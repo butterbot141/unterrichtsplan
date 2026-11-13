@@ -4,197 +4,298 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Unterrichtsmaterial</title>
-<meta name="theme-color" content="#F3F5F8" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#10151C" media="(prefers-color-scheme: dark)">
-<meta name="robots" content="noindex">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#F4F6FA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F141C" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Material">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
 :root{
-  --page:#F3F5F8; --sheet:#FFFFFF; --ink:#1D2530; --muted:#5D6877; --line:#DCE1E8; --soft:#EEF1F5;
-  --primary:#2F5FB3; --danger:#B42318; --ok:#177A5E;
-  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --page:#F4F6FA; --sheet:#FFFFFF; --ink:#1B2333; --muted:#5E6A7C; --line:#DFE4EC; --soft:#EEF2F7;
+  --primary:#2F5FB3; --danger:#B42318; --ok:#177A5E; --lk:#7A5AF8; --lk-soft:#F1ECFE;
+  --serif:"Iowan Old Style","Charter","Palatino Linotype",Palatino,Georgia,serif;
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --shadow:0 1px 2px rgba(20,30,50,.05),0 4px 14px rgba(20,30,50,.05);
   color-scheme:light; box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --page:#10151C; --sheet:#18202A; --ink:#E7ECF2; --muted:#A0ABB9; --line:#2B3542; --soft:#202935;
-    --primary:#8DB2F2; --danger:#F08A80; --ok:#5FCB9F; color-scheme:dark;
+    --page:#0F141C; --sheet:#171E29; --ink:#E7ECF3; --muted:#A1ACBB; --line:#2A3443; --soft:#1F2733;
+    --primary:#8DB2F2; --danger:#F08A80; --ok:#5FCB9F; --lk:#B4A0FF; --lk-soft:#2A2442;
+    --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --page:#10151C; --sheet:#18202A; --ink:#E7ECF2; --muted:#A0ABB9; --line:#2B3542; --soft:#202935;
-  --primary:#8DB2F2; --danger:#F08A80; --ok:#5FCB9F; color-scheme:dark;
+  --page:#0F141C; --sheet:#171E29; --ink:#E7ECF3; --muted:#A1ACBB; --line:#2A3443; --soft:#1F2733;
+  --primary:#8DB2F2; --danger:#F08A80; --ok:#5FCB9F; --lk:#B4A0FF; --lk-soft:#2A2442;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark;
 }
-/* Fachfarben */
-.acc-blau{--acc:#2F5FB3;--acc-soft:#E6EEFB}
-.acc-gruen{--acc:#177A5E;--acc-soft:#E2F3EC}
-.acc-orange{--acc:#C2410C;--acc-soft:#FCEBDD}
-.acc-lila{--acc:#6D4AB0;--acc-soft:#EEE8F8}
-.acc-rot{--acc:#B42318;--acc-soft:#FBE7E5}
-.acc-grau{--acc:#4B5563;--acc-soft:#ECEEF1}
+.acc-blau{--acc:#2F5FB3;--acc-soft:#E7EEFB}
+.acc-gruen{--acc:#137A5C;--acc-soft:#E1F3EC}
+.acc-orange{--acc:#C2410C;--acc-soft:#FCECDF}
+.acc-lila{--acc:#6D4AB0;--acc-soft:#EFE9F9}
+.acc-rot{--acc:#B42318;--acc-soft:#FBE8E6}
+.acc-grau{--acc:#4B5563;--acc-soft:#ECEEF2}
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]) .acc-blau{--acc:#8DB2F2;--acc-soft:#1E2B40}
+  :root:not([data-theme="light"]) .acc-blau{--acc:#8DB2F2;--acc-soft:#1E2B42}
   :root:not([data-theme="light"]) .acc-gruen{--acc:#5FCB9F;--acc-soft:#15302A}
-  :root:not([data-theme="light"]) .acc-orange{--acc:#F4A06B;--acc-soft:#3A2416}
+  :root:not([data-theme="light"]) .acc-orange{--acc:#F4A06B;--acc-soft:#3A2517}
   :root:not([data-theme="light"]) .acc-lila{--acc:#B8A0EC;--acc-soft:#2A2240}
   :root:not([data-theme="light"]) .acc-rot{--acc:#F08A80;--acc-soft:#3A1C1A}
   :root:not([data-theme="light"]) .acc-grau{--acc:#B3BCC8;--acc-soft:#262E39}
 }
-/* Materialtypen */
-.t-html{--tc:#0E7C7B}.t-praesentation{--tc:#C2410C}.t-ab{--tc:#2F5FB3}.t-dokument{--tc:#5D6877}
-.t-mitschrift{--tc:#6D4AB0}.t-klassenarbeit{--tc:#B42318}.t-link{--tc:#3F5A78}.t-video{--tc:#C0265E}.t-uebersicht{--tc:var(--acc,#2F5FB3)}
+.t-ab{--tc:#2F5FB3}.t-html{--tc:#0E7C7B}.t-praesentation{--tc:#C2410C}.t-dokument{--tc:#5E6A7C}
+.t-mitschrift{--tc:#6D4AB0}.t-video{--tc:#C0265E}.t-link{--tc:#3F5A78}.t-loesung{--tc:#137A5C}.t-pruefung{--tc:#B42318}.t-uebersicht{--tc:var(--acc)}
 @media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .t-ab{--tc:#8DB2F2}
   :root:not([data-theme="light"]) .t-html{--tc:#5ED0CE}
   :root:not([data-theme="light"]) .t-praesentation{--tc:#F4A06B}
-  :root:not([data-theme="light"]) .t-ab{--tc:#8DB2F2}
   :root:not([data-theme="light"]) .t-dokument{--tc:#B3BCC8}
   :root:not([data-theme="light"]) .t-mitschrift{--tc:#B8A0EC}
-  :root:not([data-theme="light"]) .t-klassenarbeit{--tc:#F08A80}
-  :root:not([data-theme="light"]) .t-link{--tc:#9DB7D6}
   :root:not([data-theme="light"]) .t-video{--tc:#F07FA8}
+  :root:not([data-theme="light"]) .t-link{--tc:#9DB7D6}
+  :root:not([data-theme="light"]) .t-loesung{--tc:#5FCB9F}
+  :root:not([data-theme="light"]) .t-pruefung{--tc:#F08A80}
 }
-
 *,*::before,*::after{box-sizing:inherit}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 80px)}
 body{margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);font-size:1.0625rem;line-height:1.5;min-height:100vh}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sheet)}
 a{color:inherit}
-button{font:inherit;color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
 .i{width:1.2em;height:1.2em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
-
-/* Kopf */
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--sheet) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
-.top-in{max-width:960px;margin:0 auto;padding:.55rem 1rem;display:flex;align-items:center;gap:.6rem}
-.brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;font-weight:700;font-size:1.05rem;margin-right:auto;min-height:44px}
-.brand-mark{width:30px;height:30px;border-radius:8px;background:var(--ink);display:grid;place-items:center}
-.brand-mark i{display:block;width:13px;height:16px;border-radius:2px;background:var(--sheet);box-shadow:4px -3px 0 -1px var(--page),4px -3px 0 0 var(--sheet)}
-.iconbtn{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:12px;border:0;background:transparent;cursor:pointer;color:var(--muted)}
-.iconbtn:hover{background:var(--soft);color:var(--ink)}
-.editbtn{display:none;align-items:center;gap:.4rem;border:1px solid var(--line);background:var(--sheet);border-radius:999px;padding:.45rem .9rem;min-height:40px;cursor:pointer;font-weight:600}
-.can-edit .editbtn{display:inline-flex}
-.editing .editbtn{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
-
-main{max-width:960px;margin:0 auto;padding:1.4rem 1rem 4rem}
 h1,h2,h3{font-family:var(--serif);font-weight:700;line-height:1.15;margin:0}
 .muted{color:var(--muted)}
+[hidden]{display:none !important}
+
+/* Kopf */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--sheet) 90%,transparent);
+  -webkit-backdrop-filter:saturate(1.4) blur(12px);backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1040px;margin:0 auto;padding:.5rem 1rem;display:flex;align-items:center;gap:.5rem}
+.brand{display:flex;align-items:center;gap:.65rem;text-decoration:none;font-weight:700;margin-right:auto;min-height:44px;min-width:0}
+.brand svg{width:34px;height:34px;flex:none}
+.brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:1.05rem}
+.iconbtn{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:12px;border:0;background:transparent;cursor:pointer;color:var(--muted)}
+.iconbtn:hover{background:var(--soft);color:var(--ink)}
+.pillbtn{display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;color:inherit;border:1px solid var(--line);background:var(--sheet);border-radius:999px;padding:.45rem .9rem;min-height:42px;cursor:pointer;font-weight:600;white-space:nowrap}
+.pillbtn.dark{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.pillbtn.add{background:var(--primary);color:#fff;border-color:var(--primary)}
+.admin-only{display:none !important}
+.can-edit .admin-only{display:inline-flex !important}
+@media (max-width:560px){.pillbtn .lbl{display:none}.pillbtn{padding:.45rem .65rem}}
+
+main{max-width:1040px;margin:0 auto;padding:1.2rem 1rem 4rem}
 
 /* Start */
-.hero{display:flex;align-items:center;gap:.6rem;margin:.6rem 0 1.4rem}
-.hero h1{font-size:clamp(2rem,5vw,2.7rem)}
-.faecher{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:1rem}
-.fach{background:var(--sheet);border:1px solid var(--line);border-radius:18px;padding:1.2rem 1.2rem 1.3rem;position:relative;overflow:hidden}
-.fach::before{content:"";position:absolute;inset:0 0 auto;height:6px;background:var(--acc)}
-.fach-head{display:flex;align-items:center;gap:.4rem;margin:.2rem 0 1rem}
-.fach-head h2{font-size:1.65rem;margin-right:auto}
+.hero{position:relative;overflow:hidden;border-radius:22px;padding:1.6rem 1.5rem 1.5rem;margin:.4rem 0 1.4rem;background:var(--sheet);border:1px solid var(--line);box-shadow:var(--shadow)}
+.hero::before{content:"";position:absolute;right:-60px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(111,168,255,.28),transparent 70%)}
+.hero::after{content:"";position:absolute;right:120px;bottom:-110px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(60,196,160,.22),transparent 70%)}
+.hero h1{font-size:clamp(1.9rem,4.6vw,2.6rem);position:relative}
+.hero p{margin:.35rem 0 0;color:var(--muted);position:relative}
+.hero .tools{position:absolute;right:.6rem;top:.6rem}
+.faecher{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:1rem}
+.fach{background:var(--sheet);border:1px solid var(--line);border-radius:20px;padding:1.2rem;box-shadow:var(--shadow)}
+.fach-head{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.fach-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--acc-soft);color:var(--acc);flex:none}
+.fach-icon .i{width:26px;height:26px}
+.fach-head h2{font-size:1.6rem;margin-right:auto}
 .jgs{display:flex;flex-wrap:wrap;gap:.6rem}
-.jg{display:grid;place-items:center;min-width:68px;height:68px;padding:0 .9rem;border-radius:14px;text-decoration:none;
-  background:var(--acc-soft);color:var(--acc);font-family:var(--serif);font-size:1.7rem;font-weight:700;border:2px solid transparent}
-.jg:hover,.jg:focus-visible{border-color:var(--acc);outline:none}
-.jg.add{background:transparent;border:2px dashed var(--line);color:var(--muted);cursor:pointer;font-family:var(--sans);font-size:1.4rem}
+.jg{display:grid;place-items:center;min-width:70px;height:70px;padding:0 .9rem;border-radius:16px;text-decoration:none;background:var(--acc-soft);color:var(--acc);
+  font-family:var(--serif);font-size:1.75rem;font-weight:700;border:2px solid transparent;transition:transform .12s}
+.jg:hover,.jg:focus-visible{border-color:var(--acc);outline:none;transform:translateY(-1px)}
+.jg.add{background:transparent;border:2px dashed var(--line);color:var(--muted);cursor:pointer;font-family:var(--sans);font-size:1.3rem}
 
-/* Fachseite */
-.crumb{display:inline-flex;align-items:center;gap:.25rem;text-decoration:none;color:var(--muted);font-size:.98rem;min-height:40px}
-.crumb:hover{color:var(--ink)}
-.page-head{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:.2rem 0 1.6rem}
-.page-head h1{font-size:clamp(1.9rem,4.6vw,2.5rem)}
-.pill{display:inline-flex;align-items:center;border-radius:999px;background:var(--acc-soft);color:var(--acc);font-family:var(--sans);font-weight:700;font-size:1rem;padding:.25rem .8rem}
-.thema{margin:0 0 2.2rem}
-.thema-head{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:0 0 .7rem;padding-bottom:.5rem;border-bottom:2px solid var(--acc)}
-.thema-head h2{font-size:1.45rem;margin-right:auto}
-.rows{background:var(--sheet);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-.row{display:grid;grid-template-columns:minmax(140px,26%) 1fr auto;gap:.6rem 1.2rem;align-items:center;padding:.95rem 1.1rem;border-top:1px solid var(--line)}
+/* Kopfzeilen der Unterseiten */
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:.2rem;color:var(--muted);font-size:.95rem;margin-bottom:.3rem}
+.crumbs a{text-decoration:none;display:inline-flex;align-items:center;min-height:36px;padding:0 .2rem;border-radius:8px}
+.crumbs a:hover{color:var(--ink)}
+.page-head{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:0 0 1.3rem}
+.page-head h1{font-size:clamp(1.8rem,4.4vw,2.4rem)}
+.page-head .sub{flex-basis:100%;color:var(--muted);margin-top:-.2rem}
+.pill{display:inline-flex;align-items:center;border-radius:999px;background:var(--acc-soft);color:var(--acc);font-weight:700;font-size:.95rem;padding:.25rem .8rem;font-family:var(--sans)}
+.spacer{margin-left:auto}
+
+/* Reihen-Übersicht */
+.reihen{display:grid;gap:.75rem}
+.reihe-card{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:1rem;background:var(--sheet);border:1px solid var(--line);border-radius:18px;padding:1rem 1.1rem;text-decoration:none;box-shadow:var(--shadow)}
+a.reihe-card:hover{border-color:var(--acc)}
+.reihe-nr{font-family:var(--serif);font-size:2rem;font-weight:700;color:var(--acc);min-width:2.2rem;text-align:center}
+.reihe-card b{display:block;font-size:1.15rem}
+.reihe-card small{display:block;color:var(--muted)}
+.reihe-card .go{color:var(--muted)}
+.editing a.reihe-card{pointer-events:none}
+.editing .reihe-card .tools{pointer-events:auto}
+
+/* Reihe */
+.overview{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;background:var(--acc-soft);border-radius:16px;padding:.85rem 1rem;margin:0 0 1.2rem}
+.overview b{color:var(--acc);margin-right:auto}
+.rows{background:var(--sheet);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+.row{display:grid;grid-template-columns:auto minmax(130px,26%) 1fr auto;gap:.5rem 1rem;align-items:start;padding:1rem 1.1rem;border-top:1px solid var(--line)}
 .row:first-child{border-top:0}
-.row-title b{display:block;font-size:1.08rem}
+.nr{width:2.1rem;height:2.1rem;border-radius:50%;display:grid;place-items:center;background:var(--acc-soft);color:var(--acc);font-weight:700;font-size:.98rem;margin-top:.15rem}
+.row-title{padding-top:.25rem}
+.row-title b{display:block;font-size:1.08rem;line-height:1.3}
 .row-title small{display:block;color:var(--muted);font-size:.92rem}
-.row.empty{display:block;color:var(--muted);font-size:.98rem}
-@media (max-width:640px){.row{grid-template-columns:1fr auto}.row .chips{grid-column:1 / -1;grid-row:2}}
+.row-main{min-width:0}
+.row.empty{display:block;color:var(--muted)}
+@media (max-width:700px){
+  .row{grid-template-columns:auto 1fr auto}
+  .row .row-main{grid-column:2 / -1;grid-row:2}
+}
 .chips{display:flex;flex-wrap:wrap;gap:.45rem}
-.chip{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .75rem;min-height:42px;border-radius:11px;border:1px solid var(--line);background:var(--sheet);
+.chip{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .75rem;min-height:42px;border-radius:12px;border:1px solid var(--line);background:var(--sheet);
   text-decoration:none;color:var(--ink);font-size:.98rem;cursor:pointer;text-align:left;max-width:100%}
 .chip .i{color:var(--tc)}
 .chip:hover,.chip:focus-visible{border-color:var(--tc);outline:none;background:color-mix(in srgb,var(--tc) 7%,var(--sheet))}
 .chip .ext{font-size:.72rem;font-weight:700;letter-spacing:.03em;color:var(--muted);border-left:1px solid var(--line);padding-left:.45rem}
 .chip.add{border-style:dashed;color:var(--muted)}
-.chip.ov{background:var(--acc-soft);border-color:transparent;color:var(--acc);font-weight:600}
-.chip.ov .i{color:var(--acc)}
+.chip.lkchip{border-style:dashed;border-color:color-mix(in srgb,var(--lk) 45%,var(--line))}
+.lk-toggle{display:inline-flex;align-items:center;gap:.35rem;margin-top:.55rem;border:0;background:transparent;color:var(--lk);font-weight:600;font-size:.92rem;cursor:pointer;padding:.3rem .1rem;min-height:36px}
+.lk-toggle .i{transition:transform .2s}
+.lk-toggle[aria-expanded="true"] .i{transform:rotate(90deg)}
+.lk-area{margin-top:.4rem;padding:.65rem;border-radius:12px;background:var(--lk-soft)}
+.lk-area .lbl{display:block;font-size:.8rem;font-weight:700;color:var(--lk);text-transform:none;margin-bottom:.4rem}
+.reihe-nav{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1.4rem}
+.reihe-nav a{display:block;text-decoration:none;background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:.75rem 1rem;min-height:60px}
+.reihe-nav a:hover{border-color:var(--acc)}
+.reihe-nav small{display:block;color:var(--muted);font-size:.85rem}
+.reihe-nav b{color:var(--acc)}
+.reihe-nav .next{text-align:right;grid-column:2}
 
 /* Bearbeiten */
-.tools{display:none;gap:.1rem}
+.tools{display:none;gap:.05rem;align-items:center}
 .editing .tools{display:inline-flex}
 .tools .iconbtn{width:40px;height:40px}
 .tools .iconbtn.del:hover{color:var(--danger)}
 .edit-only{display:none !important}
 .editing .edit-only{display:inline-flex !important}
-.editing .rows,.editing .fach{border-style:dashed}
+.editing .rows,.editing .fach,.editing .reihe-card{border-style:dashed}
 .addbtn{display:inline-flex;align-items:center;gap:.4rem;border:2px dashed var(--line);background:transparent;border-radius:14px;padding:.75rem 1.1rem;min-height:48px;cursor:pointer;color:var(--muted);font-weight:600}
 .addbtn:hover{color:var(--ink);border-color:var(--muted)}
-.add-row{display:flex;width:100%;border:0;border-top:1px dashed var(--line);border-radius:0;justify-content:center}
+.add-row{width:100%;justify-content:center;border:0;border-top:1px dashed var(--line);border-radius:0}
+.btnline{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+.empty-state{background:var(--sheet);border:1px solid var(--line);border-radius:18px;padding:2rem 1.2rem;text-align:center;color:var(--muted)}
 
-.empty-state{background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:2rem 1.2rem;text-align:center;color:var(--muted)}
-
-/* Einstellungen */
-.panel{background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:1.2rem;max-width:620px}
-.panel p{margin:.4rem 0 1rem}
-label.f{display:block;margin:0 0 .9rem;font-weight:600}
-label.f span{display:block;margin-bottom:.3rem}
-input[type=text],input[type=url],input[type=password],select,textarea{
-  width:100%;font:inherit;color:var(--ink);background:var(--page);border:1px solid var(--line);border-radius:10px;padding:.65rem .75rem;min-height:46px}
+/* Formulare & Panels */
+.panel{background:var(--sheet);border:1px solid var(--line);border-radius:18px;padding:1.2rem;max-width:660px;margin-bottom:1rem;box-shadow:var(--shadow)}
+.panel h2{font-size:1.3rem;margin-bottom:.4rem}
+.panel p{margin:.3rem 0 .9rem}
+label.f{display:block;margin:0 0 .85rem;font-weight:600}
+label.f > span{display:block;margin-bottom:.3rem}
+input[type=text],input[type=url],input[type=password],input[type=number],select,textarea{
+  width:100%;background:var(--page);border:1px solid var(--line);border-radius:10px;padding:.65rem .75rem;min-height:46px}
 textarea{min-height:80px;resize:vertical}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--primary);outline-offset:1px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border-radius:12px;padding:.65rem 1.1rem;min-height:46px;border:1px solid var(--line);background:var(--sheet);cursor:pointer;font-weight:600}
+.check{display:flex;align-items:center;gap:.55rem;font-weight:600;margin:0 0 .85rem;min-height:40px}
+.check input{width:20px;height:20px;accent-color:var(--primary)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border-radius:12px;padding:.65rem 1.1rem;min-height:46px;border:1px solid var(--line);background:var(--sheet);cursor:pointer;font-weight:600;text-decoration:none}
 .btn.primary{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
 .btn.danger{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 40%,var(--line))}
-.btnrow{display:flex;gap:.6rem;flex-wrap:wrap}
-.status{margin-top:1rem;font-weight:600}
+.status{margin-top:.8rem;font-weight:600}
 .status.ok{color:var(--ok)}.status.err{color:var(--danger)}
-footer{max-width:960px;margin:0 auto;padding:0 1rem 2rem;display:flex;justify-content:flex-end}
-footer a{display:inline-flex;align-items:center;gap:.35rem;color:var(--muted);text-decoration:none;font-size:.9rem;min-height:40px}
-
-/* Formular-Dialog */
-dialog{border:0;padding:0;background:transparent;color:var(--ink);max-width:min(560px,100vw);width:100%}
-dialog::backdrop{background:rgba(10,14,20,.45)}
-.sheet-form{background:var(--sheet);border-radius:20px;padding:1.2rem 1.2rem calc(1.2rem + env(safe-area-inset-bottom,0px));margin:0 .5rem}
-.sheet-form h3{font-size:1.35rem;margin:0 0 1rem}
-@media (max-width:600px){dialog{margin:auto 0 0;max-width:100vw}.sheet-form{border-radius:20px 20px 0 0;margin:0}}
-.seg{display:flex;gap:.35rem;flex-wrap:wrap;margin:.2rem 0 .6rem}
-.seg label{display:inline-flex;align-items:center;gap:.35rem;border:1px solid var(--line);border-radius:999px;padding:.4rem .8rem;cursor:pointer;font-weight:600;min-height:40px}
-.seg input{accent-color:var(--primary)}
-fieldset{border:0;padding:0;margin:0 0 .9rem}
-legend{font-weight:600;padding:0;margin-bottom:.3rem}
 .hint{font-size:.88rem;color:var(--muted);font-weight:400;margin:.3rem 0 0}
-.sheet-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.2rem;flex-wrap:wrap}
+fieldset{border:1px solid var(--line);border-radius:12px;padding:.75rem .85rem .2rem;margin:0 0 .9rem}
+legend{font-weight:700;padding:0 .3rem}
+.seg{display:flex;gap:.35rem;flex-wrap:wrap;margin:.1rem 0 .6rem}
+.seg label{display:inline-flex;align-items:center;gap:.35rem;border:1px solid var(--line);border-radius:999px;padding:.35rem .8rem;cursor:pointer;font-weight:600;min-height:40px}
+.seg input{accent-color:var(--primary)}
+.slot-file,.slot-link,.newname{margin-bottom:.6rem}
+.current{font-size:.9rem;color:var(--muted);margin:-.2rem 0 .5rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 .8rem}
+@media (max-width:520px){.grid2{grid-template-columns:1fr}}
+.checklist{max-height:50vh;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:.4rem .7rem;margin-bottom:.6rem}
+.checklist label{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem 0;border-top:1px solid var(--line);font-weight:600}
+.checklist label:first-child{border-top:0}
+.checklist small{display:block;font-weight:400;color:var(--muted)}
+.checklist input{width:20px;height:20px;margin-top:.15rem;accent-color:var(--primary)}
+
+dialog{border:0;padding:0;background:transparent;color:var(--ink);max-width:min(600px,100vw);width:100%}
+dialog::backdrop{background:rgba(10,14,20,.5)}
+.sheet-form{background:var(--sheet);border-radius:22px;padding:1.2rem 1.2rem calc(1.2rem + env(safe-area-inset-bottom,0px));margin:0 .5rem;max-height:92vh;overflow:auto}
+.sheet-form h3{font-size:1.35rem;margin:0 0 1rem}
+@media (max-width:600px){dialog{margin:auto 0 0;max-width:100vw}.sheet-form{border-radius:22px 22px 0 0;margin:0}}
+.sheet-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem;flex-wrap:wrap;position:sticky;bottom:-1.2rem;background:var(--sheet);padding:.6rem 0 .2rem}
 .sheet-actions .left{margin-right:auto}
 
+/* Zugang */
+.lock{min-height:calc(100vh - 140px);display:grid;place-items:center;padding:1rem}
+.lock-card{background:var(--sheet);border:1px solid var(--line);border-radius:26px;padding:1.6rem 1.4rem;width:min(380px,100%);text-align:center;box-shadow:var(--shadow)}
+.lock-card svg.logo{width:64px;height:64px;margin:0 auto .6rem;display:block}
+.lock-card h1{font-size:1.6rem}
+.lock-card p{color:var(--muted);margin:.3rem 0 1rem}
+.pins{display:flex;justify-content:center;gap:.6rem;margin:0 0 1rem}
+.pins span{width:46px;height:56px;border-radius:12px;border:2px solid var(--line);display:grid;place-items:center;font-size:1.6rem;font-weight:700}
+.pins span.on{border-color:var(--primary)}
+.pins.err{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem}
+.pad button{min-height:58px;border-radius:14px;border:1px solid var(--line);background:var(--page);font-size:1.4rem;font-weight:600;cursor:pointer}
+.pad button:active{background:var(--soft)}
+.lock-card .check{justify-content:center;margin:1rem 0 0;font-weight:500;color:var(--muted)}
+.codeinput{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px}
+
+/* Anzeige */
+.viewer{position:fixed;inset:0;z-index:40;background:var(--page);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.viewer-bar{display:flex;align-items:center;gap:.4rem;padding:.45rem .6rem;border-bottom:1px solid var(--line);background:var(--sheet)}
+.viewer-bar b{margin-right:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:.3rem}
+.viewer-body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;position:relative}
+.viewer-body iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#fff}
+.viewer-body img,.viewer-body video{max-width:100%;display:block;margin:1rem auto}
+.pdf-pages{padding:.8rem;display:grid;gap:.8rem;justify-items:center;padding-bottom:calc(1rem + env(safe-area-inset-bottom,0px))}
+.pdf-page{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.18);width:100%;max-width:900px;position:relative}
+.pdf-page canvas{width:100%;height:auto;display:block}
+.file-card{max-width:440px;margin:3rem auto;text-align:center;padding:1.5rem;background:var(--sheet);border:1px solid var(--line);border-radius:18px}
+.file-card .i{width:44px;height:44px;color:var(--tc,var(--primary))}
+
 /* Laden & Meldungen */
-.busy{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:rgba(10,14,20,.35)}
+.busy{position:fixed;inset:0;z-index:60;display:none;place-items:center;background:rgba(10,14,20,.35)}
 .busy.on{display:grid}
 .busy div{background:var(--sheet);border-radius:16px;padding:1.1rem 1.4rem;display:flex;gap:.8rem;align-items:center;font-weight:600;max-width:85vw}
-.spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--ink);animation:spin .8s linear infinite}
+.spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--ink);animation:spin .8s linear infinite;flex:none}
 @keyframes spin{to{transform:rotate(360deg)}}
-.toast{position:fixed;left:50%;bottom:calc(1.2rem + env(safe-area-inset-bottom,0px));transform:translate(-50%,200%);visibility:hidden;background:var(--ink);color:var(--sheet);border-radius:12px;padding:.75rem 1.1rem;z-index:60;transition:transform .25s;max-width:90vw;font-weight:600}
+.center-spin{display:grid;place-items:center;height:100%;min-height:200px}
+.toast{position:fixed;left:50%;bottom:calc(1.2rem + env(safe-area-inset-bottom,0px));transform:translate(-50%,200%);visibility:hidden;background:var(--ink);color:var(--sheet);border-radius:12px;padding:.75rem 1.1rem;z-index:70;transition:transform .25s;max-width:90vw;font-weight:600}
 .toast.on{transform:translate(-50%,0);visibility:visible}
-@media (prefers-reduced-motion: reduce){.spin{animation-duration:2s}.toast{transition:none}}
-a:focus-visible,button:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+footer{max-width:1040px;margin:0 auto;padding:0 1rem 2rem;display:flex;justify-content:flex-end}
+footer a{display:inline-flex;align-items:center;gap:.35rem;color:var(--muted);text-decoration:none;font-size:.9rem;min-height:40px}
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){.spin{animation-duration:2s}.toast,.jg,.lk-toggle .i{transition:none}.pins.err{animation:none}}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="top-in">
-    <a class="brand" href="#/"><span class="brand-mark" aria-hidden="true"><i></i></span><span id="brand-title">Unterrichtsmaterial</span></a>
+    <a class="brand" href="#/"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#logo"/></svg><span id="brand-title">Unterrichtsmaterial</span></a>
+    <button class="pillbtn add admin-only" id="add-material" hidden></button>
+    <button class="pillbtn admin-only" id="edit-toggle" hidden></button>
     <button class="iconbtn" id="reload" aria-label="Neu laden" title="Neu laden"></button>
-    <button class="editbtn" id="edit-toggle"></button>
   </div>
 </header>
 <main id="app" aria-live="polite"></main>
 <footer><a href="#/einstellungen" id="settings-link"></a></footer>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="lg-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22305A"/><stop offset="1" stop-color="#2F5FB3"/></linearGradient>
+    <symbol id="logo" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="24" fill="url(#lg-bg)"/>
+      <rect x="66" y="22" width="16" height="13" rx="4" fill="#F5B83D"/>
+      <rect x="66" y="40" width="16" height="13" rx="4" fill="#3CC4A0"/>
+      <rect x="66" y="58" width="16" height="13" rx="4" fill="#7FB0FF"/>
+      <rect x="20" y="16" width="54" height="68" rx="8" fill="#FFFFFF"/>
+      <rect x="20" y="16" width="10" height="68" rx="5" fill="#DCE6F7"/>
+      <rect x="37" y="30" width="27" height="5" rx="2.5" fill="#2F5FB3"/>
+      <rect x="37" y="42" width="22" height="4" rx="2" fill="#B9C6DC"/>
+      <rect x="37" y="51" width="26" height="4" rx="2" fill="#B9C6DC"/>
+      <rect x="37" y="60" width="18" height="4" rx="2" fill="#B9C6DC"/>
+    </symbol>
+  </defs>
+</svg>
 
 <dialog id="sheet"></dialog>
 <div class="busy" id="busy"><div><span class="spin"></span><span id="busy-text">Bitte warten …</span></div></div>
@@ -204,157 +305,326 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--primary);outline-of
 (function(){
 'use strict';
 
-/* ---------- Grundlagen ---------- */
-var CFG_KEY = 'um-config';
-var DATA_PATH = 'data/inhalt.json';
-var MAX_MB = 50, WARN_MB = 10;
+/* =====================================================================
+   Grundlagen
+   ===================================================================== */
+var CFG_KEY = 'um-github', KEK_KEY = 'um-zugang', LK_KEY = 'um-lk-offen';
+var DATA_PATH = 'data/inhalt.enc', ACCESS_PATH = 'data/zugang.json';
+var MAX_MB = 50, WARN_MB = 15, ITER = 250000;
+var MAGIC = [85, 77, 67, 49]; // "UMC1"
 
 var TYPES = [
-  ['html','Interaktive Seite'],['praesentation','Präsentation'],['ab','Arbeitsblatt'],['dokument','Dokument'],
-  ['mitschrift','Mitschrift'],['klassenarbeit','Klassenarbeit'],['video','Video'],['link','Link']
+  ['ab','Arbeitsblatt'], ['html','Interaktive Seite'], ['praesentation','Präsentation'], ['dokument','Dokument'],
+  ['mitschrift','Mitschrift / Tafelbild'], ['video','Video'], ['link','Link'], ['loesung','Lösung'],
+  ['pruefung','Klassenarbeit / Test / Klausur']
 ];
+var TYPE_LABEL = {}; TYPES.forEach(function(t){ TYPE_LABEL[t[0]] = t[1]; });
 var COLORS = [['blau','Blau'],['gruen','Grün'],['orange','Orange'],['lila','Lila'],['rot','Rot'],['grau','Grau']];
+var MIME = { pdf:'application/pdf', html:'text/html', htm:'text/html', png:'image/png', jpg:'image/jpeg', jpeg:'image/jpeg', gif:'image/gif', webp:'image/webp', svg:'image/svg+xml',
+  mp4:'video/mp4', mov:'video/quicktime', mp3:'audio/mpeg', m4a:'audio/mp4', txt:'text/plain', csv:'text/csv', md:'text/markdown',
+  docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document', doc:'application/msword',
+  pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation', ppt:'application/vnd.ms-powerpoint',
+  xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', odt:'application/vnd.oasis.opendocument.text',
+  odp:'application/vnd.oasis.opendocument.presentation', key:'application/x-iwork-keynote-sffkey', ggb:'application/vnd.geogebra.file', zip:'application/zip' };
 
 var I = {
+  ab:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h4"/>',
   html:'<path d="M5 3l14 8-6 1.6L10 19z"/>',
   praesentation:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8"/>',
-  ab:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h4"/>',
   dokument:'<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/>',
   mitschrift:'<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/>',
-  klassenarbeit:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2.8h6V4M8.5 11l2 2 4-4M8.5 17h7"/>',
-  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
   video:'<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9l5 3-5 3z"/>',
+  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  loesung:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.6 2.6L16 9.6"/>',
+  pruefung:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
   uebersicht:'<path d="M4 6h16M4 12h16M4 18h10"/>',
   edit:'<path d="M4 20l4-1 11-11-3-3L5 16z"/>',
-  up:'<path d="M12 19V5M6 11l6-6 6 6"/>',
-  down:'<path d="M12 5v14M6 13l6 6 6-6"/>',
+  up:'<path d="M12 19V5M6 11l6-6 6 6"/>', down:'<path d="M12 5v14M6 13l6 6 6-6"/>',
   trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',
   gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
   refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>',
-  back:'<path d="M15 5l-7 7 7 7"/>'
+  back:'<path d="M15 5l-7 7 7 7"/>', next:'<path d="M9 5l7 7-7 7"/>',
+  close:'<path d="M6 6l12 12M18 6L6 18"/>',
+  share:'<path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',
+  download:'<path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/>',
+  teacher:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/>',
+  lock:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  zip:'<path d="M6 3h9l4 4v14H6z"/><path d="M11 3v2M11 7v2M11 11v2M10 15h2v3h-2z"/>',
+  atom:'<circle cx="12" cy="12" r="1.6"/><ellipse cx="12" cy="12" rx="9.5" ry="3.8"/><ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(120 12 12)"/>',
+  mathe:'<path d="M4 6h7M7.5 2.5v7M14 5.5l5 0M4.5 15.5l5 5M9.5 15.5l-5 5M13.5 16h6M13.5 20h6"/>',
+  buch:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/>',
+  klp:'<path d="M9 4h6v3H9z"/><path d="M7 5H5v16h14V5h-2"/><path d="M8.5 12l2 2 4-4"/>'
 };
 function ico(n){ return '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' + (I[n] || I.dokument) + '</svg>'; }
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-function $(s){ return document.querySelector(s); }
-function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function $(s, r){ return (r || document).querySelector(s); }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 function slug(s){
   return String(s).toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
-    .normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60) || 'eintrag';
+    .normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0, 50) || 'eintrag';
 }
-function fileSlug(name){
-  var dot = name.lastIndexOf('.');
-  var base = dot > 0 ? name.slice(0,dot) : name, ext = dot > 0 ? name.slice(dot+1).toLowerCase().replace(/[^a-z0-9]/g,'') : '';
-  return slug(base) + (ext ? '.' + ext : '');
-}
-function extOf(p){ var m = /\.([a-z0-9]+)$/i.exec(p || ''); return m ? m[1].toUpperCase() : ''; }
+function extOf(n){ var m = /\.([a-z0-9]+)$/i.exec(n || ''); return m ? m[1].toLowerCase() : ''; }
 function hostOf(u){ try{ return new URL(u).hostname.replace(/^www\./,''); }catch(e){ return ''; } }
-function guessType(name){
-  var e = extOf(name).toLowerCase();
-  if(e === 'html' || e === 'htm') return 'html';
-  if(['pptx','ppt','key','odp'].indexOf(e) >= 0) return 'praesentation';
-  if(['mp4','mov','m4v','webm'].indexOf(e) >= 0) return 'video';
-  return null;
-}
 function jgLabel(j){ return /^\d+$/.test(j.name) ? 'Jahrgang ' + j.name : j.name; }
-function jgOrder(n){
-  if(/^\d+$/.test(n)) return parseInt(n,10);
-  var k = {EF:11, Q1:12, Q2:13}[String(n).toUpperCase()];
-  return k || 99;
-}
+function jgOrder(n){ if(/^\d+$/.test(n)) return parseInt(n, 10); return ({EF:11, Q1:12, Q2:13})[String(n).toUpperCase()] || 99; }
+function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
 
-/* ---------- Einstellungen ---------- */
-var cfg = loadCfg();
-function loadCfg(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; }catch(e){ return {}; } }
-function saveCfg(){ try{ localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); }catch(e){} }
-function canEdit(){ return !!(cfg.token && cfg.owner && cfg.repo); }
+/* Base64 */
+function bytesToB64(bytes){ var bin = ''; for(var i = 0; i < bytes.length; i += 0x8000){ bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); } return btoa(bin); }
+function b64ToBytes(b64){ var bin = atob(String(b64).replace(/\s/g, '')), out = new Uint8Array(bin.length); for(var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i); return out; }
+var TE = new TextEncoder(), TD = new TextDecoder();
 
-/* ---------- Zustand ---------- */
-var data = null, dataSha = null, editing = false;
-
-/* ---------- Base64 ---------- */
-function b64enc(str){
-  var bytes = new TextEncoder().encode(str), bin = '';
-  for(var i = 0; i < bytes.length; i += 0x8000){ bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); }
-  return btoa(bin);
+/* =====================================================================
+   Verschlüsselung (AES-GCM, Schlüssel per PBKDF2 aus Code/Passwort)
+   ===================================================================== */
+function randomBytes(n){ return crypto.getRandomValues(new Uint8Array(n)); }
+function deriveKek(secret, saltB64, iter){
+  return crypto.subtle.importKey('raw', TE.encode(secret), 'PBKDF2', false, ['deriveBits']).then(function(base){
+    return crypto.subtle.deriveBits({ name:'PBKDF2', hash:'SHA-256', salt:b64ToBytes(saltB64), iterations:iter || ITER }, base, 256);
+  }).then(function(bits){ return new Uint8Array(bits); });
 }
-function b64dec(b64){
-  var bin = atob(b64.replace(/\s/g,'')), bytes = new Uint8Array(bin.length);
-  for(var i = 0; i < bin.length; i++){ bytes[i] = bin.charCodeAt(i); }
-  return new TextDecoder().decode(bytes);
-}
-function fileB64(file){
-  return new Promise(function(res, rej){
-    var r = new FileReader();
-    r.onload = function(){ res(String(r.result).split(',')[1] || ''); };
-    r.onerror = function(){ rej(new Error('Datei konnte nicht gelesen werden.')); };
-    r.readAsDataURL(file);
+function aesKey(raw){ return crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['encrypt', 'decrypt']); }
+function seal(key, bytes){
+  var iv = randomBytes(12);
+  return crypto.subtle.encrypt({ name:'AES-GCM', iv:iv }, key, bytes).then(function(ct){
+    ct = new Uint8Array(ct);
+    var out = new Uint8Array(16 + ct.length); out.set(MAGIC, 0); out.set(iv, 4); out.set(ct, 16); return out;
   });
 }
+function unseal(key, bytes){
+  for(var i = 0; i < 4; i++){ if(bytes[i] !== MAGIC[i]) return Promise.reject(new Error('Unbekanntes Dateiformat')); }
+  return crypto.subtle.decrypt({ name:'AES-GCM', iv:bytes.subarray(4, 16) }, key, bytes.subarray(16)).then(function(p){ return new Uint8Array(p); });
+}
+/* Datenschlüssel (DEK) mit dem aus dem Code abgeleiteten Schlüssel (KEK) entpacken */
+function unwrapDek(kekRaw, wrappedB64){ return aesKey(kekRaw).then(function(k){ return unseal(k, b64ToBytes(wrappedB64)); }); }
+function wrapDek(kekRaw, dekRaw){ return aesKey(kekRaw).then(function(k){ return seal(k, dekRaw); }).then(bytesToB64); }
 
-/* ---------- GitHub-API ---------- */
+/* =====================================================================
+   Zustand
+   ===================================================================== */
+var cfg = loadJSON(CFG_KEY) || {};
+var zugang = null, zugangSha = null;
+var keyB = null, dekB = null, keyP = null, dekP = null;
+var data = null, dataSha = null, editing = false, freshForAdmin = false;
+var lkOpen = loadJSON(LK_KEY) || {};
+function loadJSON(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
+function saveJSON(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+function canEdit(){ return !!(cfg.token && cfg.owner && cfg.repo); }
+
+/* =====================================================================
+   GitHub-API (nur zum Bearbeiten)
+   ===================================================================== */
 function encPath(p){ return p.split('/').map(encodeURIComponent).join('/'); }
 function gh(method, path, body){
   var branch = cfg.branch || 'main';
   var url = 'https://api.github.com/repos/' + encodeURIComponent(cfg.owner) + '/' + encodeURIComponent(cfg.repo) + '/contents/' + encPath(path)
     + (method === 'GET' ? '?ref=' + encodeURIComponent(branch) + '&t=' + Date.now() : '');
-  var opts = { method: method, headers: {
-    'Accept':'application/vnd.github+json', 'Authorization':'Bearer ' + cfg.token, 'X-GitHub-Api-Version':'2022-11-28' } };
+  var opts = { method:method, headers:{ 'Accept':'application/vnd.github+json', 'Authorization':'Bearer ' + cfg.token, 'X-GitHub-Api-Version':'2022-11-28' } };
   if(body){ body.branch = branch; opts.body = JSON.stringify(body); }
   return fetch(url, opts).then(function(r){
     if(r.ok) return r.json();
-    return r.json().catch(function(){ return {}; }).then(function(j){
-      var e = new Error(j.message || ('Fehler ' + r.status)); e.status = r.status; throw e;
-    });
+    return r.json().catch(function(){ return {}; }).then(function(j){ var e = new Error(j.message || ('Fehler ' + r.status)); e.status = r.status; throw e; });
   });
 }
 function ghSha(path){ return gh('GET', path).then(function(r){ return r.sha; }, function(e){ if(e.status === 404) return null; throw e; }); }
+function ghRaw(path){
+  var url = 'https://api.github.com/repos/' + encodeURIComponent(cfg.owner) + '/' + encodeURIComponent(cfg.repo) + '/contents/' + encPath(path) + '?ref=' + encodeURIComponent(cfg.branch || 'main') + '&t=' + Date.now();
+  return fetch(url, { headers:{ 'Accept':'application/vnd.github.raw', 'Authorization':'Bearer ' + cfg.token, 'X-GitHub-Api-Version':'2022-11-28' } })
+    .then(function(r){ if(!r.ok) throw new Error('Fehler ' + r.status); return r.arrayBuffer(); }).then(function(b){ return new Uint8Array(b); });
+}
+function ghPutBytes(path, bytes, message, sha){ var b = { message:message, content:bytesToB64(bytes) }; if(sha) b.sha = sha; return gh('PUT', path, b); }
 
+/* =====================================================================
+   Laden & Speichern
+   ===================================================================== */
+function fetchBytes(path, noStore){
+  return fetch(path + (noStore ? '?t=' + Date.now() : ''), { cache: noStore ? 'no-store' : 'default' }).then(function(r){
+    if(!r.ok){ var e = new Error('Datei nicht gefunden'); e.status = r.status; throw e; }
+    return r.arrayBuffer();
+  }).then(function(b){ return new Uint8Array(b); });
+}
+function loadZugang(fromApi){
+  if(fromApi && canEdit()){
+    return gh('GET', ACCESS_PATH).then(function(r){ zugang = JSON.parse(TD.decode(b64ToBytes(r.content))); zugangSha = r.sha; return zugang; },
+      function(e){ if(e.status === 404){ zugang = null; zugangSha = null; return null; } throw e; });
+  }
+  return fetch(ACCESS_PATH + '?t=' + Date.now(), { cache:'no-store' }).then(function(r){
+    if(r.status === 404) return null;
+    if(!r.ok) throw new Error('Zugangsdaten nicht erreichbar');
+    return r.json();
+  }).then(function(z){ zugang = z; return z; });
+}
+function unlockBasis(kekRaw){
+  return unwrapDek(kekRaw, zugang.basis.dek).then(function(raw){ dekB = raw; return aesKey(raw); }).then(function(k){ keyB = k; });
+}
+function unlockPruefung(secret){
+  return deriveKek(secret, zugang.pruefung.salt, zugang.iter).then(function(kek){ return unwrapDek(kek, zugang.pruefung.dek); })
+    .then(function(raw){ dekP = raw; return aesKey(raw); }).then(function(k){ keyP = k; });
+}
 function loadData(fromApi){
   if(fromApi && canEdit()){
-    return gh('GET', DATA_PATH).then(function(r){ data = JSON.parse(b64dec(r.content)); dataSha = r.sha; });
+    return gh('GET', DATA_PATH).then(function(r){
+      dataSha = r.sha;
+      if(r.content) return b64ToBytes(r.content);
+      return ghRaw(DATA_PATH);
+    }).then(function(bytes){ return unseal(keyB, bytes); })
+      .then(function(p){ data = JSON.parse(TD.decode(p)); freshForAdmin = true; });
   }
-  return fetch(DATA_PATH, {cache:'no-store'}).then(function(r){
-    if(!r.ok) throw new Error('Inhalte nicht gefunden'); return r.json();
-  }).then(function(j){ data = j; });
+  return fetchBytes(DATA_PATH, true).then(function(bytes){ return unseal(keyB, bytes); })
+    .then(function(p){ data = JSON.parse(TD.decode(p)); freshForAdmin = false; });
 }
 function saveData(msg){
-  return gh('PUT', DATA_PATH, { message: msg, content: b64enc(JSON.stringify(data, null, 2) + '\n'), sha: dataSha })
+  return seal(keyB, TE.encode(JSON.stringify(data))).then(function(bytes){ return ghPutBytes(DATA_PATH, bytes, msg, dataSha); })
     .then(function(r){ dataSha = r.content.sha; });
 }
-function uploadFile(file, dir){
-  var mb = file.size / 1048576;
-  if(mb > MAX_MB) return Promise.reject(new Error('Die Datei ist ' + mb.toFixed(1) + ' MB groß. Erlaubt sind höchstens ' + MAX_MB + ' MB.'));
-  var name = fileSlug(file.name), dot = name.lastIndexOf('.'), base = dot > 0 ? name.slice(0,dot) : name, ext = dot > 0 ? name.slice(dot) : '';
-  function freePath(n){
+function keyFor(schutz){ return schutz === 'pruefung' ? keyP : keyB; }
+function freePath(dir, name){
+  var dot = name.indexOf('.'), base = dot > 0 ? name.slice(0, dot) : name, ext = dot > 0 ? name.slice(dot) : '';
+  function tryN(n){
     var p = dir + '/' + (n ? base + '-' + n : base) + ext;
-    return ghSha(p).then(function(sha){ return sha ? freePath((n || 1) + 1) : p; });
+    return ghSha(p).then(function(sha){ return sha ? tryN((n || 1) + 1) : p; });
   }
-  var path;
-  return freePath(0).then(function(p){ path = p; busy('Lade „' + file.name + '“ hoch …'); return fileB64(file); })
-    .then(function(content){ return gh('PUT', path, { message: 'Material: ' + path.split('/').pop(), content: content }); })
-    .then(function(){ return path; });
+  return tryN(0);
+}
+function uploadFile(file, dir, schutz){
+  var mb = file.size / 1048576;
+  if(mb > MAX_MB) return Promise.reject(new Error('„' + file.name + '“ ist ' + mb.toFixed(1) + ' MB groß. Erlaubt sind höchstens ' + MAX_MB + ' MB.'));
+  var ext = extOf(file.name), base = slug(file.name.replace(/\.[^.]+$/, '')), path;
+  busy('Verschlüssele „' + file.name + '“ …');
+  return file.arrayBuffer().then(function(buf){ return seal(keyFor(schutz), new Uint8Array(buf)); }).then(function(sealed){
+    return freePath(dir, base + (ext ? '.' + ext : '') + '.enc').then(function(p){ path = p; busy('Lade „' + file.name + '“ hoch …'); return ghPutBytes(p, sealed, 'Material: ' + file.name); });
+  }).then(function(){ return { pfad:path, name:file.name, ext:ext, mb:Math.round(mb * 100) / 100, schutz:schutz }; });
 }
 function deleteFiles(paths){
   var chain = Promise.resolve();
-  paths.forEach(function(p){
+  paths.filter(Boolean).forEach(function(p){
     chain = chain.then(function(){ busy('Lösche ' + p.split('/').pop() + ' …'); return ghSha(p); })
-      .then(function(sha){ if(sha) return gh('DELETE', p, { message: 'Entfernt: ' + p.split('/').pop(), sha: sha }); });
+      .then(function(sha){ if(sha) return gh('DELETE', p, { message:'Entfernt: ' + p.split('/').pop(), sha:sha }); });
   });
   return chain;
 }
 
-/* ---------- Oberfläche: Hilfen ---------- */
+/* =====================================================================
+   Kernlehrplan-Vorlagen (NRW) – Vorschläge, mit schulinternem Lehrplan abgleichen
+   ===================================================================== */
+var KLP = {
+  physik: {
+    ge: {
+      '7-10': [
+        ['Optische Instrumente', 'Abbildungen mit Spiegeln und Linsen · Linsensysteme · Licht und Farben'],
+        ['Erde und Weltall', 'Himmelsobjekte · Modelle des Universums · Teleskope'],
+        ['Stromkreise', 'Spannung und Ladungstrennung · Stromstärke und Widerstand · Gesetze des Stromkreises'],
+        ['Bewegungen und ihre Ursachen', 'Bewegungen · Kraft und Druck · Auftrieb · Satelliten und Raumfahrt'],
+        ['Energie, Leistung, Wirkungsgrad', 'Kraft, Arbeit und Energie · Maschinen und Leistung · Energieumwandlung und Wirkungsgrad'],
+        ['Elektrische Energieversorgung', 'Elektromagnetismus und Induktion · Elektromotor und Generator · Kraftwerke und Nachhaltigkeit'],
+        ['Radioaktivität und Kernenergie', 'Atomkerne und Radioaktivität · Ionisierende Strahlung · Kernspaltung']
+      ]
+    },
+    gym: {
+      '5-6': [
+        ['Temperatur und Wärme', 'Inhaltsfeld 1'], ['Elektrischer Strom und Magnetismus', 'Inhaltsfeld 2'],
+        ['Schall', 'Inhaltsfeld 3'], ['Licht', 'Inhaltsfeld 4']
+      ],
+      '7-10': [
+        ['Optische Instrumente', 'Inhaltsfeld 5'], ['Sterne und Weltall', 'Inhaltsfeld 6'], ['Bewegung, Kraft und Energie', 'Inhaltsfeld 7'],
+        ['Druck und Auftrieb', 'Inhaltsfeld 8'], ['Elektrizität', 'Inhaltsfeld 9'], ['Ionisierende Strahlung und Kernenergie', 'Inhaltsfeld 10'],
+        ['Energieversorgung', 'Inhaltsfeld 11']
+      ]
+    },
+    sek2: {
+      EF: [
+        ['Bewegungen beschreiben und vermessen', 'Grundlagen der Mechanik – Kinematik'],
+        ['Ursachen von Bewegungen', 'Grundlagen der Mechanik – Dynamik'],
+        ['Erhaltungssätze: Energie und Impuls', 'Grundlagen der Mechanik – Erhaltungssätze'],
+        ['Kreisbewegung und Gravitation', 'Kreisbewegung, Gravitation und physikalische Weltbilder'],
+        ['Physikalische Weltbilder', 'Kreisbewegung, Gravitation und physikalische Weltbilder']
+      ],
+      Q: [
+        ['Schwingungen und mechanische Wellen', 'Klassische Wellen und geladene Teilchen in Feldern (GK)'],
+        ['Beugung und Interferenz von Licht', 'Klassische Wellen und geladene Teilchen in Feldern (GK)'],
+        ['Geladene Teilchen in Feldern', 'Klassische Wellen und geladene Teilchen in Feldern (GK)'],
+        ['Photonen und Elektronen als Quantenobjekte', 'Quantenobjekte (GK)'],
+        ['Induktion, Generator und Transformator', 'Elektrodynamik und Energieübertragung (GK)'],
+        ['Kondensator und elektromagnetische Schwingung', 'Elektrodynamik und Energieübertragung (GK)'],
+        ['Ionisierende Strahlung', 'Strahlung und Materie (GK)'],
+        ['Atomphysik und Spektren', 'Strahlung und Materie (GK)'],
+        ['Kernumwandlungen und Massendefekt', 'Strahlung und Materie (GK)'],
+        ['Ladungen, Felder und Induktion', 'Leistungskurs'],
+        ['Schwingende Systeme und Wellen', 'Leistungskurs'],
+        ['Quantenphysik', 'Leistungskurs'],
+        ['Atom- und Kernphysik', 'Leistungskurs']
+      ]
+    }
+  },
+  mathe: {
+    sek1: {
+      '5-6': [
+        ['Natürliche Zahlen und Größen', 'Arithmetik/Algebra'], ['Daten erheben und darstellen', 'Stochastik'],
+        ['Geometrische Grundbegriffe und Körper', 'Geometrie'], ['Flächen und Umfang', 'Geometrie'],
+        ['Brüche', 'Arithmetik/Algebra'], ['Dezimalzahlen', 'Arithmetik/Algebra'], ['Winkel und Kreis', 'Geometrie'],
+        ['Rauminhalte', 'Geometrie'], ['Prozente – erste Schritte', 'Arithmetik/Algebra']
+      ],
+      '7-8': [
+        ['Rationale Zahlen', 'Arithmetik/Algebra'], ['Zuordnungen', 'Funktionen'], ['Prozent- und Zinsrechnung', 'Funktionen'],
+        ['Terme und Gleichungen', 'Arithmetik/Algebra'], ['Lineare Funktionen', 'Funktionen'], ['Lineare Gleichungssysteme', 'Arithmetik/Algebra'],
+        ['Dreiecke und Konstruktionen', 'Geometrie'], ['Wahrscheinlichkeit', 'Stochastik']
+      ],
+      '9-10': [
+        ['Reelle Zahlen, Potenzen und Wurzeln', 'Arithmetik/Algebra'], ['Quadratische Funktionen und Gleichungen', 'Funktionen'],
+        ['Satz des Pythagoras', 'Geometrie'], ['Ähnlichkeit und Strahlensätze', 'Geometrie'], ['Trigonometrie', 'Geometrie'],
+        ['Kreis und Körper', 'Geometrie'], ['Exponentielles Wachstum', 'Funktionen'], ['Mehrstufige Zufallsexperimente', 'Stochastik']
+      ]
+    },
+    sek2: {
+      EF: [
+        ['Funktionen und ihre Eigenschaften', 'Funktionen und Analysis'], ['Änderungsraten und Ableitung', 'Funktionen und Analysis'],
+        ['Funktionsuntersuchungen', 'Funktionen und Analysis'], ['Koordinaten und Vektoren', 'Analytische Geometrie und Lineare Algebra'],
+        ['Bedingte Wahrscheinlichkeiten', 'Stochastik']
+      ],
+      Q: [
+        ['Extremwertprobleme und Steckbriefaufgaben', 'Funktionen und Analysis'], ['Integralrechnung', 'Funktionen und Analysis'],
+        ['Exponentialfunktionen und Logarithmus', 'Funktionen und Analysis'], ['Funktionenscharen', 'Funktionen und Analysis'],
+        ['Lineare Gleichungssysteme', 'Analytische Geometrie und Lineare Algebra'], ['Geraden im Raum', 'Analytische Geometrie und Lineare Algebra'],
+        ['Ebenen', 'Analytische Geometrie und Lineare Algebra'], ['Lagebeziehungen, Abstände und Winkel', 'Analytische Geometrie und Lineare Algebra'],
+        ['Binomialverteilung', 'Stochastik'], ['Kenngrößen von Wahrscheinlichkeitsverteilungen', 'Stochastik'],
+        ['Normalverteilung', 'Stochastik (LK)'], ['Stochastische Prozesse', 'Stochastik']
+      ]
+    }
+  }
+};
+function klpFor(fach, jgName){
+  var v = fach.vorlage, sf = (data && data.schulform) || 'ge', n = String(jgName).toUpperCase(), num = /^\d+$/.test(n) ? parseInt(n, 10) : null;
+  var t = KLP[v]; if(!t) return [];
+  if(n === 'EF') return t.sek2.EF;
+  if(n === 'Q1' || n === 'Q2') return t.sek2.Q;
+  if(num === null) return [];
+  if(v === 'physik'){
+    var s = (num <= 6) ? '5-6' : '7-10';
+    return (t[sf] && t[sf][s]) || [];
+  }
+  if(v === 'mathe'){ return t.sek1[num <= 6 ? '5-6' : (num <= 8 ? '7-8' : '9-10')] || []; }
+  return [];
+}
+
+/* =====================================================================
+   Oberfläche: Hilfen
+   ===================================================================== */
 function busy(t){ var b = $('#busy'); if(t === false){ b.classList.remove('on'); return; } $('#busy-text').textContent = t; b.classList.add('on'); }
 var toastTimer;
-function toast(t){ var el = $('#toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toastTimer); toastTimer = setTimeout(function(){ el.classList.remove('on'); }, 3600); }
+function toast(t){ var el = $('#toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toastTimer); toastTimer = setTimeout(function(){ el.classList.remove('on'); }, 3800); }
 function fail(e){
   busy(false);
   var m = e && e.message ? e.message : String(e);
-  if(e && e.status === 401) m = 'Der Token ist ungültig oder abgelaufen. Bitte in den Einstellungen erneuern.';
-  if(e && (e.status === 409 || e.status === 422) && /sha/i.test(m)) m = 'Die Inhalte wurden zwischenzeitlich geändert. Bitte noch einmal versuchen.';
+  if(e && e.status === 401) m = 'Der GitHub-Token ist ungültig oder abgelaufen. Bitte in den Einstellungen erneuern.';
+  if(e && (e.status === 409 || e.status === 422) && /sha/i.test(m)) m = 'Die Inhalte wurden zwischenzeitlich an einem anderen Gerät geändert. Bitte noch einmal versuchen.';
   alert(m);
-  if(editing) return loadData(true).then(render, function(){});
+  if(canEdit() && keyB) return loadData(true).then(render, function(){});
+}
+function ensureFresh(){
+  if(freshForAdmin && dataSha) return Promise.resolve();
+  busy('Lade aktuellen Stand …');
+  return loadData(true).then(function(){ busy(false); });
 }
 function commit(msg, work){
   busy('Speichere …');
@@ -363,40 +633,60 @@ function commit(msg, work){
     .catch(fail);
 }
 
-/* ---------- Daten finden ---------- */
-function findFach(fid){ return (data.faecher || []).filter(function(f){ return f.id === fid; })[0]; }
+/* Daten finden */
 function findIn(arr, id){ return (arr || []).filter(function(x){ return x.id === id; })[0]; }
 function ctx(el){
-  var d = el.dataset, f = findFach(d.f), j = f && findIn(f.jahrgaenge, d.j), t = j && findIn(j.themen, d.t),
-      v = t && findIn(t.vorhaben, d.v), m = v && findIn(v.materialien, d.m);
-  return { f:f, j:j, t:t, v:v, m:m };
+  var d = el.dataset, f = findIn(data && data.faecher, d.f), j = f && findIn(f.jahrgaenge, d.j), r = j && findIn(j.reihen, d.r),
+      v = r && findIn(r.vorhaben, d.v), m = v && findIn(v.materialien, d.m);
+  return { f:f, j:j, r:r, v:v, m:m };
 }
-function dirFor(f, j, t){ return 'material/' + f.id + '/' + slug(j.id) + '/' + t.id; }
-function move(arr, item, dir){
-  var i = arr.indexOf(item), k = i + dir;
-  if(i < 0 || k < 0 || k >= arr.length) return false;
-  arr.splice(i, 1); arr.splice(k, 0, item); return true;
-}
+function idsAttr(o){ return ['f','j','r','v','m'].filter(function(k){ return o[k]; }).map(function(k){ return 'data-' + k + '="' + esc(o[k].id) + '"'; }).join(' '); }
+function dirFor(f, j, r){ return 'material/' + f.id + '/' + j.id + '/' + (r ? r.id : 'allgemein'); }
+function move(arr, item, dir){ var i = arr.indexOf(item), k = i + dir; if(i < 0 || k < 0 || k >= arr.length) return false; arr.splice(i, 1); arr.splice(k, 0, item); return true; }
 function filesOf(obj){
   var out = [];
   (function walk(o){
     if(!o || typeof o !== 'object') return;
     if(Array.isArray(o)){ o.forEach(walk); return; }
     if(typeof o.pfad === 'string') out.push(o.pfad);
-    Object.keys(o).forEach(function(k){ if(typeof o[k] === 'object') walk(o[k]); });
+    Object.keys(o).forEach(function(k){ if(o[k] && typeof o[k] === 'object') walk(o[k]); });
   })(obj);
   return out;
 }
+function fachIcon(f){ return f.vorlage === 'physik' ? 'atom' : (f.vorlage === 'mathe' ? 'mathe' : 'buch'); }
 
-/* ---------- Bausteine ---------- */
-function href(m){ return m.url ? m.url : './' + encPath(m.pfad || ''); }
-function chip(m, ids){
-  var typ = m.typ || 'dokument', badge = m.url ? hostOf(m.url) : extOf(m.pfad);
-  var inner = ico(typ) + '<span>' + esc(m.titel) + '</span>' + (badge ? '<span class="ext">' + esc(badge) + '</span>' : '');
+/* =====================================================================
+   Bausteine
+   ===================================================================== */
+function chipFile(F, titel, typ, refAttrs, extraClass){
+  var lock = F.schutz === 'pruefung';
+  return '<button class="chip t-' + typ + (extraClass ? ' ' + extraClass : '') + '" data-open="file" ' + refAttrs + '>'
+    + ico(lock ? 'lock' : typ) + '<span>' + esc(titel) + '</span><span class="ext">' + esc((F.ext || '').toUpperCase()) + '</span></button>';
+}
+function chipLink(url, titel, typ, extraClass){
+  return '<a class="chip t-' + typ + (extraClass ? ' ' + extraClass : '') + '" href="' + esc(url) + '" target="_blank" rel="noopener">' + ico(typ)
+    + '<span>' + esc(titel) + '</span><span class="ext">' + esc(hostOf(url)) + '</span></a>';
+}
+/* Ein Material in SuS- und Lehrkraft-Teile zerlegen */
+function materialChips(m, ids){
+  var sus = [], lk = [], ref = ids + ' data-m="' + esc(m.id) + '"';
   if(editing){
-    return '<button class="chip t-' + typ + '" data-act="edit-m" ' + ids + ' data-m="' + esc(m.id) + '">' + inner + '</button>';
+    var label = (m.nurLK ? '🔒 ' : '') + m.titel;
+    sus.push('<button class="chip t-' + m.typ + (m.nurLK ? ' lkchip' : '') + '" data-act="edit-m" ' + ref + '>' + ico(m.typ) + '<span>' + esc(m.titel) + '</span>'
+      + (m.nurLK ? '<span class="ext">LK</span>' : '') + (m.lk ? '<span class="ext">+ ' + esc((m.lk.ext || '').toUpperCase()) + '</span>' : '') + '</button>');
+    return { sus:sus, lk:lk };
   }
-  return '<a class="chip t-' + typ + '" href="' + esc(href(m)) + '" target="_blank" rel="noopener">' + inner + '</a>';
+  var target = m.nurLK ? lk : sus;
+  if(m.sus) target.push(chipFile(m.sus, m.titel, m.typ, ref + ' data-slot="sus"', m.nurLK ? 'lkchip' : ''));
+  else if(m.url) target.push(chipLink(m.url, m.titel, m.typ, m.nurLK ? 'lkchip' : ''));
+  if(m.lk) lk.push(chipFile(m.lk, m.titel, m.typ, ref + ' data-slot="lk"', 'lkchip'));
+  return { sus:sus, lk:lk };
+}
+function lkBlock(key, chips){
+  if(!chips.length) return '';
+  var open = !!lkOpen[key];
+  return '<button class="lk-toggle" data-lk="' + esc(key) + '" aria-expanded="' + open + '">' + ico('next') + 'Lehrkraft-Material (' + chips.length + ')</button>'
+    + '<div class="lk-area"' + (open ? '' : ' hidden') + '><div class="chips">' + chips.join('') + '</div></div>';
 }
 function tools(act, ids, opts){
   opts = opts || {};
@@ -404,399 +694,931 @@ function tools(act, ids, opts){
     + (opts.noMove ? '' : '<button class="iconbtn" data-act="up-' + act + '" ' + ids + ' aria-label="Nach oben">' + ico('up') + '</button>'
     + '<button class="iconbtn" data-act="down-' + act + '" ' + ids + ' aria-label="Nach unten">' + ico('down') + '</button>')
     + '<button class="iconbtn" data-act="edit-' + act + '" ' + ids + ' aria-label="Bearbeiten">' + ico('edit') + '</button>'
-    + '<button class="iconbtn del" data-act="del-' + act + '" ' + ids + ' aria-label="Löschen">' + ico('trash') + '</button>'
-    + '</span>';
-}
-function ids(o){
-  return ['f','j','t','v'].filter(function(k){ return o[k]; }).map(function(k){ return 'data-' + k + '="' + esc(o[k].id) + '"'; }).join(' ');
+    + '<button class="iconbtn del" data-act="del-' + act + '" ' + ids + ' aria-label="Löschen">' + ico('trash') + '</button></span>';
 }
 
-/* ---------- Ansichten ---------- */
+/* =====================================================================
+   Ansichten
+   ===================================================================== */
+function renderLock(errText){
+  return '<div class="lock"><div class="lock-card"><svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo"/></svg>'
+    + '<h1>' + esc((zugang && zugang.titel) || 'Unterrichtsmaterial') + '</h1><p>Gib den Zugangscode ein.</p>'
+    + '<div class="pins" id="pins" aria-hidden="true"><span></span><span></span><span></span><span></span></div>'
+    + '<div class="pad" id="pad">' + [1,2,3,4,5,6,7,8,9].map(function(n){ return '<button data-k="' + n + '">' + n + '</button>'; }).join('')
+    + '<button data-k="del" aria-label="Löschen">⌫</button><button data-k="0">0</button><button data-k="ok" aria-label="Bestätigen">✓</button></div>'
+    + '<label class="check"><input type="checkbox" id="remember" checked>Auf diesem Gerät merken</label>'
+    + '<p class="status err" id="lock-err">' + esc(errText || '') + '</p></div></div>';
+}
+function renderNotSetUp(){
+  return '<div class="empty-state" style="margin-top:2rem"><h2 style="margin-bottom:.5rem">Noch nicht eingerichtet</h2>'
+    + '<p>Diese Materialsammlung wurde noch nicht eingerichtet.</p>'
+    + (canEdit() ? '<p><a class="btn primary" href="#/einrichtung">Jetzt einrichten</a></p>' : '<p><a class="btn" href="#/einstellungen">Zu den Einstellungen</a></p>') + '</div>';
+}
 function renderStart(){
-  var html = '<div class="hero"><h1>' + esc(data.titel || 'Unterrichtsmaterial') + '</h1>'
-    + '<span class="tools"><button class="iconbtn" data-act="edit-titel" aria-label="Titel ändern">' + ico('edit') + '</button></span></div>';
-  html += '<div class="faecher">';
+  var html = '<section class="hero"><h1>' + esc(data.titel || 'Unterrichtsmaterial') + '</h1><p>Wähle dein Fach und deinen Jahrgang.</p>'
+    + '<span class="tools"><button class="iconbtn" data-act="edit-titel" aria-label="Titel ändern">' + ico('edit') + '</button></span></section><div class="faecher">';
   (data.faecher || []).forEach(function(f){
-    var jgs = (f.jahrgaenge || []).slice().sort(function(a,b){ return jgOrder(a.name) - jgOrder(b.name); });
-    html += '<article class="fach acc-' + esc(f.farbe || 'blau') + '"><div class="fach-head"><h2>' + esc(f.name) + '</h2>'
-      + tools('f', ids({f:f})) + '</div><div class="jgs">';
-    jgs.forEach(function(j){
-      html += '<a class="jg" href="#/f/' + encodeURIComponent(f.id) + '/' + encodeURIComponent(j.id) + '" aria-label="' + esc(f.name + ', ' + jgLabel(j)) + '">' + esc(j.name) + '</a>';
-    });
-    html += '<button class="jg add edit-only" data-act="add-j" ' + ids({f:f}) + ' aria-label="Jahrgang hinzufügen">' + ico('plus') + '</button>';
-    if(!jgs.length) html += '<p class="muted" style="margin:.2rem 0 0">Noch keine Jahrgänge.</p>';
+    var jgs = (f.jahrgaenge || []).slice().sort(function(a, b){ return jgOrder(a.name) - jgOrder(b.name); });
+    html += '<article class="fach acc-' + esc(f.farbe || 'blau') + '"><div class="fach-head"><span class="fach-icon">' + ico(fachIcon(f)) + '</span><h2>' + esc(f.name) + '</h2>'
+      + tools('f', idsAttr({f:f})) + '</div><div class="jgs">';
+    jgs.forEach(function(j){ html += '<a class="jg" href="#/f/' + encodeURIComponent(f.id) + '/' + encodeURIComponent(j.id) + '" aria-label="' + esc(f.name + ', ' + jgLabel(j)) + '">' + esc(j.name) + '</a>'; });
+    html += '<button class="jg add edit-only" data-act="add-j" ' + idsAttr({f:f}) + ' aria-label="Jahrgang hinzufügen">' + ico('plus') + '</button>';
+    if(!jgs.length) html += '<p class="muted" style="margin:.3rem 0 0">Noch keine Jahrgänge.</p>';
     html += '</div></article>';
   });
   html += '</div><p class="edit-only" style="margin-top:1rem"><button class="addbtn" data-act="add-f">' + ico('plus') + 'Fach hinzufügen</button></p>';
   return html;
 }
-
-function renderFach(fid, jid){
-  var f = findFach(fid), j = f && findIn(f.jahrgaenge, jid);
-  if(!j) return '<a class="crumb" href="#/">' + ico('back') + 'Alle Fächer</a><div class="empty-state">Diese Seite gibt es nicht (mehr).</div>';
-  document.title = f.name + ' ' + j.name + ' – ' + (data.titel || 'Unterrichtsmaterial');
-  var html = '<div class="acc-' + esc(f.farbe || 'blau') + '"><a class="crumb" href="#/">' + ico('back') + 'Alle Fächer</a>'
-    + '<div class="page-head"><h1>' + esc(f.name) + '</h1><span class="pill">' + esc(jgLabel(j)) + '</span>'
-    + tools('j', ids({f:f, j:j}), {noMove:true}) + '</div>';
-  var themen = j.themen || [];
-  if(!themen.length){
-    html += '<div class="empty-state">Hier ist noch nichts eingetragen.</div>';
-  }
-  themen.forEach(function(t){
-    var tid = ids({f:f, j:j, t:t});
-    html += '<section class="thema"><div class="thema-head"><h2>' + esc(t.titel) + '</h2>';
-    if(t.uebersicht){
-      var ov = Object.assign({}, t.uebersicht, {typ:'uebersicht', titel: t.uebersicht.titel || 'Übersicht'});
-      html += editing ? '<span class="chip ov t-uebersicht">' + ico('uebersicht') + '<span>' + esc(ov.titel) + '</span></span>'
-        : '<a class="chip ov t-uebersicht" href="' + esc(href(ov)) + '" target="_blank" rel="noopener">' + ico('uebersicht') + '<span>' + esc(ov.titel) + '</span></a>';
-    }
-    html += tools('t', tid) + '</div><div class="rows">';
-    var vs = t.vorhaben || [];
-    if(!vs.length) html += '<div class="row empty">Noch keine Unterrichtsvorhaben.</div>';
-    vs.forEach(function(v){
-      var vid = ids({f:f, j:j, t:t, v:v});
-      html += '<div class="row"><div class="row-title"><b>' + esc(v.titel) + '</b>' + (v.notiz ? '<small>' + esc(v.notiz) + '</small>' : '') + '</div><div class="chips">';
-      (v.materialien || []).forEach(function(m){ html += chip(m, vid); });
-      if(!(v.materialien || []).length && !editing) html += '<span class="muted" style="font-size:.95rem">Noch kein Material.</span>';
-      html += '<button class="chip add edit-only" data-act="add-m" ' + vid + '>' + ico('plus') + '<span>Material</span></button>';
-      html += '</div>' + tools('v', vid) + '</div>';
-    });
-    html += '<button class="addbtn add-row edit-only" data-act="add-v" ' + tid + '>' + ico('plus') + 'Unterrichtsvorhaben</button>';
-    html += '</div></section>';
+function crumbs(parts){
+  return '<nav class="crumbs" aria-label="Pfad"><a href="#/">Start</a>' + parts.map(function(p){ return '<span>›</span><a href="' + p[1] + '">' + esc(p[0]) + '</a>'; }).join('') + '</nav>';
+}
+function renderJahrgang(f, j){
+  document.title = f.name + ' ' + j.name;
+  var reihen = j.reihen || [], base = '#/f/' + encodeURIComponent(f.id) + '/' + encodeURIComponent(j.id);
+  var html = '<div class="acc-' + esc(f.farbe || 'blau') + '">' + crumbs([[f.name + ' ' + j.name, base]])
+    + '<div class="page-head"><h1>' + esc(f.name) + '</h1><span class="pill">' + esc(jgLabel(j)) + '</span>' + tools('j', idsAttr({f:f, j:j}), {noMove:true})
+    + '<span class="spacer"></span><button class="pillbtn" data-act="export-j" ' + idsAttr({f:f, j:j}) + '>' + ico('zip') + '<span class="lbl">Herunterladen</span></button>'
+    + '<span class="sub">Unterrichtsreihen</span></div>';
+  if(!reihen.length) html += '<div class="empty-state">Hier ist noch keine Reihe eingetragen.</div>';
+  html += '<div class="reihen">';
+  reihen.forEach(function(r, i){
+    var n = (r.vorhaben || []).length;
+    html += '<a class="reihe-card" href="' + base + '/' + encodeURIComponent(r.id) + '"><span class="reihe-nr">' + (i + 1) + '</span><span><b>' + esc(r.titel) + '</b>'
+      + '<small>' + (r.inhaltsfeld ? esc(r.inhaltsfeld) + ' · ' : '') + n + (n === 1 ? ' Unterrichtsvorhaben' : ' Unterrichtsvorhaben') + '</small></span>'
+      + (editing ? tools('r', idsAttr({f:f, j:j, r:r})) : '<span class="go">' + ico('next') + '</span>') + '</a>';
   });
-  html += '<p class="edit-only"><button class="addbtn" data-act="add-t" ' + ids({f:f, j:j}) + '>' + ico('plus') + 'Thema hinzufügen</button></p></div>';
-  return html;
+  html += '</div><div class="btnline edit-only"><button class="addbtn" data-act="add-r" ' + idsAttr({f:f, j:j}) + '>' + ico('plus') + 'Reihe hinzufügen</button>';
+  if(klpFor(f, j.name).length) html += '<button class="addbtn" data-act="klp-r" ' + idsAttr({f:f, j:j}) + '>' + ico('klp') + 'Aus dem Kernlehrplan ergänzen</button>';
+  return html + '</div></div>';
+}
+function renderReihe(f, j, r){
+  document.title = r.titel;
+  var base = '#/f/' + encodeURIComponent(f.id) + '/' + encodeURIComponent(j.id), ids = idsAttr({f:f, j:j, r:r});
+  var html = '<div class="acc-' + esc(f.farbe || 'blau') + '">' + crumbs([[f.name + ' ' + j.name, base], [r.titel, base + '/' + encodeURIComponent(r.id)]])
+    + '<div class="page-head"><h1>' + esc(r.titel) + '</h1>' + tools('r', ids, {noMove:true})
+    + (r.inhaltsfeld ? '<span class="sub">' + esc(r.inhaltsfeld) + '</span>' : '') + '</div>';
+  if(r.uebersicht){
+    var ov = Object.assign({ id:'ov', typ:'uebersicht', titel:'Reihenübersicht' }, r.uebersicht), parts = materialChipsOv(ov, ids);
+    html += '<div class="overview"><b>' + ico('uebersicht') + ' Reihenübersicht</b><div class="chips">' + parts.sus.join('') + '</div>'
+      + (parts.lk.length ? '<div style="flex-basis:100%">' + lkBlock(r.id + ':ov', parts.lk) + '</div>' : '') + '</div>';
+  }
+  var vs = r.vorhaben || [];
+  html += '<div class="rows">';
+  if(!vs.length) html += '<div class="row empty">Noch keine Unterrichtsvorhaben.</div>';
+  vs.forEach(function(v, i){
+    var vid = idsAttr({f:f, j:j, r:r, v:v}), sus = [], lk = [];
+    (v.materialien || []).forEach(function(m){ var p = materialChips(m, vid); sus = sus.concat(p.sus); lk = lk.concat(p.lk); });
+    html += '<div class="row"><span class="nr">' + (i + 1) + '</span><div class="row-title"><b>' + esc(v.titel) + '</b>' + (v.notiz ? '<small>' + esc(v.notiz) + '</small>' : '') + '</div>'
+      + '<div class="row-main"><div class="chips">' + sus.join('')
+      + (!sus.length && !editing ? '<span class="muted" style="font-size:.95rem;padding-top:.5rem">' + (lk.length ? '' : 'Noch kein Material.') + '</span>' : '')
+      + '<button class="chip add edit-only" data-act="add-m" ' + vid + '>' + ico('plus') + '<span>Material</span></button></div>'
+      + (editing ? '' : lkBlock(v.id, lk)) + '</div>' + tools('v', vid) + '</div>';
+  });
+  html += '<button class="addbtn add-row edit-only" data-act="add-v" ' + ids + '>' + ico('plus') + 'Unterrichtsvorhaben</button></div>';
+  var all = j.reihen || [], idx = all.indexOf(r), prev = all[idx - 1], next = all[idx + 1];
+  if(prev || next){
+    html += '<nav class="reihe-nav">' + (prev ? '<a href="' + base + '/' + encodeURIComponent(prev.id) + '"><small>Vorherige Reihe</small><b>' + esc(prev.titel) + '</b></a>' : '')
+      + (next ? '<a class="next" href="' + base + '/' + encodeURIComponent(next.id) + '"><small>Nächste Reihe</small><b>' + esc(next.titel) + '</b></a>' : '') + '</nav>';
+  }
+  return html + '</div>';
+}
+function materialChipsOv(ov, ids){
+  var sus = [], lk = [], ref = ids + ' data-ov="1"';
+  if(ov.sus) sus.push(chipFile(ov.sus, ov.sus.ext === 'pdf' ? 'Öffnen' : ov.sus.name, 'uebersicht', ref + ' data-slot="sus"'));
+  else if(ov.url) sus.push(chipLink(ov.url, 'Öffnen', 'uebersicht'));
+  if(ov.lk) lk.push(chipFile(ov.lk, 'Reihenübersicht', 'uebersicht', ref + ' data-slot="lk"', 'lkchip'));
+  return { sus:sus, lk:lk };
 }
 
 function renderSettings(){
   document.title = 'Einstellungen';
-  return '<a class="crumb" href="#/">' + ico('back') + 'Zurück</a><div class="page-head"><h1>Einstellungen</h1></div>'
-    + '<form class="panel" id="cfg-form" autocomplete="off">'
-    + '<p class="muted">Nur für dich zum Bearbeiten. Die Angaben bleiben auf diesem Gerät gespeichert.</p>'
-    + '<label class="f"><span>GitHub-Benutzername</span><input type="text" name="owner" value="' + esc(cfg.owner || '') + '" autocapitalize="off" spellcheck="false"></label>'
-    + '<label class="f"><span>Repository</span><input type="text" name="repo" value="' + esc(cfg.repo || '') + '" autocapitalize="off" spellcheck="false"></label>'
-    + '<label class="f"><span>Branch</span><input type="text" name="branch" value="' + esc(cfg.branch || 'main') + '" autocapitalize="off" spellcheck="false"></label>'
+  var html = crumbs([['Einstellungen', '#/einstellungen']]) + '<div class="page-head"><h1>Einstellungen</h1></div>';
+  if(keyB){
+    html += '<section class="panel"><h2>Zugang</h2><p class="muted">Der Code ist auf diesem Gerät gespeichert.</p>'
+      + '<button class="btn" data-act="logout">Auf diesem Gerät abmelden</button></section>'
+      + '<section class="panel"><h2>Herunterladen</h2><p class="muted">Alle Materialien als ZIP-Ordner mit Übersicht – zum Weiterverwenden ohne diese Seite.'
+      + (keyP ? ' Klassenarbeiten sind enthalten.' : ' Klassenarbeiten sind nur enthalten, wenn das Prüfungspasswort eingegeben wurde.') + '</p>'
+      + '<div class="btnline" style="margin:0"><button class="btn primary" data-act="export-all">' + ico('zip') + 'Alles herunterladen</button>'
+      + (keyP ? '' : '<button class="btn" data-act="unlock-p">' + ico('lock') + 'Prüfungspasswort eingeben</button>') + '</div></section>';
+  }
+  html += '<form class="panel" id="cfg-form" autocomplete="off"><h2>Bearbeiten über GitHub</h2>'
+    + '<p class="muted">Nur für die Person, die die Seite pflegt. Die Angaben bleiben auf diesem Gerät.</p>'
+    + '<div class="grid2"><label class="f"><span>GitHub-Benutzername</span><input type="text" name="owner" value="' + esc(cfg.owner || '') + '" autocapitalize="off" spellcheck="false"></label>'
+    + '<label class="f"><span>Repository</span><input type="text" name="repo" value="' + esc(cfg.repo || '') + '" autocapitalize="off" spellcheck="false"></label></div>'
     + '<label class="f"><span>Zugangs-Token</span><input type="password" name="token" value="' + esc(cfg.token || '') + '" autocapitalize="off" spellcheck="false">'
-    + '<span class="hint">Fine-grained Token, nur für dieses Repository, Berechtigung „Contents: Read and write“.</span></label>'
-    + '<div class="btnrow"><button class="btn primary" type="submit">Speichern und testen</button>'
-    + '<button class="btn danger" type="button" id="cfg-clear">Token von diesem Gerät löschen</button></div>'
-    + '<div class="status" id="cfg-status"></div></form>';
+    + '<span class="hint">Fine-grained Token nur für dieses Repository, Berechtigung „Contents: Read and write“.</span></label>'
+    + '<label class="f"><span>Branch</span><input type="text" name="branch" value="' + esc(cfg.branch || 'main') + '" autocapitalize="off" spellcheck="false"></label>'
+    + '<div class="btnline" style="margin:0"><button class="btn primary" type="submit">Speichern und testen</button>'
+    + '<button class="btn danger" type="button" id="cfg-clear">Token löschen</button></div><div class="status" id="cfg-status"></div></form>';
+  if(canEdit() && keyB && data){
+    var sf = data.schulform || 'ge';
+    html += '<section class="panel"><h2>Verwaltung</h2>'
+      + '<label class="f"><span>Lehrplan-Vorlagen für</span><select id="schulform"><option value="ge"' + (sf === 'ge' ? ' selected' : '') + '>Gesamtschule</option>'
+      + '<option value="gym"' + (sf === 'gym' ? ' selected' : '') + '>Gymnasium</option></select>'
+      + '<span class="hint">Betrifft nur die Vorschläge beim Anlegen von Reihen (Sek I Physik). Sek II ist für beide gleich.</span></label>'
+      + '<div class="btnline" style="margin:0"><button class="btn" data-act="change-code">Zugangscode ändern</button>'
+      + '<button class="btn" data-act="change-pw">Prüfungspasswort ändern</button></div></section>';
+  }
+  if(canEdit() && !zugang) html += '<section class="panel"><h2>Ersteinrichtung</h2><p class="muted">Die Seite ist noch nicht eingerichtet.</p><a class="btn primary" href="#/einrichtung">Jetzt einrichten</a></section>';
+  return html;
+}
+function renderSetup(){
+  document.title = 'Einrichtung';
+  if(!canEdit()) return renderNotSetUp();
+  if(zugang) return crumbs([['Einrichtung', '#/einrichtung']]) + '<div class="empty-state">Die Seite ist bereits eingerichtet. Code und Passwort änderst du in den Einstellungen.</div>';
+  return crumbs([['Einrichtung', '#/einrichtung']]) + '<div class="page-head"><h1>Ersteinrichtung</h1></div>'
+    + '<form class="panel" id="setup-form" autocomplete="off">'
+    + '<label class="f"><span>Titel der Seite</span><input type="text" name="titel" value="Unterrichtsmaterial" required></label>'
+    + '<div class="grid2"><label class="f"><span>Zugangscode (Ziffern)</span><input type="text" name="code" inputmode="numeric" pattern="[0-9]{4,8}" placeholder="z. B. 4 Ziffern" required></label>'
+    + '<label class="f"><span>Prüfungspasswort</span><input type="text" name="pw" minlength="8" placeholder="mind. 8 Zeichen" required></label></div>'
+    + '<label class="f"><span>Schulform für Lehrplan-Vorlagen</span><select name="schulform"><option value="ge">Gesamtschule</option><option value="gym">Gymnasium</option></select></label>'
+    + '<div class="grid2"><label class="f"><span>Jahrgänge Physik</span><input type="text" name="jgPhysik" value="8" placeholder="z. B. 8, 9, Q2"></label>'
+    + '<label class="f"><span>Jahrgänge Mathematik</span><input type="text" name="jgMathe" value="" placeholder="z. B. 6, EF, Q1"></label></div>'
+    + '<label class="check"><input type="checkbox" name="klp" checked>Reihen aus dem Kernlehrplan vorschlagen</label>'
+    + '<p class="hint">Code und Passwort gut merken: Ohne sie lassen sich die Inhalte nicht mehr öffnen.</p>'
+    + '<div class="btnline"><button class="btn primary" type="submit">Einrichten</button></div><div class="status" id="setup-status"></div></form>';
 }
 
 function render(){
-  document.body.classList.toggle('can-edit', canEdit());
+  document.body.classList.toggle('can-edit', canEdit() && !!keyB);
   document.body.classList.toggle('editing', editing);
-  $('#edit-toggle').innerHTML = editing ? 'Fertig' : ico('edit') + 'Bearbeiten';
-  if(data) $('#brand-title').textContent = data.titel || 'Unterrichtsmaterial';
-  var h = location.hash.replace(/^#\/?/, ''), parts = h.split('/').map(function(p){ try{ return decodeURIComponent(p); }catch(e){ return p; } });
+  $('#edit-toggle').innerHTML = editing ? 'Fertig' : ico('edit') + '<span class="lbl">Bearbeiten</span>';
+  $('#add-material').innerHTML = ico('plus') + '<span class="lbl">Material</span>';
+  $('#brand-title').textContent = (data && data.titel) || (zugang && zugang.titel) || 'Unterrichtsmaterial';
+  var parts = location.hash.replace(/^#\/?/, '').split('/').map(function(p){ try{ return decodeURIComponent(p); }catch(e){ return p; } });
   var app = $('#app');
   if(parts[0] === 'einstellungen'){ app.innerHTML = renderSettings(); wireSettings(); return; }
-  if(!data){ app.innerHTML = '<div class="empty-state">Lade …</div>'; return; }
+  if(parts[0] === 'einrichtung'){ app.innerHTML = renderSetup(); wireSetup(); return; }
+  if(zugang === undefined){ app.innerHTML = '<div class="center-spin"><span class="spin"></span></div>'; return; }
+  if(zugang === null){ app.innerHTML = renderNotSetUp(); return; }
+  if(!keyB){ app.innerHTML = renderLock(); wireLock(); return; }
+  if(!data){ app.innerHTML = '<div class="center-spin"><span class="spin"></span></div>'; return; }
   document.title = data.titel || 'Unterrichtsmaterial';
-  app.innerHTML = parts[0] === 'f' ? renderFach(parts[1], parts[2]) : renderStart();
+  if(parts[0] === 'f'){
+    var f = findIn(data.faecher, parts[1]), j = f && findIn(f.jahrgaenge, parts[2]);
+    if(!j){ app.innerHTML = crumbs([]) + '<div class="empty-state">Diese Seite gibt es nicht (mehr).</div>'; return; }
+    if(parts[3]){
+      var r = findIn(j.reihen, parts[3]);
+      app.innerHTML = r ? renderReihe(f, j, r) : crumbs([]) + '<div class="empty-state">Diese Reihe gibt es nicht (mehr).</div>';
+    } else app.innerHTML = renderJahrgang(f, j);
+    return;
+  }
+  app.innerHTML = renderStart();
 }
 
-/* ---------- Formulare ---------- */
+/* =====================================================================
+   Zugangscode-Eingabe
+   ===================================================================== */
+function wireLock(){
+  var code = '', pins = $('#pins'), err = $('#lock-err'), working = false;
+  function paint(){ Array.prototype.forEach.call(pins.children, function(s, i){ s.textContent = i < code.length ? '•' : ''; s.className = i < code.length ? 'on' : ''; }); }
+  function submit(){
+    if(working || code.length < 4) return;
+    working = true; err.textContent = 'Prüfe …';
+    deriveKek(code, zugang.basis.salt, zugang.iter).then(function(kek){
+      return unlockBasis(kek).then(function(){ if($('#remember').checked) saveJSON(KEK_KEY, bytesToB64(kek)); });
+    }).then(function(){ return loadData(false); }).then(function(){ render(); })
+      .catch(function(){ working = false; code = ''; paint(); err.textContent = 'Der Code stimmt nicht.'; pins.classList.remove('err'); void pins.offsetWidth; pins.classList.add('err'); });
+  }
+  function key(k){
+    if(working) return;
+    if(k === 'del') code = code.slice(0, -1);
+    else if(k === 'ok') return submit();
+    else if(/^\d$/.test(k) && code.length < 8) code += k;
+    err.textContent = ''; paint();
+    if(code.length === 4 && zugang.codeLaenge === 4) submit();
+  }
+  $('#pad').addEventListener('click', function(e){ var b = e.target.closest('button'); if(b) key(b.dataset.k); });
+  document.onkeydown = function(e){
+    if(!$('#pad')) { document.onkeydown = null; return; }
+    if(/^\d$/.test(e.key)) key(e.key); else if(e.key === 'Backspace') key('del'); else if(e.key === 'Enter') key('ok');
+  };
+  paint();
+}
+
+/* =====================================================================
+   Anzeige von Dateien (PDF, HTML, Bilder …)
+   ===================================================================== */
+var viewerState = null, pdfjsPromise = null;
+function loadPdfjs(){
+  if(!pdfjsPromise){
+    pdfjsPromise = import('./lib/pdfjs/pdf.min.js').then(function(lib){
+      lib.GlobalWorkerOptions.workerSrc = new URL('lib/pdfjs/pdf.worker.min.js', location.href).href; return lib;
+    });
+  }
+  return pdfjsPromise;
+}
+function askPruefung(){
+  if(keyP) return Promise.resolve(true);
+  return openForm({ title:'Prüfungspasswort', submit:'Öffnen', intro:'Klassenarbeiten, Tests und Klausuren sind extra geschützt.',
+    fields:[{ name:'pw', label:'Passwort', type:'password', required:true }] }).then(function(v){
+    if(!v) return false;
+    busy('Prüfe …');
+    return unlockPruefung(v.pw).then(function(){ busy(false); return true; }, function(){ busy(false); alert('Das Passwort stimmt nicht.'); return false; });
+  });
+}
+function openFile(F, titel, typ){
+  var go = F.schutz === 'pruefung' ? askPruefung() : Promise.resolve(true);
+  return go.then(function(ok){
+    if(!ok) return;
+    var ext = (F.ext || '').toLowerCase(), mime = MIME[ext] || 'application/octet-stream';
+    var niceName = (titel || F.name || 'datei').replace(/[\\/:*?"<>|]+/g, '-') + (ext ? '.' + ext : '');
+    var v = document.createElement('div');
+    v.className = 'viewer t-' + (typ || 'dokument');
+    v.innerHTML = '<div class="viewer-bar"><button class="iconbtn" data-v="close" aria-label="Schließen">' + ico('back') + '</button><b>' + esc(titel) + '</b>'
+      + '<button class="pillbtn" data-v="share" hidden>' + ico('share') + '<span class="lbl">Teilen</span></button>'
+      + '<a class="pillbtn" data-v="dl" hidden>' + ico('download') + '<span class="lbl">Speichern</span></a></div>'
+      + '<div class="viewer-body"><div class="center-spin"><span class="spin"></span></div></div>';
+    document.body.appendChild(v);
+    document.body.style.overflow = 'hidden';
+    history.pushState({ viewer:true }, '');
+    viewerState = { el:v, url:null, closed:false };
+    var body = $('.viewer-body', v);
+    fetchBytes(F.pfad).then(function(bytes){ return unseal(keyFor(F.schutz), bytes); }).then(function(plain){
+      if(viewerState.closed) return;
+      var file = new File([plain], niceName, { type:mime }), url = URL.createObjectURL(file);
+      viewerState.url = url;
+      var dl = $('[data-v=dl]', v); dl.href = url; dl.download = niceName; dl.hidden = false;
+      if(navigator.canShare && navigator.canShare({ files:[file] })){
+        var sh = $('[data-v=share]', v); sh.hidden = false;
+        sh.onclick = function(){ navigator.share({ files:[file], title:titel }).catch(function(){}); };
+      }
+      if(ext === 'pdf') return renderPdf(body, plain);
+      if(ext === 'html' || ext === 'htm'){
+        body.innerHTML = '<iframe title="' + esc(titel) + '" src="' + url + '" allow="fullscreen"></iframe>'; return;
+      }
+      if(/^image\//.test(mime)){ body.innerHTML = '<img alt="' + esc(titel) + '" src="' + url + '">'; return; }
+      if(/^video\//.test(mime) || /^audio\//.test(mime)){ body.innerHTML = '<video controls playsinline src="' + url + '"></video>'; return; }
+      body.innerHTML = '<div class="file-card">' + ico(typ || 'dokument') + '<h3 style="margin:.6rem 0 .3rem">' + esc(F.name || niceName) + '</h3>'
+        + '<p class="muted">Diese Datei kann hier nicht angezeigt werden. Speichere sie oder öffne sie in einer passenden App.</p>'
+        + '<div class="btnline" style="justify-content:center"><a class="btn primary" href="' + url + '" download="' + esc(niceName) + '">' + ico('download') + 'Speichern</a></div></div>';
+    }).catch(function(e){ if(!viewerState.closed) body.innerHTML = '<div class="file-card"><h3>Fehler</h3><p class="muted">' + esc(e.message || 'Die Datei konnte nicht geladen werden.') + '</p></div>'; });
+    v.addEventListener('click', function(e){ var b = e.target.closest('[data-v=close]'); if(b) history.back(); });
+  });
+}
+function closeViewer(){
+  if(!viewerState) return;
+  viewerState.closed = true;
+  if(viewerState.url) setTimeout(function(u){ URL.revokeObjectURL(u); }.bind(null, viewerState.url), 1000);
+  viewerState.el.remove(); viewerState = null; document.body.style.overflow = '';
+}
+window.addEventListener('popstate', function(){ if(viewerState) closeViewer(); });
+function renderPdf(body, bytes){
+  return loadPdfjs().then(function(pdfjs){
+    return pdfjs.getDocument({ data:bytes.slice(), standardFontDataUrl:'lib/pdfjs/standard_fonts/', wasmUrl:'lib/pdfjs/wasm/', isEvalSupported:false }).promise;
+  }).then(function(doc){
+    body.innerHTML = '<div class="pdf-pages"></div>';
+    var wrap = $('.pdf-pages', body), slots = [];
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting && !en.target.dataset.done){ en.target.dataset.done = '1'; drawPage(doc, en.target); } });
+    }, { root:body, rootMargin:'600px 0px' });
+    var chain = Promise.resolve();
+    for(var n = 1; n <= doc.numPages; n++){
+      (function(n){
+        chain = chain.then(function(){ return doc.getPage(n); }).then(function(page){
+          var vp = page.getViewport({ scale:1 }), d = document.createElement('div');
+          d.className = 'pdf-page'; d.dataset.page = n; d.style.aspectRatio = vp.width + ' / ' + vp.height;
+          wrap.appendChild(d); io.observe(d); slots.push(d);
+        });
+      })(n);
+    }
+    return chain;
+  });
+}
+function drawPage(doc, slot){
+  doc.getPage(+slot.dataset.page).then(function(page){
+    var w = slot.clientWidth || 800, dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    var vp0 = page.getViewport({ scale:1 }), scale = (w * dpr) / vp0.width, vp = page.getViewport({ scale:scale });
+    var c = document.createElement('canvas'); c.width = Math.floor(vp.width); c.height = Math.floor(vp.height);
+    slot.appendChild(c);
+    return page.render({ canvasContext:c.getContext('2d'), viewport:vp }).promise;
+  }).catch(function(){});
+}
+
+/* =====================================================================
+   Formulare
+   ===================================================================== */
 function fieldHtml(fd){
   if(fd.type === 'select'){
     return '<label class="f"><span>' + esc(fd.label) + '</span><select name="' + fd.name + '">'
-      + fd.options.map(function(o){ return '<option value="' + esc(o[0]) + '"' + (o[0] === fd.value ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('')
-      + '</select></label>';
+      + fd.options.map(function(o){ return '<option value="' + esc(o[0]) + '"' + (o[0] === fd.value ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select></label>';
   }
-  if(fd.type === 'textarea'){
-    return '<label class="f"><span>' + esc(fd.label) + '</span><textarea name="' + fd.name + '">' + esc(fd.value || '') + '</textarea></label>';
+  if(fd.type === 'check') return '<label class="check"><input type="checkbox" name="' + fd.name + '"' + (fd.value ? ' checked' : '') + '>' + esc(fd.label) + '</label>';
+  if(fd.type === 'checklist'){
+    return '<div class="checklist">' + fd.items.map(function(it, i){
+      return '<label><input type="checkbox" name="' + fd.name + '" value="' + i + '"' + (it.checked ? ' checked' : '') + '><span>' + esc(it.label) + (it.sub ? '<small>' + esc(it.sub) + '</small>' : '') + '</span></label>';
+    }).join('') + '</div>';
   }
-  if(fd.type === 'source'){
-    var modes = [];
-    if(fd.keep) modes.push(['keep', 'Behalten']);
-    modes.push(['file', 'Datei'], ['link', 'Link']);
-    if(fd.allowNone) modes.push(['none', 'Keine']);
-    var def = fd.keep ? 'keep' : (fd.allowNone ? 'none' : 'file');
-    return '<fieldset class="src" data-name="' + fd.name + '"><legend>' + esc(fd.label) + '</legend><div class="seg">'
-      + modes.map(function(m){ return '<label><input type="radio" name="' + fd.name + '__mode" value="' + m[0] + '"' + (m[0] === def ? ' checked' : '') + '>' + m[1] + '</label>'; }).join('')
-      + '</div><div class="src-file"><input type="file" name="' + fd.name + '__file"><p class="hint">Am besten unter ' + WARN_MB + ' MB. Präsentationen lieber zusätzlich als PDF.</p></div>'
-      + '<div class="src-link"><input type="url" name="' + fd.name + '__url" placeholder="https://" value="' + esc(fd.url || '') + '"></div></fieldset>';
-  }
-  return '<label class="f"><span>' + esc(fd.label) + '</span><input type="text" name="' + fd.name + '" value="' + esc(fd.value || '') + '"'
-    + (fd.required ? ' required' : '') + (fd.placeholder ? ' placeholder="' + esc(fd.placeholder) + '"' : '') + '></label>';
+  if(fd.type === 'slot') return slotHtml(fd);
+  if(fd.type === 'html') return fd.html;
+  return '<label class="f"><span>' + esc(fd.label) + '</span><input type="' + (fd.type || 'text') + '" name="' + fd.name + '" value="' + esc(fd.value || '') + '"'
+    + (fd.required ? ' required' : '') + (fd.placeholder ? ' placeholder="' + esc(fd.placeholder) + '"' : '') + (fd.attrs || '') + '></label>';
+}
+/* Datei-Feld: Behalten / Datei / Link / Keine */
+function slotHtml(fd){
+  var modes = [];
+  if(fd.current) modes.push(['keep', 'Behalten']);
+  modes.push(['file', 'Datei']);
+  if(fd.allowLink) modes.push(['link', 'Link']);
+  modes.push(['none', fd.current ? 'Entfernen' : 'Keine']);
+  var def = fd.current ? 'keep' : (fd.defaultMode || 'none');
+  return '<fieldset class="slot" data-slot="' + fd.name + '"><legend>' + esc(fd.label) + '</legend>'
+    + (fd.current ? '<p class="current">Aktuell: ' + esc(fd.current) + '</p>' : '')
+    + '<div class="seg">' + modes.map(function(m){ return '<label><input type="radio" name="' + fd.name + '__mode" value="' + m[0] + '"' + (m[0] === def ? ' checked' : '') + '>' + m[1] + '</label>'; }).join('') + '</div>'
+    + '<div class="slot-file"><input type="file" name="' + fd.name + '__file"' + (fd.accept ? ' accept="' + fd.accept + '"' : '') + '>' + (fd.hint ? '<p class="hint">' + esc(fd.hint) + '</p>' : '') + '</div>'
+    + '<div class="slot-link"><input type="url" name="' + fd.name + '__url" placeholder="https://" value="' + esc(fd.url || '') + '"></div></fieldset>';
+}
+function syncSlots(form){
+  form.querySelectorAll('fieldset.slot').forEach(function(fs){
+    var mode = (fs.querySelector('input[type=radio]:checked') || {}).value;
+    fs.querySelector('.slot-file').style.display = mode === 'file' ? '' : 'none';
+    fs.querySelector('.slot-link').style.display = mode === 'link' ? '' : 'none';
+  });
+}
+function readSlot(form, name){
+  var mode = (form.querySelector('input[name="' + name + '__mode"]:checked') || {}).value;
+  var fi = form.querySelector('input[name="' + name + '__file"]'), ui = form.querySelector('input[name="' + name + '__url"]');
+  return { mode:mode, file:fi && fi.files ? fi.files[0] : null, url:ui ? ui.value.trim() : '' };
+}
+function checkSlot(s, label){
+  if(!s) return true;
+  if(s.mode === 'file' && !s.file){ alert('Bitte eine Datei auswählen' + (label ? ' (' + label + ')' : '') + '.'); return false; }
+  if(s.mode === 'link' && !/^https?:\/\//i.test(s.url)){ alert('Bitte einen vollständigen Link mit https:// eingeben.'); return false; }
+  if(s.mode === 'file' && s.file.size / 1048576 > WARN_MB && !confirm('„' + s.file.name + '“ ist ' + (s.file.size / 1048576).toFixed(1) + ' MB groß. Trotzdem hochladen?')) return false;
+  return true;
 }
 function openForm(o){
   return new Promise(function(res){
     var dlg = $('#sheet');
-    dlg.innerHTML = '<form method="dialog" class="sheet-form"><h3>' + esc(o.title) + '</h3>' + o.fields.map(fieldHtml).join('')
+    dlg.innerHTML = '<form method="dialog" class="sheet-form"><h3>' + esc(o.title) + '</h3>' + (o.intro ? '<p class="muted" style="margin-top:-.5rem">' + esc(o.intro) + '</p>' : '')
+      + o.fields.map(fieldHtml).join('')
       + '<div class="sheet-actions">' + (o.deletable ? '<button class="btn danger left" value="delete" formnovalidate>' + ico('trash') + 'Löschen</button>' : '')
       + '<button class="btn" value="cancel" formnovalidate>Abbrechen</button><button class="btn primary" value="ok">' + esc(o.submit || 'Speichern') + '</button></div></form>';
     var form = dlg.querySelector('form');
-    form.querySelectorAll('fieldset.src').forEach(function(fs){
-      function sync(){
-        var mode = (fs.querySelector('input[type=radio]:checked') || {}).value;
-        fs.querySelector('.src-file').style.display = mode === 'file' ? '' : 'none';
-        fs.querySelector('.src-link').style.display = mode === 'link' ? '' : 'none';
-      }
-      fs.addEventListener('change', sync); sync();
-    });
-    var typSel = form.querySelector('select[name=typ]'), typTouched = false;
-    if(typSel){
-      typSel.addEventListener('change', function(){ typTouched = true; });
-      form.addEventListener('change', function(e){
-        if(e.target.type === 'file' && e.target.files[0]){
-          var g = guessType(e.target.files[0].name);
-          if(g && !typTouched) typSel.value = g;
-          var tt = form.querySelector('input[name=titel]');
-          if(tt && !tt.value) tt.value = e.target.files[0].name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ');
-        }
-      });
-    }
+    form.addEventListener('change', function(){ syncSlots(form); });
+    syncSlots(form);
+    if(o.wire) o.wire(form);
     dlg.addEventListener('close', function(){
       var rv = dlg.returnValue;
-      if(rv === 'delete') return res({ _delete: true });
+      if(rv === 'delete') return res({ _delete:true });
       if(rv !== 'ok') return res(null);
       var out = {};
       o.fields.forEach(function(fd){
-        if(fd.type === 'source'){
-          var mode = (form.querySelector('input[name="' + fd.name + '__mode"]:checked') || {}).value;
-          out[fd.name] = { mode: mode, file: (form.querySelector('input[name="' + fd.name + '__file"]').files || [])[0], url: form.querySelector('input[name="' + fd.name + '__url"]').value.trim() };
-        } else {
-          var el = form.querySelector('[name="' + fd.name + '"]'); out[fd.name] = el ? el.value.trim() : '';
-        }
+        if(!fd.name) return;
+        if(fd.type === 'slot') out[fd.name] = readSlot(form, fd.name);
+        else if(fd.type === 'check') out[fd.name] = form.querySelector('[name="' + fd.name + '"]').checked;
+        else if(fd.type === 'checklist') out[fd.name] = Array.prototype.map.call(form.querySelectorAll('[name="' + fd.name + '"]:checked'), function(x){ return +x.value; });
+        else { var el = form.querySelector('[name="' + fd.name + '"]'); out[fd.name] = el ? el.value.trim() : ''; }
       });
+      if(o.collect) o.collect(form, out);
       res(out);
-    }, { once: true });
+    }, { once:true });
     dlg.returnValue = '';
     dlg.showModal();
+    var first = form.querySelector('input[type=text],input[type=password]'); if(first && !o.noFocus) setTimeout(function(){ first.focus(); }, 50);
   });
 }
-function checkSource(src){
-  if(!src) return true;
-  if(src.mode === 'file' && !src.file){ alert('Bitte eine Datei auswählen.'); return false; }
-  if(src.mode === 'link' && !/^https?:\/\//i.test(src.url)){ alert('Bitte einen vollständigen Link mit https:// eingeben.'); return false; }
-  if(src.mode === 'file' && src.file.size / 1048576 > WARN_MB
-     && !confirm('Die Datei ist ' + (src.file.size / 1048576).toFixed(1) + ' MB groß. Große Dateien füllen den Speicher schnell. Trotzdem hochladen?')) return false;
-  return true;
-}
-/* Wendet eine Quelle (Datei/Link) auf ein Objekt an. Liefert ggf. den alten Pfad zurück. */
-function applySource(target, src, dir){
-  var old = target.pfad || null;
-  if(!src || src.mode === 'keep') return Promise.resolve(null);
-  if(src.mode === 'link'){ delete target.pfad; target.url = src.url; return Promise.resolve(old); }
-  if(src.mode === 'none'){ return Promise.resolve(old); }
-  return uploadFile(src.file, dir).then(function(p){ delete target.url; target.pfad = p; return old; });
-}
-function askDeleteFiles(paths){
+function askDelete(paths){
   paths = paths.filter(Boolean);
   if(!paths.length) return false;
   return confirm(paths.length === 1 ? 'Soll die Datei auch aus dem Speicher gelöscht werden?' : 'Sollen die ' + paths.length + ' Dateien auch aus dem Speicher gelöscht werden?');
 }
+/* Wendet ein Datei-Feld auf ein Objekt an; gibt alte Pfade zurück */
+function applySlot(target, key, s, dir, schutz, allowLink){
+  var old = target[key] && target[key].pfad ? [target[key].pfad] : [];
+  if(!s || s.mode === 'keep') return Promise.resolve([]);
+  if(s.mode === 'none'){ target[key] = null; if(allowLink) target.url = null; return Promise.resolve(old); }
+  if(s.mode === 'link'){ target[key] = null; target.url = s.url; return Promise.resolve(old); }
+  return uploadFile(s.file, dir, schutz).then(function(F){ target[key] = F; if(allowLink) target.url = null; return old; });
+}
 
-/* ---------- Aktionen ---------- */
-var actions = {
-  'edit-titel': function(){
-    openForm({ title:'Titel der Seite', fields:[{ name:'titel', label:'Titel', value:data.titel, required:true }] }).then(function(v){
-      if(!v) return; commit('Titel geändert', function(){ data.titel = v.titel; });
-    });
-  },
-  'add-f': function(){
-    openForm({ title:'Fach hinzufügen', fields:[{ name:'name', label:'Name', required:true }, { name:'farbe', label:'Farbe', type:'select', options:COLORS, value:'orange' }] }).then(function(v){
-      if(!v) return;
-      var id = slug(v.name); while(findFach(id)) id += '-2';
-      commit('Fach: ' + v.name, function(){ data.faecher.push({ id:id, name:v.name, farbe:v.farbe, jahrgaenge:[] }); });
-    });
-  },
-  'edit-f': function(c){
-    openForm({ title:'Fach bearbeiten', fields:[{ name:'name', label:'Name', value:c.f.name, required:true }, { name:'farbe', label:'Farbe', type:'select', options:COLORS, value:c.f.farbe }] }).then(function(v){
-      if(!v) return; commit('Fach geändert', function(){ c.f.name = v.name; c.f.farbe = v.farbe; });
-    });
-  },
-  'del-f': function(c){
-    if(!confirm('Fach „' + c.f.name + '“ mit allen Einträgen löschen?')) return;
-    var files = filesOf(c.f), rm = askDeleteFiles(files);
-    commit('Fach gelöscht', function(){ data.faecher.splice(data.faecher.indexOf(c.f), 1); return rm ? deleteFiles(files) : null; });
-  },
-  'up-f': function(c){ if(move(data.faecher, c.f, -1)) commit('Reihenfolge'); },
-  'down-f': function(c){ if(move(data.faecher, c.f, 1)) commit('Reihenfolge'); },
-
-  'add-j': function(c){
-    openForm({ title:c.f.name + ': Jahrgang hinzufügen', fields:[{ name:'name', label:'Jahrgang', placeholder:'z. B. 8, EF, Q1', required:true }] }).then(function(v){
-      if(!v) return;
-      var id = slug(v.name); while(findIn(c.f.jahrgaenge, id)) id += '-2';
-      commit(c.f.name + ' ' + v.name + ' angelegt', function(){ c.f.jahrgaenge.push({ id:id, name:v.name, themen:[] }); });
-    });
-  },
-  'edit-j': function(c){
-    openForm({ title:'Jahrgang umbenennen', fields:[{ name:'name', label:'Jahrgang', value:c.j.name, required:true }] }).then(function(v){
-      if(!v) return; commit('Jahrgang umbenannt', function(){ c.j.name = v.name; });
-    });
-  },
-  'del-j': function(c){
-    if(!confirm(jgLabel(c.j) + ' mit allen Einträgen löschen?')) return;
-    var files = filesOf(c.j), rm = askDeleteFiles(files);
-    commit('Jahrgang gelöscht', function(){ c.f.jahrgaenge.splice(c.f.jahrgaenge.indexOf(c.j), 1); return rm ? deleteFiles(files) : null; })
-      .then(function(){ location.hash = '#/'; });
-  },
-
-  'add-t': function(c){
-    openForm({ title:'Thema hinzufügen', submit:'Anlegen', fields:[
-      { name:'titel', label:'Thema', required:true, placeholder:'z. B. Sehhilfen für nah und fern' },
-      { name:'ov', label:'Übersichtsdokument', type:'source', allowNone:true }
-    ]}).then(function(v){
-      if(!v || !checkSource(v.ov)) return;
-      var id = slug(v.titel); while(findIn(c.j.themen, id)) id += '-2';
-      var t = { id:id, titel:v.titel, uebersicht:null, vorhaben:[] };
-      commit('Thema: ' + v.titel, function(){
-        var dir = dirFor(c.f, c.j, t);
-        if(v.ov.mode === 'none') { c.j.themen.push(t); return; }
-        t.uebersicht = { titel:'Übersicht' };
-        return applySource(t.uebersicht, v.ov, dir).then(function(){ c.j.themen.push(t); });
+/* Material-Dialog mit Ortsauswahl */
+function materialForm(loc, m){
+  var isNew = !m;
+  m = m || { typ:'ab', titel:'', nurLK:false, sus:null, lk:null, url:null };
+  var faecher = data.faecher || [];
+  var ortHtml = '<fieldset><legend>Ort</legend><div class="grid2">'
+    + '<label class="f"><span>Fach</span><select name="o_f"></select></label><label class="f"><span>Jahrgang</span><select name="o_j"></select></label></div>'
+    + '<label class="f"><span>Reihe</span><select name="o_r"></select></label><div class="newname" data-for="o_r"><input type="text" name="o_r_new" placeholder="Name der neuen Reihe"></div>'
+    + '<label class="f"><span>Unterrichtsvorhaben</span><select name="o_v"></select></label><div class="newname" data-for="o_v"><input type="text" name="o_v_new" placeholder="Name des neuen Vorhabens"></div></fieldset>';
+  return openForm({
+    title: isNew ? 'Material hinzufügen' : 'Material bearbeiten', submit: isNew ? 'Hinzufügen' : 'Speichern', deletable: !isNew, noFocus:true,
+    fields:[
+      { type:'html', html:ortHtml },
+      { name:'typ', label:'Art', type:'select', options:TYPES, value:m.typ },
+      { name:'titel', label:'Titel', value:m.titel, required:true },
+      { name:'sus', label:'Für Schülerinnen und Schüler', type:'slot', allowLink:true, current: m.sus ? m.sus.name : (m.url ? m.url : ''), url:m.url,
+        defaultMode:'file', hint:'Am besten als PDF. Interaktive Seiten als HTML-Datei.' },
+      { name:'lk', label:'Für Lehrkräfte (bearbeitbar, optional)', type:'slot', current: m.lk ? m.lk.name : '', hint:'z. B. die Word- oder PowerPoint-Datei' },
+      { name:'nurLK', label:'Nur im Lehrkraft-Bereich anzeigen', type:'check', value:m.nurLK },
+      { type:'html', html:'<p class="hint" id="pruef-hint" hidden>' + ico('lock') + ' Wird zusätzlich mit dem Prüfungspasswort verschlüsselt.</p>' }
+    ],
+    wire:function(form){
+      var sf = form.o_f, sj = form.o_j, sr = form.o_r, sv = form.o_v;
+      function opts(sel, items, cur, addLabel){
+        sel.innerHTML = items.map(function(x){ return '<option value="' + esc(x.id) + '"' + (x.id === cur ? ' selected' : '') + '>' + esc(x.label) + '</option>'; }).join('')
+          + (addLabel ? '<option value="__neu">' + esc(addLabel) + '</option>' : '');
+        if(!items.length && addLabel) sel.value = '__neu';
+      }
+      function fill(level){
+        var f = (level === 0 ? findIn(faecher, loc.f) : findIn(faecher, sf.value)) || faecher[0];
+        if(level <= 0) opts(sf, faecher.map(function(x){ return { id:x.id, label:x.name }; }), f && f.id);
+        f = findIn(faecher, sf.value);
+        var jgs = f ? f.jahrgaenge.slice().sort(function(a, b){ return jgOrder(a.name) - jgOrder(b.name); }) : [];
+        if(level <= 1) opts(sj, jgs.map(function(x){ return { id:x.id, label:jgLabel(x) }; }), level === 0 ? loc.j : null);
+        var j = f && findIn(f.jahrgaenge, sj.value);
+        if(level <= 2) opts(sr, (j ? j.reihen : []).map(function(x, i){ return { id:x.id, label:(i + 1) + '. ' + x.titel }; }), level === 0 ? loc.r : null, '＋ Neue Reihe …');
+        var r = j && findIn(j.reihen, sr.value);
+        if(level <= 3) opts(sv, (r ? r.vorhaben : []).map(function(x, i){ return { id:x.id, label:(i + 1) + '. ' + x.titel }; }), level === 0 ? loc.v : null, '＋ Neues Vorhaben …');
+        form.querySelector('[data-for=o_r]').style.display = sr.value === '__neu' ? '' : 'none';
+        form.querySelector('[data-for=o_v]').style.display = sv.value === '__neu' ? '' : 'none';
+      }
+      fill(0);
+      sf.addEventListener('change', function(){ fill(1); });
+      sj.addEventListener('change', function(){ fill(2); });
+      sr.addEventListener('change', function(){ fill(3); });
+      sv.addEventListener('change', function(){ fill(4); });
+      var typ = form.typ, nur = form.nurLK, hint = $('#pruef-hint', form), touched = false;
+      function syncTyp(){
+        var p = typ.value === 'pruefung';
+        hint.hidden = !p; nur.disabled = p;
+        if(p) nur.checked = true; else if(!touched && isNew) nur.checked = typ.value === 'loesung';
+      }
+      nur.addEventListener('change', function(){ touched = true; });
+      typ.addEventListener('change', syncTyp); syncTyp();
+      form.addEventListener('change', function(e){
+        if(e.target.type === 'file' && e.target.files[0] && e.target.name === 'sus__file'){
+          var ext = extOf(e.target.files[0].name);
+          if(isNew && (ext === 'html' || ext === 'htm')) typ.value = 'html';
+          if(isNew && ['pptx','ppt','key','odp'].indexOf(ext) >= 0) typ.value = 'praesentation';
+          syncTyp();
+          var tt = form.titel; if(!tt.value) tt.value = e.target.files[0].name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ');
+        }
       });
-    });
-  },
-  'edit-t': function(c){
-    var ov = c.t.uebersicht;
-    openForm({ title:'Thema bearbeiten', fields:[
-      { name:'titel', label:'Thema', value:c.t.titel, required:true },
-      { name:'ov', label:'Übersichtsdokument', type:'source', keep:!!ov, allowNone:true, url: ov && ov.url }
-    ]}).then(function(v){
-      if(!v || !checkSource(v.ov)) return;
-      commit('Thema geändert', function(){
-        c.t.titel = v.titel;
-        if(v.ov.mode === 'keep') return;
-        var oldPath = ov && ov.pfad;
-        if(v.ov.mode === 'none'){ c.t.uebersicht = null; return askDeleteFiles([oldPath]) ? deleteFiles([oldPath]) : null; }
-        var target = { titel:'Übersicht' };
-        return applySource(target, v.ov, dirFor(c.f, c.j, c.t)).then(function(){
-          c.t.uebersicht = target;
-          if(oldPath && askDeleteFiles([oldPath])) return deleteFiles([oldPath]);
+    },
+    collect:function(form, out){
+      out.o = { f:form.o_f.value, j:form.o_j.value, r:form.o_r.value, v:form.o_v.value, rNew:form.o_r_new.value.trim(), vNew:form.o_v_new.value.trim() };
+      if(form.typ.value === 'pruefung') out.nurLK = true;
+    }
+  });
+}
+function saveMaterial(loc, existing){
+  return ensureFresh().then(function(){
+    var cur = existing ? { f:existing.f, j:existing.j, r:existing.r, v:existing.v, m:existing.m } : null;
+    // Nach dem Neuladen die aktuellen Objekte suchen
+    if(cur){ var c = ctx({ dataset:{ f:cur.f.id, j:cur.j.id, r:cur.r.id, v:cur.v.id, m:cur.m.id } }); if(!c.m) throw new Error('Material nicht mehr vorhanden.'); cur = c; }
+    return materialForm(loc, cur && cur.m).then(function(v){
+      if(!v) return;
+      if(v._delete){
+        if(!confirm('„' + cur.m.titel + '“ entfernen?')) return;
+        var files = filesOf(cur.m), rm = askDelete(files);
+        return commit('Material entfernt', function(){ cur.v.materialien.splice(cur.v.materialien.indexOf(cur.m), 1); return rm ? deleteFiles(files) : null; });
+      }
+      var o = v.o, f = findIn(data.faecher, o.f), j = f && findIn(f.jahrgaenge, o.j);
+      if(!j){ alert('Bitte Fach und Jahrgang wählen. Jahrgänge legst du auf der Startseite an.'); return; }
+      if(o.r === '__neu' && !o.rNew){ alert('Bitte einen Namen für die neue Reihe eingeben.'); return; }
+      if(o.v === '__neu' && !o.vNew){ alert('Bitte einen Namen für das neue Unterrichtsvorhaben eingeben.'); return; }
+      if(!checkSlot(v.sus, 'Schülerinnen und Schüler') || !checkSlot(v.lk, 'Lehrkräfte')) return;
+      var schutz = v.typ === 'pruefung' ? 'pruefung' : 'basis';
+      var needP = schutz === 'pruefung' && ((v.sus.mode === 'file') || (v.lk.mode === 'file'));
+      return (needP ? askPruefung() : Promise.resolve(true)).then(function(ok){
+        if(!ok) return;
+        var target = cur ? cur.m : { id:uid() }, oldFiles = [];
+        return commit((cur ? 'Material geändert: ' : 'Material: ') + v.titel, function(){
+          var r = o.r === '__neu' ? null : findIn(j.reihen, o.r);
+          if(!r){ r = { id:uniqueId(slug(o.rNew), j.reihen), titel:o.rNew, inhaltsfeld:'', uebersicht:null, vorhaben:[] }; j.reihen.push(r); }
+          var vh = o.v === '__neu' ? null : findIn(r.vorhaben, o.v);
+          if(!vh){ vh = { id:uid(), titel:o.vNew, notiz:'', materialien:[] }; r.vorhaben.push(vh); }
+          target.typ = v.typ; target.titel = v.titel; target.nurLK = !!v.nurLK;
+          var dir = dirFor(f, j, r);
+          return applySlot(target, 'sus', v.sus, dir, schutz, true).then(function(a){ oldFiles = oldFiles.concat(a); return applySlot(target, 'lk', v.lk, dir, schutz, false); })
+            .then(function(b){
+              oldFiles = oldFiles.concat(b);
+              if(cur && cur.v !== vh){ cur.v.materialien.splice(cur.v.materialien.indexOf(cur.m), 1); }
+              if(vh.materialien.indexOf(target) < 0) vh.materialien.push(target);
+              if(oldFiles.length && askDelete(oldFiles)) return deleteFiles(oldFiles);
+            }).then(function(){
+              var want = '#/f/' + encodeURIComponent(f.id) + '/' + encodeURIComponent(j.id) + '/' + encodeURIComponent(r.id);
+              if(location.hash !== want) setTimeout(function(){ location.hash = want; }, 0);
+            });
         });
       });
     });
-  },
-  'del-t': function(c){
-    if(!confirm('Thema „' + c.t.titel + '“ mit allen Unterrichtsvorhaben löschen?')) return;
-    var files = filesOf(c.t), rm = askDeleteFiles(files);
-    commit('Thema gelöscht', function(){ c.j.themen.splice(c.j.themen.indexOf(c.t), 1); return rm ? deleteFiles(files) : null; });
-  },
-  'up-t': function(c){ if(move(c.j.themen, c.t, -1)) commit('Reihenfolge'); },
-  'down-t': function(c){ if(move(c.j.themen, c.t, 1)) commit('Reihenfolge'); },
+  }).catch(fail);
+}
+function uniqueId(base, arr){ var id = base, n = 2; while(findIn(arr, id)) id = base + '-' + (n++); return id; }
 
-  'add-v': function(c){
+/* Reihe-Dialog mit Reihenübersicht */
+function reiheForm(r){
+  r = r || { titel:'', inhaltsfeld:'', uebersicht:null };
+  var ov = r.uebersicht || {};
+  return openForm({ title: r.id ? 'Reihe bearbeiten' : 'Reihe hinzufügen', submit: r.id ? 'Speichern' : 'Anlegen', fields:[
+    { name:'titel', label:'Titel der Reihe', value:r.titel, required:true, placeholder:'z. B. Sehhilfen für nah und fern' },
+    { name:'inhaltsfeld', label:'Inhaltsfeld / Untertitel (optional)', value:r.inhaltsfeld },
+    { name:'ovSus', label:'Reihenübersicht für SuS (optional)', type:'slot', allowLink:true, current: ov.sus ? ov.sus.name : (ov.url || ''), url:ov.url, hint:'Am besten als PDF.' },
+    { name:'ovLk', label:'Reihenübersicht für Lehrkräfte (optional)', type:'slot', current: ov.lk ? ov.lk.name : '', hint:'z. B. die Word-Datei' }
+  ]});
+}
+function applyReihe(f, j, r, v){
+  r.titel = v.titel; r.inhaltsfeld = v.inhaltsfeld;
+  var ov = r.uebersicht || { sus:null, lk:null, url:null }, old = [], dir = dirFor(f, j, r);
+  if(!checkSlot(v.ovSus) || !checkSlot(v.ovLk)) return Promise.reject(new Error('abgebrochen'));
+  return applySlot(ov, 'sus', v.ovSus, dir, 'basis', true).then(function(a){ old = old.concat(a); return applySlot(ov, 'lk', v.ovLk, dir, 'basis', false); })
+    .then(function(b){
+      old = old.concat(b);
+      r.uebersicht = (ov.sus || ov.lk || ov.url) ? ov : null;
+      if(old.length && askDelete(old)) return deleteFiles(old);
+    });
+}
+
+/* =====================================================================
+   Aktionen
+   ===================================================================== */
+function needAdmin(fn){ return function(c){ ensureFresh().then(function(){ var el = c && c._el; fn(el ? ctx(el) : c); }).catch(fail); }; }
+var actions = {
+  'edit-titel': needAdmin(function(){
+    openForm({ title:'Titel der Seite', fields:[{ name:'titel', label:'Titel', value:data.titel, required:true }] }).then(function(v){
+      if(v && !v._delete) commit('Titel geändert', function(){ data.titel = v.titel; });
+    });
+  }),
+  'add-f': needAdmin(function(){
+    openForm({ title:'Fach hinzufügen', fields:[{ name:'name', label:'Name', required:true }, { name:'farbe', label:'Farbe', type:'select', options:COLORS, value:'orange' }] }).then(function(v){
+      if(!v) return;
+      commit('Fach: ' + v.name, function(){ data.faecher.push({ id:uniqueId(slug(v.name), data.faecher), name:v.name, farbe:v.farbe, vorlage:null, jahrgaenge:[] }); });
+    });
+  }),
+  'edit-f': needAdmin(function(c){
+    openForm({ title:'Fach bearbeiten', fields:[{ name:'name', label:'Name', value:c.f.name, required:true }, { name:'farbe', label:'Farbe', type:'select', options:COLORS, value:c.f.farbe }] }).then(function(v){
+      if(v) commit('Fach geändert', function(){ c.f.name = v.name; c.f.farbe = v.farbe; });
+    });
+  }),
+  'del-f': needAdmin(function(c){
+    if(!confirm('Fach „' + c.f.name + '“ mit allen Einträgen löschen?')) return;
+    var files = filesOf(c.f), rm = askDelete(files);
+    commit('Fach gelöscht', function(){ data.faecher.splice(data.faecher.indexOf(c.f), 1); return rm ? deleteFiles(files) : null; });
+  }),
+  'up-f': needAdmin(function(c){ if(move(data.faecher, c.f, -1)) commit('Reihenfolge'); }),
+  'down-f': needAdmin(function(c){ if(move(data.faecher, c.f, 1)) commit('Reihenfolge'); }),
+
+  'add-j': needAdmin(function(c){
+    openForm({ title:c.f.name + ': Jahrgang hinzufügen', fields:[
+      { name:'name', label:'Jahrgang', placeholder:'z. B. 8, EF, Q1', required:true },
+      { name:'klp', label:'Reihen aus dem Kernlehrplan vorschlagen', type:'check', value:!!c.f.vorlage }
+    ]}).then(function(v){
+      if(!v) return;
+      var tpl = v.klp ? klpFor(c.f, v.name) : [];
+      var go = function(sel){
+        commit(c.f.name + ' ' + v.name + ' angelegt', function(){
+          var j = { id:uniqueId(slug(v.name), c.f.jahrgaenge), name:v.name, reihen:[] };
+          sel.forEach(function(i){ j.reihen.push({ id:uniqueId(slug(tpl[i][0]), j.reihen), titel:tpl[i][0], inhaltsfeld:tpl[i][1], uebersicht:null, vorhaben:[] }); });
+          c.f.jahrgaenge.push(j);
+        });
+      };
+      if(!tpl.length) return go([]);
+      openForm({ title:'Reihen für ' + c.f.name + ' ' + v.name, submit:'Anlegen', intro:'Vorschläge aus dem Kernlehrplan – alles lässt sich später umbenennen.', noFocus:true,
+        fields:[{ name:'sel', type:'checklist', items:tpl.map(function(t){ return { label:t[0], sub:t[1], checked:!/Leistungskurs|\(LK\)/.test(t[1]) }; }) }] })
+        .then(function(s){ if(s) go(s.sel); });
+    });
+  }),
+  'edit-j': needAdmin(function(c){
+    openForm({ title:'Jahrgang umbenennen', fields:[{ name:'name', label:'Jahrgang', value:c.j.name, required:true }] }).then(function(v){
+      if(v) commit('Jahrgang umbenannt', function(){ c.j.name = v.name; });
+    });
+  }),
+  'del-j': needAdmin(function(c){
+    if(!confirm(jgLabel(c.j) + ' mit allen Einträgen löschen?')) return;
+    var files = filesOf(c.j), rm = askDelete(files);
+    commit('Jahrgang gelöscht', function(){ c.f.jahrgaenge.splice(c.f.jahrgaenge.indexOf(c.j), 1); return rm ? deleteFiles(files) : null; })
+      .then(function(){ location.hash = '#/'; });
+  }),
+
+  'add-r': needAdmin(function(c){
+    reiheForm().then(function(v){
+      if(!v) return;
+      var r = { id:uniqueId(slug(v.titel), c.j.reihen), titel:'', inhaltsfeld:'', uebersicht:null, vorhaben:[] };
+      commit('Reihe: ' + v.titel, function(){ return applyReihe(c.f, c.j, r, v).then(function(){ c.j.reihen.push(r); }); });
+    });
+  }),
+  'klp-r': needAdmin(function(c){
+    var have = (c.j.reihen || []).map(function(r){ return r.inhaltsfeld + '|' + r.titel; });
+    var tpl = klpFor(c.f, c.j.name).filter(function(t){ return have.indexOf(t[1] + '|' + t[0]) < 0; });
+    if(!tpl.length){ toast('Alle Vorschläge sind schon eingetragen.'); return; }
+    openForm({ title:'Aus dem Kernlehrplan ergänzen', submit:'Hinzufügen', noFocus:true, intro:'Vorschläge – bitte mit dem schulinternen Lehrplan abgleichen.',
+      fields:[{ name:'sel', type:'checklist', items:tpl.map(function(t){ return { label:t[0], sub:t[1], checked:false }; }) }] }).then(function(s){
+      if(!s || !s.sel.length) return;
+      commit('Reihen ergänzt', function(){ s.sel.forEach(function(i){ c.j.reihen.push({ id:uniqueId(slug(tpl[i][0]), c.j.reihen), titel:tpl[i][0], inhaltsfeld:tpl[i][1], uebersicht:null, vorhaben:[] }); }); });
+    });
+  }),
+  'edit-r': needAdmin(function(c){
+    reiheForm(c.r).then(function(v){ if(v) commit('Reihe geändert', function(){ return applyReihe(c.f, c.j, c.r, v); }); });
+  }),
+  'del-r': needAdmin(function(c){
+    if(!confirm('Reihe „' + c.r.titel + '“ mit allen Unterrichtsvorhaben löschen?')) return;
+    var files = filesOf(c.r), rm = askDelete(files), back = '#/f/' + encodeURIComponent(c.f.id) + '/' + encodeURIComponent(c.j.id);
+    commit('Reihe gelöscht', function(){ c.j.reihen.splice(c.j.reihen.indexOf(c.r), 1); return rm ? deleteFiles(files) : null; })
+      .then(function(){ location.hash = back; });
+  }),
+  'up-r': needAdmin(function(c){ if(move(c.j.reihen, c.r, -1)) commit('Reihenfolge'); }),
+  'down-r': needAdmin(function(c){ if(move(c.j.reihen, c.r, 1)) commit('Reihenfolge'); }),
+
+  'add-v': needAdmin(function(c){
     openForm({ title:'Unterrichtsvorhaben hinzufügen', submit:'Anlegen', fields:[
       { name:'titel', label:'Unterrichtsvorhaben', required:true, placeholder:'z. B. Camera obscura' },
       { name:'notiz', label:'Notiz (optional)', placeholder:'z. B. 1–2 Stunden' }
-    ]}).then(function(v){
-      if(!v) return;
-      commit('Vorhaben: ' + v.titel, function(){ c.t.vorhaben.push({ id:uid(), titel:v.titel, notiz:v.notiz, materialien:[] }); });
-    });
-  },
-  'edit-v': function(c){
+    ]}).then(function(v){ if(v) commit('Vorhaben: ' + v.titel, function(){ c.r.vorhaben.push({ id:uid(), titel:v.titel, notiz:v.notiz, materialien:[] }); }); });
+  }),
+  'edit-v': needAdmin(function(c){
     openForm({ title:'Unterrichtsvorhaben bearbeiten', fields:[
-      { name:'titel', label:'Unterrichtsvorhaben', value:c.v.titel, required:true },
-      { name:'notiz', label:'Notiz (optional)', value:c.v.notiz }
-    ]}).then(function(v){
-      if(!v) return; commit('Vorhaben geändert', function(){ c.v.titel = v.titel; c.v.notiz = v.notiz; });
-    });
-  },
-  'del-v': function(c){
+      { name:'titel', label:'Unterrichtsvorhaben', value:c.v.titel, required:true }, { name:'notiz', label:'Notiz (optional)', value:c.v.notiz }
+    ]}).then(function(v){ if(v) commit('Vorhaben geändert', function(){ c.v.titel = v.titel; c.v.notiz = v.notiz; }); });
+  }),
+  'del-v': needAdmin(function(c){
     if(!confirm('„' + c.v.titel + '“ mit allen Materialien löschen?')) return;
-    var files = filesOf(c.v), rm = askDeleteFiles(files);
-    commit('Vorhaben gelöscht', function(){ c.t.vorhaben.splice(c.t.vorhaben.indexOf(c.v), 1); return rm ? deleteFiles(files) : null; });
-  },
-  'up-v': function(c){ if(move(c.t.vorhaben, c.v, -1)) commit('Reihenfolge'); },
-  'down-v': function(c){ if(move(c.t.vorhaben, c.v, 1)) commit('Reihenfolge'); },
+    var files = filesOf(c.v), rm = askDelete(files);
+    commit('Vorhaben gelöscht', function(){ c.r.vorhaben.splice(c.r.vorhaben.indexOf(c.v), 1); return rm ? deleteFiles(files) : null; });
+  }),
+  'up-v': needAdmin(function(c){ if(move(c.r.vorhaben, c.v, -1)) commit('Reihenfolge'); }),
+  'down-v': needAdmin(function(c){ if(move(c.r.vorhaben, c.v, 1)) commit('Reihenfolge'); }),
 
-  'add-m': function(c){
-    openForm({ title:'Material zu „' + c.v.titel + '“', submit:'Hinzufügen', fields:[
-      { name:'src', label:'Quelle', type:'source' },
-      { name:'typ', label:'Art', type:'select', options:TYPES, value:'ab' },
-      { name:'titel', label:'Titel', required:true }
-    ]}).then(function(v){
-      if(!v || !checkSource(v.src)) return;
-      var m = { id:uid(), typ:v.typ, titel:v.titel };
-      commit('Material: ' + v.titel, function(){
-        return applySource(m, v.src, dirFor(c.f, c.j, c.t)).then(function(){ c.v.materialien.push(m); });
-      });
+  'add-m': function(c){ saveMaterial({ f:c.f.id, j:c.j.id, r:c.r.id, v:c.v.id }); },
+  'edit-m': function(c){ saveMaterial({ f:c.f.id, j:c.j.id, r:c.r.id, v:c.v.id }, c); },
+
+  'logout': function(){
+    if(!confirm('Code auf diesem Gerät vergessen?')) return;
+    try{ localStorage.removeItem(KEK_KEY); }catch(e){}
+    keyB = dekB = keyP = dekP = null; data = null; editing = false; location.hash = '#/'; render();
+  },
+  'unlock-p': function(){ askPruefung().then(function(ok){ if(ok){ toast('Prüfungen freigeschaltet.'); render(); } }); },
+  'export-all': function(){ exportZip(null, null); },
+  'export-j': function(c){ exportZip(c.f, c.j); },
+  'change-code': function(){
+    openForm({ title:'Zugangscode ändern', intro:'Alle müssen danach den neuen Code eingeben. Inhalte bleiben unverändert.',
+      fields:[{ name:'code', label:'Neuer Code (Ziffern)', attrs:' inputmode="numeric" pattern="[0-9]{4,8}"', required:true }] }).then(function(v){
+      if(!v) return;
+      busy('Ändere Code …');
+      loadZugang(true).then(function(){
+        var salt = bytesToB64(randomBytes(16)), kek;
+        return deriveKek(v.code, salt, zugang.iter).then(function(k){ kek = k; return wrapDek(k, dekB); }).then(function(w){
+          zugang.basis = { salt:salt, dek:w }; zugang.codeLaenge = v.code.length;
+          return ghPutBytes(ACCESS_PATH, TE.encode(JSON.stringify(zugang, null, 2)), 'Zugangscode geändert', zugangSha);
+        }).then(function(r){ zugangSha = r.content.sha; saveJSON(KEK_KEY, bytesToB64(kek)); busy(false); toast('Neuer Code ist aktiv.'); });
+      }).catch(fail);
     });
   },
-  'edit-m': function(c){
-    var m = c.m;
-    openForm({ title:'Material bearbeiten', deletable:true, fields:[
-      { name:'src', label:'Quelle', type:'source', keep:true, url:m.url },
-      { name:'typ', label:'Art', type:'select', options:TYPES, value:m.typ },
-      { name:'titel', label:'Titel', value:m.titel, required:true }
-    ]}).then(function(v){
-      if(!v) return;
-      if(v._delete){
-        if(!confirm('„' + m.titel + '“ entfernen?')) return;
-        var rm = askDeleteFiles([m.pfad]);
-        return commit('Material entfernt', function(){ c.v.materialien.splice(c.v.materialien.indexOf(m), 1); return rm ? deleteFiles([m.pfad]) : null; });
-      }
-      if(!checkSource(v.src)) return;
-      commit('Material geändert', function(){
-        m.typ = v.typ; m.titel = v.titel;
-        return applySource(m, v.src, dirFor(c.f, c.j, c.t)).then(function(old){
-          if(old && old !== m.pfad && askDeleteFiles([old])) return deleteFiles([old]);
-        });
+  'change-pw': function(){
+    askPruefung().then(function(ok){
+      if(!ok) return;
+      openForm({ title:'Prüfungspasswort ändern', fields:[{ name:'pw', label:'Neues Passwort (mind. 8 Zeichen)', attrs:' minlength="8"', required:true }] }).then(function(v){
+        if(!v) return;
+        busy('Ändere Passwort …');
+        loadZugang(true).then(function(){
+          var salt = bytesToB64(randomBytes(16));
+          return deriveKek(v.pw, salt, zugang.iter).then(function(k){ return wrapDek(k, dekP); }).then(function(w){
+            zugang.pruefung = { salt:salt, dek:w };
+            return ghPutBytes(ACCESS_PATH, TE.encode(JSON.stringify(zugang, null, 2)), 'Prüfungspasswort geändert', zugangSha);
+          }).then(function(r){ zugangSha = r.content.sha; busy(false); toast('Neues Prüfungspasswort ist aktiv.'); });
+        }).catch(fail);
       });
     });
   }
 };
 
 document.addEventListener('click', function(e){
+  var o = e.target.closest('[data-open]');
+  if(o){
+    e.preventDefault();
+    var c = ctx(o), slot = o.dataset.slot, F, titel, typ;
+    if(o.dataset.ov){ F = c.r.uebersicht[slot]; titel = 'Reihenübersicht – ' + c.r.titel; typ = 'uebersicht'; }
+    else { F = c.m[slot]; titel = c.m.titel; typ = c.m.typ; }
+    if(F) openFile(F, titel, typ);
+    return;
+  }
+  var t = e.target.closest('[data-lk]');
+  if(t){
+    var area = t.nextElementSibling, open = area.hidden;
+    area.hidden = !open; t.setAttribute('aria-expanded', open);
+    if(open) lkOpen[t.dataset.lk] = 1; else delete lkOpen[t.dataset.lk];
+    saveJSON(LK_KEY, lkOpen); return;
+  }
   var b = e.target.closest('[data-act]');
   if(!b || !actions[b.dataset.act]) return;
   e.preventDefault();
-  actions[b.dataset.act](ctx(b));
+  var cx = ctx(b); cx._el = b;
+  actions[b.dataset.act](cx);
 });
 
-/* ---------- Einstellungen verdrahten ---------- */
+/* =====================================================================
+   Einstellungen & Einrichtung
+   ===================================================================== */
 function wireSettings(){
   var form = $('#cfg-form'), st = $('#cfg-status');
   form.addEventListener('submit', function(e){
     e.preventDefault();
     var fd = new FormData(form);
-    cfg = { owner:fd.get('owner').trim(), repo:fd.get('repo').trim(), branch:(fd.get('branch').trim() || 'main'), token:fd.get('token').trim() };
-    saveCfg();
+    cfg = { owner:String(fd.get('owner')).trim(), repo:String(fd.get('repo')).trim(), branch:(String(fd.get('branch')).trim() || 'main'), token:String(fd.get('token')).trim() };
+    saveJSON(CFG_KEY, cfg);
     st.className = 'status'; st.textContent = 'Teste Verbindung …';
     fetch('https://api.github.com/repos/' + encodeURIComponent(cfg.owner) + '/' + encodeURIComponent(cfg.repo), {
       headers:{ 'Accept':'application/vnd.github+json', 'Authorization':'Bearer ' + cfg.token, 'X-GitHub-Api-Version':'2022-11-28' }
     }).then(function(r){ if(!r.ok) throw new Error(r.status === 404 ? 'Repository nicht gefunden – Name oder Token prüfen.' : 'Fehler ' + r.status); return r.json(); })
       .then(function(j){
         if(!j.permissions || !j.permissions.push) throw new Error('Verbunden, aber der Token hat keine Schreibrechte.');
-        st.className = 'status ok'; st.textContent = 'Verbunden. Du kannst jetzt über „Bearbeiten“ Inhalte eintragen.';
-        document.body.classList.toggle('can-edit', canEdit());
+        st.className = 'status ok';
+        st.textContent = zugang ? 'Verbunden. Über „Bearbeiten“ und „Material“ trägst du Inhalte ein.' : 'Verbunden. Jetzt die Ersteinrichtung starten.';
+        if(!zugang) setTimeout(function(){ location.hash = '#/einrichtung'; }, 800); else render();
       })
       .catch(function(err){ st.className = 'status err'; st.textContent = err.message; });
   });
   $('#cfg-clear').addEventListener('click', function(){
-    cfg.token = ''; saveCfg(); editing = false; form.token.value = '';
-    st.className = 'status ok'; st.textContent = 'Token gelöscht.';
-    document.body.classList.remove('can-edit', 'editing');
+    cfg.token = ''; saveJSON(CFG_KEY, cfg); editing = false; form.token.value = '';
+    st.className = 'status ok'; st.textContent = 'Token gelöscht.'; document.body.classList.remove('can-edit', 'editing');
+  });
+  var sfSel = $('#schulform');
+  if(sfSel) sfSel.addEventListener('change', function(){
+    var val = sfSel.value; ensureFresh().then(function(){ commit('Schulform: ' + val, function(){ data.schulform = val; }); }).catch(fail);
   });
 }
+function wireSetup(){
+  var form = $('#setup-form'); if(!form) return;
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var fd = new FormData(form), st = $('#setup-status');
+    var code = String(fd.get('code')).trim(), pw = String(fd.get('pw')), titel = String(fd.get('titel')).trim() || 'Unterrichtsmaterial';
+    if(!/^\d{4,8}$/.test(code)){ st.className = 'status err'; st.textContent = 'Der Code muss aus 4 bis 8 Ziffern bestehen.'; return; }
+    if(pw.length < 8){ st.className = 'status err'; st.textContent = 'Das Prüfungspasswort braucht mindestens 8 Zeichen.'; return; }
+    busy('Richte ein …');
+    var rawB = randomBytes(32), rawP = randomBytes(32), saltB = bytesToB64(randomBytes(16)), saltP = bytesToB64(randomBytes(16)), kekB;
+    loadZugang(true).then(function(z){
+      if(z) throw new Error('Die Seite ist bereits eingerichtet.');
+      return deriveKek(code, saltB, ITER);
+    }).then(function(k){ kekB = k; return Promise.all([wrapDek(k, rawB), deriveKek(pw, saltP, ITER).then(function(kp){ return wrapDek(kp, rawP); })]); })
+      .then(function(w){
+        zugang = { version:1, titel:titel, iter:ITER, codeLaenge:code.length, basis:{ salt:saltB, dek:w[0] }, pruefung:{ salt:saltP, dek:w[1] } };
+        return Promise.all([aesKey(rawB), aesKey(rawP)]);
+      }).then(function(keys){
+        keyB = keys[0]; dekB = rawB; keyP = keys[1]; dekP = rawP;
+        data = initialData(titel, String(fd.get('schulform')), String(fd.get('jgPhysik')), String(fd.get('jgMathe')), !!fd.get('klp'));
+        busy('Speichere Zugang …');
+        return ghPutBytes(ACCESS_PATH, TE.encode(JSON.stringify(zugang, null, 2)), 'Einrichtung: Zugang');
+      }).then(function(r){
+        zugangSha = r.content.sha; dataSha = null; busy('Speichere Inhalte …');
+        return seal(keyB, TE.encode(JSON.stringify(data))).then(function(bytes){ return ghPutBytes(DATA_PATH, bytes, 'Einrichtung: Inhalte'); });
+      }).then(function(r){
+        dataSha = r.content.sha; freshForAdmin = true; saveJSON(KEK_KEY, bytesToB64(kekB));
+        busy(false); toast('Eingerichtet! Die Seite ist in 1–2 Minuten online.'); location.hash = '#/';
+        render();
+      }).catch(function(err){ busy(false); zugang = null; st.className = 'status err'; st.textContent = err.message; });
+  });
+}
+function initialData(titel, schulform, jgP, jgM, useKlp){
+  var d = { titel:titel, schulform:schulform, faecher:[
+    { id:'mathe', name:'Mathematik', farbe:'blau', vorlage:'mathe', jahrgaenge:[] },
+    { id:'physik', name:'Physik', farbe:'gruen', vorlage:'physik', jahrgaenge:[] }
+  ]};
+  data = d;
+  [[d.faecher[1], jgP], [d.faecher[0], jgM]].forEach(function(pair){
+    String(pair[1]).split(/[,;\s]+/).map(function(s){ return s.trim().toUpperCase(); }).filter(Boolean).forEach(function(name){
+      var f = pair[0], j = { id:uniqueId(slug(name), f.jahrgaenge), name:name, reihen:[] };
+      (useKlp ? klpFor(f, name) : []).forEach(function(t){
+        if(/Leistungskurs|\(LK\)/.test(t[1])) return;
+        j.reihen.push({ id:uniqueId(slug(t[0]), j.reihen), titel:t[0], inhaltsfeld:t[1], uebersicht:null, vorhaben:[] });
+      });
+      f.jahrgaenge.push(j);
+    });
+  });
+  // Beispiel: Physik 8 – Sehhilfen für nah und fern mit Camera obscura
+  var p8 = findIn(d.faecher[1].jahrgaenge, '8');
+  if(p8){
+    var opt = p8.reihen.filter(function(r){ return r.titel === 'Optische Instrumente'; })[0];
+    if(!opt){ opt = { id:'optische-instrumente', titel:'', inhaltsfeld:'Optische Instrumente', uebersicht:null, vorhaben:[] }; p8.reihen.unshift(opt); }
+    opt.titel = 'Sehhilfen für nah und fern'; opt.inhaltsfeld = 'Optische Instrumente';
+    opt.vorhaben.push({ id:uid(), titel:'Camera obscura', notiz:'Doppelstunde', materialien:[] });
+  }
+  return d;
+}
 
-/* ---------- Kopf-Buttons ---------- */
+/* =====================================================================
+   Export als ZIP (unverschlüsselt, mit Übersicht)
+   ===================================================================== */
+var CRC = (function(){ var t = new Uint32Array(256); for(var n = 0; n < 256; n++){ var c = n; for(var k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(b){ var c = 0xFFFFFFFF; for(var i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zipBlob(files){
+  var parts = [], central = [], offset = 0, d = new Date();
+  var time = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), date = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  files.forEach(function(f){
+    var name = TE.encode(f.name), crc = crc32(f.bytes), size = f.bytes.length;
+    var h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+    h.setUint16(10, time, true); h.setUint16(12, date, true); h.setUint32(14, crc, true); h.setUint32(18, size, true); h.setUint32(22, size, true);
+    h.setUint16(26, name.length, true); h.setUint16(28, 0, true);
+    parts.push(h.buffer, name, f.bytes);
+    var c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
+    c.setUint16(12, time, true); c.setUint16(14, date, true); c.setUint32(16, crc, true); c.setUint32(20, size, true); c.setUint32(24, size, true);
+    c.setUint16(28, name.length, true); c.setUint32(42, offset, true);
+    central.push(c.buffer, name);
+    offset += 30 + name.length + size;
+  });
+  var cdSize = central.reduce(function(s, p){ return s + (p.byteLength || p.length); }, 0);
+  var e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, cdSize, true); e.setUint32(16, offset, true);
+  return new Blob(parts.concat(central, [e.buffer]), { type:'application/zip' });
+}
+function safeName(s){ return String(s).replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim().slice(0, 80) || 'Datei'; }
+function pad2(n){ return (n < 10 ? '0' : '') + n; }
+function exportZip(onlyF, onlyJ){
+  var jobs = [], links = [], html = '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Übersicht</title>'
+    + '<style>body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:860px;margin:2rem auto;padding:0 1rem;line-height:1.5;color:#1B2333}h1,h2,h3{font-family:Georgia,serif}h3{margin-bottom:.2rem}li{margin:.2rem 0}small{color:#5E6A7C}</style></head><body>'
+    + '<h1>' + esc(data.titel || 'Unterrichtsmaterial') + '</h1><p><small>Export vom ' + new Date().toLocaleDateString('de-DE') + '</small></p>';
+  (data.faecher || []).forEach(function(f){
+    if(onlyF && f !== onlyF) return;
+    (f.jahrgaenge || []).forEach(function(j){
+      if(onlyJ && j !== onlyJ) return;
+      var jdir = safeName(f.name) + '/' + safeName(jgLabel(j));
+      html += '<h2>' + esc(f.name + ' – ' + jgLabel(j)) + '</h2>';
+      (j.reihen || []).forEach(function(r, ri){
+        var rdir = jdir + '/' + pad2(ri + 1) + ' ' + safeName(r.titel);
+        html += '<h3>' + (ri + 1) + '. ' + esc(r.titel) + '</h3><ol>';
+        if(r.uebersicht){
+          ['sus', 'lk'].forEach(function(k){ var F = r.uebersicht[k]; if(F) jobs.push({ F:F, path:rdir + '/00 Reihenübersicht' + (k === 'lk' ? ' (Lehrkraft)' : '') + '.' + F.ext }); });
+        }
+        (r.vorhaben || []).forEach(function(v, vi){
+          var vdir = rdir + '/' + pad2(vi + 1) + ' ' + safeName(v.titel), items = [];
+          (v.materialien || []).forEach(function(m){
+            ['sus', 'lk'].forEach(function(k){
+              var F = m[k]; if(!F) return;
+              if(F.schutz === 'pruefung' && !keyP) return;
+              var p = vdir + '/' + safeName(m.titel) + (k === 'lk' ? ' (Lehrkraft)' : '') + '.' + F.ext;
+              jobs.push({ F:F, path:p }); items.push('<a href="' + encodeURI(p) + '">' + esc(m.titel) + (k === 'lk' ? ' (Lehrkraft)' : '') + '</a> <small>' + esc((F.ext || '').toUpperCase()) + '</small>');
+            });
+            if(m.url){ items.push('<a href="' + esc(m.url) + '">' + esc(m.titel) + '</a> <small>Link</small>'); links.push(m.titel + ': ' + m.url); }
+          });
+          html += '<li><b>' + esc(v.titel) + '</b>' + (items.length ? '<br>' + items.join(' · ') : '') + '</li>';
+        });
+        html += '</ol>';
+      });
+    });
+  });
+  html += '</body></html>';
+  if(!jobs.length && !links.length){ toast('Hier gibt es noch nichts zum Herunterladen.'); return; }
+  var files = [], i = 0, seen = {};
+  function next(){
+    if(i >= jobs.length) return Promise.resolve();
+    var job = jobs[i++];
+    busy('Bereite vor … ' + i + ' / ' + jobs.length);
+    return fetchBytes(job.F.pfad).then(function(b){ return unseal(keyFor(job.F.schutz), b); }).then(function(plain){
+      var p = job.path, n = 2; while(seen[p]) p = job.path.replace(/(\.[^.]+)$/, ' (' + (n++) + ')$1'); seen[p] = 1;
+      files.push({ name:p, bytes:plain });
+    }, function(){}).then(next);
+  }
+  next().then(function(){
+    files.unshift({ name:'Übersicht.html', bytes:TE.encode(html) });
+    if(links.length) files.push({ name:'Links.txt', bytes:TE.encode(links.join('\r\n')) });
+    var blob = zipBlob(files), url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = safeName((onlyF ? onlyF.name + ' ' + onlyJ.name : (data.titel || 'Unterrichtsmaterial'))) + '.zip';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(url); }, 30000);
+    busy(false); toast('ZIP wird heruntergeladen.');
+  }).catch(fail);
+}
+
+/* =====================================================================
+   Kopf-Buttons & Start
+   ===================================================================== */
 $('#reload').innerHTML = ico('refresh');
 $('#settings-link').innerHTML = ico('gear') + 'Einstellungen';
 $('#edit-toggle').addEventListener('click', function(){
-  if(editing){ editing = false; busy('Lade …'); loadData(false).catch(function(){}).then(function(){ busy(false); render(); }); return; }
-  busy('Lade aktuellen Stand …');
-  loadData(true).then(function(){ editing = true; busy(false); render(); }).catch(fail);
+  if(editing){ editing = false; render(); return; }
+  ensureFresh().then(function(){ editing = true; render(); }).catch(fail);
+});
+$('#add-material').addEventListener('click', function(){
+  var p = location.hash.replace(/^#\/?/, '').split('/').map(function(x){ try{ return decodeURIComponent(x); }catch(e){ return x; } });
+  saveMaterial(p[0] === 'f' ? { f:p[1], j:p[2], r:p[3] } : {});
 });
 $('#reload').addEventListener('click', function(){
+  if(!keyB){ boot(); return; }
   busy('Lade …');
-  loadData(editing).then(function(){ busy(false); render(); toast('Aktualisiert.'); }).catch(function(e){ busy(false); toast('Keine Verbindung – zeige gespeicherten Stand.'); });
+  loadData(canEdit() && editing).then(function(){ busy(false); render(); toast('Aktualisiert.'); })
+    .catch(function(){ busy(false); toast('Keine Verbindung – zeige gespeicherten Stand.'); });
 });
+window.addEventListener('hashchange', function(){ if(viewerState) closeViewer(); render(); window.scrollTo(0, 0); });
 
-window.addEventListener('hashchange', function(){ render(); window.scrollTo(0, 0); });
-
-/* ---------- Start ---------- */
-render();
-loadData(false).then(render).catch(function(){
-  $('#app').innerHTML = '<div class="empty-state">Die Inhalte konnten nicht geladen werden. Bitte Internetverbindung prüfen und neu laden.</div>';
-});
-
-if('serviceWorker' in navigator){
-  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+function boot(){
+  zugang = undefined; render();
+  loadZugang(false).then(function(z){
+    if(!z){ render(); return; }
+    var stored = loadJSON(KEK_KEY);
+    if(!stored){ render(); return; }
+    return unlockBasis(b64ToBytes(stored)).then(function(){ return loadData(false); }).then(render, function(){
+      try{ localStorage.removeItem(KEK_KEY); }catch(e){}
+      keyB = null; render();
+    });
+  }).catch(function(){
+    zugang = null;
+    $('#app').innerHTML = '<div class="empty-state">Keine Verbindung. Bitte Internet prüfen und neu laden.</div>';
+  });
 }
+boot();
+if('serviceWorker' in navigator){ window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
 })();
 </script>
 </body>

@@ -1,52 +1,57 @@
 # Unterrichtsmaterial
 
-Materialsammlung für SuS als installierbare Web-App (GitHub Pages). Öffnen ohne Anmeldung, Bearbeiten direkt am iPad oder Handy.
+Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkräfte öffnen sie mit einem Zugangscode – ohne Konto. Bearbeitet wird direkt vom iPad oder Handy.
 
-## Einrichten (einmalig)
+## Einrichten (einmalig, am Computer)
 
-1. **Repository anlegen:** github.com → *New repository* → Name z. B. `unterricht` → **Public**.
-2. **Dateien hochladen:** *Add file → Upload files* → den **Inhalt** dieses Ordners hineinziehen (nicht den Ordner selbst) → *Commit changes*.
-3. **Pages einschalten:** *Settings → Pages → Source: Deploy from a branch* → Branch `main`, Ordner `/ (root)` → *Save*.
-4. Nach 1–2 Minuten ist die Seite erreichbar unter
-   `https://BENUTZERNAME.github.io/unterricht/`
-
-## Bearbeiten vom Handy/iPad
-
-1. **Token erstellen:** github.com → Profilbild → *Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token*
-   - Repository access: **Only select repositories** → `unterricht`
-   - Permissions → Repository → **Contents: Read and write**
+1. **Neues Repository** auf github.com anlegen, z. B. `unterricht`, **Public**.
+   Wichtig: ein *neues* Repository verwenden. Alte, unverschlüsselte Dateien bleiben sonst im Verlauf sichtbar.
+2. **Inhalt dieses Ordners hochladen** (*Add file → Upload files*, den Inhalt hineinziehen, nicht den Ordner selbst) → *Commit changes*.
+3. **Pages einschalten:** *Settings → Pages → Deploy from a branch → main / (root) → Save*.
+   Nach 1–2 Minuten: `https://BENUTZERNAME.github.io/unterricht/`
+4. **Token erstellen:** Profilbild → *Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token*
+   - *Only select repositories* → `unterricht`
+   - *Repository permissions → Contents: Read and write*
    - Ablaufdatum setzen (z. B. 1 Jahr)
-2. Seite öffnen → unten **Einstellungen** → Benutzername, Repository, Token eintragen → *Speichern und testen*.
-3. Oben erscheint **Bearbeiten**. Damit Fächer, Jahrgänge, Themen, Unterrichtsvorhaben und Materialien anlegen, ändern, sortieren und löschen.
-4. Änderungen sind nach ca. 1–2 Minuten für alle sichtbar.
+5. Seite öffnen → **Einstellungen** → Benutzername, Repository, Token → *Speichern und testen* → **Ersteinrichtung**:
+   Zugangscode (z. B. 4 Ziffern), Prüfungspasswort (mind. 8 Zeichen), Schulform, Jahrgänge.
+6. Über **+ Material** die ersten Dateien hochladen.
 
-Der Token bleibt nur auf deinem Gerät. Nie in eine Datei schreiben. Bei Verlust des Geräts den Token auf GitHub löschen.
+## Bedienung
+
+- **+ Material** (oben): Datei oder Link hochladen, dabei Fach, Jahrgang, Reihe und Unterrichtsvorhaben wählen – auch neue anlegen.
+  - *Für SuS*: am besten PDF oder HTML. *Für Lehrkräfte*: die bearbeitbare Word-/PowerPoint-Datei.
+  - *Klassenarbeit / Test / Klausur* wird zusätzlich mit dem Prüfungspasswort verschlüsselt und nur im Lehrkraft-Bereich gezeigt.
+- **Bearbeiten**: Reihen und Vorhaben anlegen, umbenennen, sortieren, löschen; Reihenübersicht hinterlegen; Reihen aus dem Kernlehrplan ergänzen.
+- **Herunterladen**: Jahrgang oder alles als ZIP mit `Übersicht.html` – zum Weiterverwenden ohne diese Seite.
+- **Einstellungen → Verwaltung**: Schulform für die Lehrplan-Vorlagen, Zugangscode oder Prüfungspasswort ändern.
 
 ## Als App installieren
 
 - **iPad/iPhone (Safari):** Teilen → *Zum Home-Bildschirm*
-- **Android (Chrome):** Menü → *App installieren* bzw. *Zum Startbildschirm hinzufügen*
+- **Android (Chrome):** Menü → *App installieren*
 
-## Aufbau
+## Was geschützt ist – und was nicht
 
-```
-index.html            App (Ansicht + Bearbeiten)
-data/inhalt.json      Alle Einträge (wird von der App gepflegt)
-material/FACH/JAHRGANG/THEMA/   Hochgeladene Dateien
-sw.js, manifest.webmanifest, icons/   App-Funktionen
-```
+- Alle Dateien und die Übersicht liegen **verschlüsselt** (AES-256) im Repository. Ohne Code sieht man nur Datensalat.
+- Der Zugangscode ist eine **Zugangshürde** für einen abgegrenzten Personenkreis, kein Tresor: Ein vierstelliger Code lässt sich von technisch Versierten durchprobieren.
+- Klassenarbeiten deshalb mit einem **langen** Prüfungspasswort schützen.
+- Ein geänderter Code gilt für neue Anmeldungen. Alte Versionen der Zugangsdatei bleiben im Git-Verlauf.
+- Keine Namen, Fotos oder Noten von SuS hochladen.
 
 ## Dateigrößen
 
-- Ziel: Dateien möglichst **unter 10 MB** (die App warnt darüber, blockiert über 50 MB).
-- Präsentationen zusätzlich als **PDF** hochladen – öffnet auf jedem Gerät.
-- Videos nicht hochladen, sondern **verlinken** (z. B. YouTube „nicht gelistet“).
-- Gelöschte oder ersetzte Dateien bleiben im Git-Verlauf und zählen weiter zum Speicher.
-- Grenzen von GitHub Pages: Seite höchstens 1 GB, ca. 100 GB Datenverkehr pro Monat.
+- Möglichst **unter 15 MB** pro Datei (Warnung), höchstens 50 MB.
+- Videos nicht hochladen, sondern verlinken.
+- GitHub Pages: Seite bis 1 GB, ca. 100 GB Datenverkehr pro Monat. Ersetzte Dateien bleiben im Verlauf und zählen mit.
 
-## Wichtig
+## Technik
 
-- Alles im Repository ist **öffentlich** – auch über direkte Links und im Verlauf.
-- Keine Namen, Fotos oder Noten von SuS hochladen.
-- Klassenarbeiten erst nach dem Schreiben hochladen.
-- Fremde Bilder/Screenshots nur, wenn die Rechte geklärt sind (sonst verlinken oder eigene Bilder nutzen).
+```
+index.html             App
+data/zugang.json       Verschlüsselte Schlüssel (wird bei der Einrichtung erstellt)
+data/inhalt.enc        Verschlüsselte Übersicht aller Einträge
+material/…/*.enc       Verschlüsselte Dateien
+lib/pdfjs/             PDF-Anzeige (pdf.js, Apache-2.0)
+sw.js, manifest.webmanifest, icons/   App-Funktionen
+```
