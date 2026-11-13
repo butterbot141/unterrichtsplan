@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "titel": "Unterrichtsmaterial",
+  "iter": 250000,
+  "codeLaenge": 4,
+  "basis": {
+    "salt": "dO/dAs06bhUcWcQakkOgCA==",
+    "dek": "VU1DMZ1HP44o+53/riUgB5e6WfMyQj7moUC3BbvPatVdRQrN58exFX/hbj9z8MLMQmsFTpO7G/BAGfmNAAmpXQ=="
+  },
+  "pruefung": {
+    "salt": "gFisFAl3AvMgeWLHaRHn9w==",
+    "dek": "VU1DMcypjeSDQWWZfy/oMklMx6La4IaKTsn99/8pMrbssGFC/al+pLClFCm/zjEXoWloKkV5O6dmZ0KxcNyy2w=="
+  }
+}
