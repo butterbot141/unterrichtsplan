@@ -19,27 +19,36 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 
 ## Bedienung
 
-- **+ Material** (oben): Datei oder Link hochladen, dabei Fach, Jahrgang, Reihe und Unterrichtsvorhaben wählen – auch neue anlegen.
-  - *Für SuS*: am besten PDF oder HTML. *Für Lehrkräfte*: die bearbeitbare Word-/PowerPoint-Datei.
-  - *Klassenarbeit / Test / Klausur* wird zusätzlich mit dem Prüfungspasswort verschlüsselt und nur im Lehrkraft-Bereich gezeigt.
-- **Bearbeiten**: Reihen und Vorhaben anlegen, umbenennen, sortieren, löschen; Reihenübersicht hinterlegen; Reihen aus dem Kernlehrplan ergänzen.
+- **Bearbeiten** → pro Unterrichtsvorhaben zwei Knöpfe:
+  - **+ Unterrichtsmaterial** (für SuS): PDF, interaktive Seite (HTML), Link, Video-Link. Mit dem **Auge** daneben ein- und ausblenden.
+  - **+ Lehrkraft-Material**: Word-/PowerPoint-Dateien, Lösungen, Klassenarbeiten. Für SuS **nie** sichtbar.
+  - Art und Titel werden aus dem Dateinamen vorgeschlagen („Lösung“ → Lösung, „Klausur/Test/KA“ → Prüfung, `.html` → interaktive Seite).
+  - *Klassenarbeit / Test / Klausur* landet immer im Lehrkraft-Bereich und wird zusätzlich mit dem Prüfungspasswort verschlüsselt.
+- **+ Material** (oben): wie oben, mit Auswahl von Fach, Jahrgang, Reihe und Vorhaben – auch neue anlegen.
+- **Bearbeiten**: außerdem Reihen und Vorhaben anlegen, umbenennen, sortieren, löschen; Titelbild hinterlegen; Reihen aus dem Kernlehrplan ergänzen.
 - **Herunterladen**: Jahrgang oder alles als ZIP mit `Übersicht.html` – zum Weiterverwenden ohne diese Seite.
 - **Einstellungen → Verwaltung**: Schulform für die Lehrplan-Vorlagen, Zugangscode oder Prüfungspasswort ändern.
 
 ## Mit dem Kurs teilen
 
 - In einer Reihe auf **Mit Kurs teilen** tippen: Link und QR-Code.
-- Über den Link sehen SuS nur diese Reihe – ohne Hauptmenü, ohne ausgeblendete Stunden, ohne Lehrkraft-Material.
-- Ganz unten führt ein kleiner Link „Ganze Sammlung öffnen“ trotzdem zurück. Nichts ist geheim, es lenkt nur nicht ab.
+- Über den Link sehen SuS nur diese Reihe – ohne Hauptmenü, ohne Ausgeblendetes, ohne Lehrkraft-Material. Das Gerät merkt sich die Reihe.
+- Ganz unten: **Alle Materialien herunterladen** – ein ZIP mit allem, was SuS sehen (z. B. zur Vorbereitung auf einen Test).
+- **Zurück zur ganzen Sammlung (Lehrkraft):**
+  - Auf Geräten mit eingetragenem Token gibt es oben den Knopf **Lehrkraft-Ansicht**; diese Geräte bleiben nie im Kursmodus hängen.
+  - Auf anderen Geräten: **5× schnell auf das Fach-Schild** (z. B. „Physik 8“) tippen oder die Adresse mit `#/einstellungen` aufrufen → **Kursansicht auf diesem Gerät beenden**.
 
-## Überblick einer Reihe
+## Titelbild einer Reihe
 
-- Concept-Map mit Karten (Thema, Begriff, Frage, Notiz), Verbindungen und optionalem Titelbild.
-- Bearbeiten: **Bearbeiten → Überblick bearbeiten**. Karten ziehen, antippen zum Ändern, „Verbinden“ für Linien.
+- Ein Bild pro Reihe, z. B. Foto oder Export der Concept-Map oder Fragensammlung (außerhalb der App erstellt).
+- **Bearbeiten → Titelbild hinzufügen/ändern**. Große Bilder werden beim Hochladen verkleinert.
+- Wird oben in der Reihe ganz angezeigt (nicht abgeschnitten); antippen öffnet es groß.
 
-## Stunden ausblenden
+## Ausblenden
 
-- **Bearbeiten → Augen-Symbol** in der Zeile. Ausgeblendete Stunden sind in der Kursansicht nicht sichtbar.
+- **Stunden:** Bearbeiten → Augen-Symbol rechts in der Zeile.
+- **Einzelne Materialien:** Bearbeiten → Augen-Symbol neben dem Material.
+- In der Kursansicht ist Ausgeblendetes unsichtbar, in der Lehrkraft-Ansicht abgedimmt.
 
 ## Planung importieren
 
@@ -66,9 +75,11 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 
 ## Dateigrößen
 
-- Möglichst **unter 15 MB** pro Datei (Warnung), höchstens 50 MB.
-- Videos nicht hochladen, sondern verlinken.
+- Möglichst **unter 15 MB** pro Datei (Warnung), höchstens 50 MB. Bei großen PowerPoints für SuS lieber ein PDF hochladen.
+- Videos werden nicht hochgeladen, sondern verlinkt. Bilder werden automatisch verkleinert.
+- **Einstellungen → Speicherplatz** zeigt den belegten Platz gesamt und pro Fach/Jahrgang, dazu die Größe des Repositorys inkl. Verlauf. Warnung ab ca. 800 MB.
 - GitHub Pages: Seite bis 1 GB, ca. 100 GB Datenverkehr pro Monat. Ersetzte Dateien bleiben im Verlauf und zählen mit.
+- **Wird es eng:** ein Fach in ein eigenes Repository (eigene Sammlung) auslagern und hier unter *Fach bearbeiten → Adresse* verlinken. Die Startseite zeigt dann einen Knopf zur anderen Sammlung.
 
 ## Technik
 

@@ -264,31 +264,26 @@ dialog::backdrop{background:rgba(10,14,20,.5)}
 footer{max-width:1040px;margin:0 auto;padding:0 1rem 2rem;display:flex;justify-content:flex-end}
 footer a{display:inline-flex;align-items:center;gap:.35rem;color:var(--muted);text-decoration:none;font-size:.9rem;min-height:40px}
 .reihe-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
-/* Überblick (Concept-Map / Fragen / Titelbild) */
-.board-wrap{margin:0 0 1.3rem}
-.titelbild{width:100%;aspect-ratio:16/5;object-fit:cover;border-radius:18px;display:block;background:var(--soft);margin-bottom:.8rem;box-shadow:var(--shadow)}
-.board-scroll{overflow-x:auto;border-radius:18px;border:1px solid var(--line);background:var(--sheet);box-shadow:var(--shadow)}
-.board{position:relative;aspect-ratio:16/10;min-width:560px;container-type:inline-size;
-  background-image:radial-gradient(circle,var(--line) 1px,transparent 1.6px);background-size:22px 22px;background-color:var(--sheet)}
-.board svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.board svg.edges line{stroke:var(--muted);stroke-width:2;vector-effect:non-scaling-stroke;opacity:.65}
-.node{position:absolute;transform:translate(-50%,-50%);max-width:28%;padding:.5em .8em;border-radius:12px;font-size:clamp(11px,1.7cqw,18px);line-height:1.25;
-  text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.14);user-select:none;-webkit-user-select:none;white-space:pre-wrap;overflow-wrap:anywhere}
-.node.thema{background:var(--ink);color:var(--sheet);font-weight:700;font-family:var(--serif);font-size:clamp(13px,2.3cqw,25px);border-radius:16px;padding:.6em 1em}
-.node.begriff{background:var(--acc-soft,#E7EEFB);color:var(--acc,#2F5FB3);font-weight:700;border:1.5px solid var(--acc,#2F5FB3)}
-.node.frage{background:#FFF1A8;color:#3F3200;transform:translate(-50%,-50%) rotate(-1.5deg)}
-.node.frage::before{content:"? ";font-weight:800}
-.node.notiz{background:var(--soft);color:var(--ink);border:1.5px dashed var(--muted)}
-.editor .board{touch-action:none}
-.editor .node{cursor:grab;touch-action:none}
-.node.sel{outline:3px solid var(--primary);outline-offset:3px}
-.editor-bar{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;padding:.5rem .6rem;border-bottom:1px solid var(--line);background:var(--sheet)}
-.editor-bar .grow{flex:1}
-.editor-body{flex:1;overflow:auto;padding:.8rem}
-.editor-body .hint{margin:0 0 .6rem}
-.editor-img{display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem;flex-wrap:wrap}
-.editor-img img{height:70px;border-radius:10px;object-fit:cover;aspect-ratio:16/5}
-.pillbtn.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+/* Titelbild der Reihe */
+.titelbild-wrap{margin:0 0 1.3rem}
+.titelbild-btn{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in;border-radius:18px}
+.titelbild{display:block;max-width:100%;max-height:min(70vh,720px);width:auto;height:auto;margin:0 auto;border-radius:18px;box-shadow:var(--shadow);background:var(--soft)}
+/* Material: Auge, ausgeblendet */
+.mwrap{display:inline-flex;align-items:center;gap:.1rem;max-width:100%}
+.mwrap .iconbtn{width:40px;height:40px}
+.chip.aus{opacity:.55;border-style:dashed}
+.chip .aus-i{width:1em;height:1em;color:var(--muted)}
+.lk-area.edit{margin-top:.6rem}
+/* Speicher */
+.bar{height:10px;background:var(--soft);border-radius:6px;overflow:hidden;margin:.3rem 0 .2rem}
+.bar i{display:block;height:100%;background:var(--primary)}
+.bar.warn i{background:var(--danger)}
+.store-list{list-style:none;margin:.6rem 0 0;padding:0}
+.store-list li{display:flex;justify-content:space-between;gap:1rem;padding:.3rem 0;border-top:1px solid var(--line)}
+.store-list li.sub{padding-left:1rem;color:var(--muted);font-size:.95rem}
+.linkbtn{display:inline-flex;align-items:center;gap:.35rem;border:0;background:transparent;color:var(--muted);font-size:.88rem;cursor:pointer;min-height:40px;text-decoration:underline;text-underline-offset:3px}
+.linkbtn:hover{color:var(--ink)}
+.fach-extern{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem}
 /* Ausgeblendete Stunden */
 .row.aus{background:repeating-linear-gradient(-45deg,transparent 0 10px,color-mix(in srgb,var(--line) 35%,transparent) 10px 20px)}
 .row.aus .row-title,.row.aus .row-main{opacity:.6}
@@ -298,7 +293,7 @@ footer a{display:inline-flex;align-items:center;gap:.35rem;color:var(--muted);te
 .kurs footer,.kurs .admin-only{display:none !important}
 .kurs .brand{pointer-events:none}
 .kurs-foot{text-align:center;margin-top:2.2rem}
-.kurs-foot a{color:var(--muted);font-size:.85rem;text-decoration:underline;text-underline-offset:3px}
+.kurs .pill{cursor:default;-webkit-user-select:none;user-select:none}
 /* Teilen */
 .qr-box{display:grid;place-items:center;margin:.2rem 0 .9rem}
 .qr-box svg{width:min(240px,64vw);height:auto;background:#fff;padding:8px;border-radius:14px;border:1px solid var(--line)}
@@ -315,6 +310,7 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid 
     <a class="brand" href="#/"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#logo"/></svg><span id="brand-title">Unterrichtsmaterial</span></a>
     <button class="pillbtn add admin-only" id="add-material" hidden></button>
     <button class="pillbtn admin-only" id="edit-toggle" hidden></button>
+    <button class="pillbtn" id="kurs-exit" hidden></button>
     <button class="iconbtn" id="reload" aria-label="Neu laden" title="Neu laden"></button>
   </div>
 </header>
@@ -351,9 +347,10 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid 
    Grundlagen
    ===================================================================== */
 var CFG_KEY = 'um-github', KEK_KEY = 'um-zugang', LK_KEY = 'um-lk-offen', KURS_KEY = 'um-kurs';
-var NODE_ARTS = [['thema','Thema'],['begriff','Begriff'],['frage','Frage'],['notiz','Notiz']];
 var DATA_PATH = 'data/inhalt.enc', ACCESS_PATH = 'data/zugang.json';
 var MAX_MB = 50, WARN_MB = 15, ITER = 250000;
+var LIMIT_MB = 1024, WARN_TOTAL_MB = 800; // GitHub Pages: höchstens 1 GB pro Seite
+var VIDEO_EXT = ['mp4','mov','m4v','avi','webm','mkv','wmv'];
 var MAGIC = [85, 77, 67, 49]; // "UMC1"
 
 var TYPES = [
@@ -362,6 +359,7 @@ var TYPES = [
   ['pruefung','Klassenarbeit / Test / Klausur']
 ];
 var TYPE_LABEL = {}; TYPES.forEach(function(t){ TYPE_LABEL[t[0]] = t[1]; });
+var BEREICHE = [['sus','Unterrichtsmaterial (SuS)'],['lk','Lehrkraft-Material']];
 var COLORS = [['blau','Blau'],['gruen','Grün'],['orange','Orange'],['lila','Lila'],['rot','Rot'],['grau','Grau']];
 var MIME = { pdf:'application/pdf', html:'text/html', htm:'text/html', png:'image/png', jpg:'image/jpeg', jpeg:'image/jpeg', gif:'image/gif', webp:'image/webp', svg:'image/svg+xml',
   mp4:'video/mp4', mov:'video/quicktime', mp3:'audio/mpeg', m4a:'audio/mp4', txt:'text/plain', csv:'text/csv', md:'text/markdown',
@@ -519,10 +517,10 @@ function loadData(fromApi){
       if(r.content) return b64ToBytes(r.content);
       return ghRaw(DATA_PATH);
     }).then(function(bytes){ return unseal(keyB, bytes); })
-      .then(function(p){ data = JSON.parse(TD.decode(p)); freshForAdmin = true; });
+      .then(function(p){ data = migrate(JSON.parse(TD.decode(p))); freshForAdmin = true; });
   }
   return fetchBytes(DATA_PATH, true).then(function(bytes){ return unseal(keyB, bytes); })
-    .then(function(p){ data = JSON.parse(TD.decode(p)); freshForAdmin = false; });
+    .then(function(p){ data = migrate(JSON.parse(TD.decode(p))); freshForAdmin = false; });
 }
 function saveData(msg){
   return seal(keyB, TE.encode(JSON.stringify(data))).then(function(bytes){ return ghPutBytes(DATA_PATH, bytes, msg, dataSha); })
@@ -537,7 +535,20 @@ function freePath(dir, name){
   }
   return tryN(0);
 }
+function isImageFile(file){ return /^image\/(jpeg|png|webp|heic|heif|gif)$/.test(file.type || '') || /^(jpe?g|png|webp|heic|heif|gif)$/.test(extOf(file.name)); }
 function uploadFile(file, dir, schutz){
+  var big = isImageFile(file) && extOf(file.name) !== 'gif' && file.size > 400 * 1024;
+  return (big ? shrinkImage(file) : Promise.resolve(file)).then(function(f){ return uploadFile2(f, dir, schutz); });
+}
+/* Datei mit anderem Schlüssel neu verschlüsseln (z. B. wenn ein Material zur Prüfung wird) */
+function reseal(F, schutz){
+  if(!F || F.schutz === schutz) return Promise.resolve(F);
+  busy('Verschlüssele „' + F.name + '“ neu …');
+  return ghRaw(F.pfad).then(function(b){ return unseal(keyFor(F.schutz), b); }).then(function(p){ return seal(keyFor(schutz), p); })
+    .then(function(sealed){ return ghSha(F.pfad).then(function(sha){ return ghPutBytes(F.pfad, sealed, 'Neu verschlüsselt: ' + F.name, sha); }); })
+    .then(function(){ delete blobCache[F.pfad]; F.schutz = schutz; return F; });
+}
+function uploadFile2(file, dir, schutz){
   var mb = file.size / 1048576;
   if(mb > MAX_MB) return Promise.reject(new Error('„' + file.name + '“ ist ' + mb.toFixed(1) + ' MB groß. Erlaubt sind höchstens ' + MAX_MB + ' MB.'));
   var ext = extOf(file.name), base = slug(file.name.replace(/\.[^.]+$/, '')), path;
@@ -703,34 +714,76 @@ function filesOf(obj){
   })(obj);
   return out;
 }
+/* Alte Daten auf das aktuelle Modell bringen (Version 2):
+   Material = { id, typ, titel, bereich:"sus"|"lk", datei, url, ausgeblendet }
+   Reihe    = { …, titelbild } statt Concept-Map (board) */
+function migrate(d){
+  if(!d) return d;
+  (d.faecher || []).forEach(function(f){ (f.jahrgaenge || []).forEach(function(j){ (j.reihen || []).forEach(function(r){
+    if(r.board){ if(r.board.bild && !r.titelbild) r.titelbild = r.board.bild; delete r.board; }
+    if(r.titelbild === undefined) r.titelbild = null;
+    (r.vorhaben || []).forEach(function(v){
+      var out = [];
+      (v.materialien || []).forEach(function(m){
+        if(m.bereich){ if(m.typ === 'pruefung') m.bereich = 'lk'; out.push(m); return; }
+        var lkOnly = m.typ === 'pruefung' || !!m.nurLK, base = { typ:m.typ || 'dokument', titel:m.titel || 'Material' };
+        if(m.sus || m.url) out.push(Object.assign({ id:m.id || uid() }, base, { bereich:lkOnly ? 'lk' : 'sus', datei:m.sus || null, url:m.sus ? null : (m.url || null), ausgeblendet:!lkOnly && !!m.ausgeblendet }));
+        if(m.lk) out.push(Object.assign({ id:(m.sus || m.url) ? uid() : (m.id || uid()) }, base, { bereich:'lk', datei:m.lk, url:null, ausgeblendet:false }));
+      });
+      v.materialien = out;
+    });
+  }); }); });
+  d.version = 2;
+  return d;
+}
+function usedMb(o){
+  var sum = 0;
+  (function walk(x){
+    if(!x || typeof x !== 'object') return;
+    if(Array.isArray(x)){ x.forEach(walk); return; }
+    if(typeof x.pfad === 'string') sum += +x.mb || 0;
+    Object.keys(x).forEach(function(k){ if(x[k] && typeof x[k] === 'object') walk(x[k]); });
+  })(o);
+  return sum;
+}
+function fmtMb(mb){
+  if(mb < 1) return Math.max(1, Math.round(mb * 1024)) + ' KB';
+  if(mb < 1024) return (mb < 10 ? mb.toFixed(1) : Math.round(mb)).toString().replace('.', ',') + ' MB';
+  return (mb / 1024).toFixed(2).replace('.', ',') + ' GB';
+}
 function fachIcon(f){ return f.vorlage === 'physik' ? 'atom' : (f.vorlage === 'mathe' ? 'mathe' : 'buch'); }
 
 /* =====================================================================
    Bausteine
    ===================================================================== */
-function chipFile(F, titel, typ, refAttrs, extraClass){
+function chipFile(F, titel, typ, refAttrs, extraClass, badge){
   var lock = F.schutz === 'pruefung';
   return '<button class="chip t-' + typ + (extraClass ? ' ' + extraClass : '') + '" data-open="file" ' + refAttrs + '>'
-    + ico(lock ? 'lock' : typ) + '<span>' + esc(titel) + '</span><span class="ext">' + esc((F.ext || '').toUpperCase()) + '</span></button>';
+    + ico(lock ? 'lock' : typ) + '<span>' + esc(titel) + '</span>' + (badge || '') + '<span class="ext">' + esc((F.ext || '').toUpperCase()) + '</span></button>';
 }
-function chipLink(url, titel, typ, extraClass){
+function chipLink(url, titel, typ, extraClass, badge){
   return '<a class="chip t-' + typ + (extraClass ? ' ' + extraClass : '') + '" href="' + esc(url) + '" target="_blank" rel="noopener">' + ico(typ)
-    + '<span>' + esc(titel) + '</span><span class="ext">' + esc(hostOf(url)) + '</span></a>';
+    + '<span>' + esc(titel) + '</span>' + (badge || '') + '<span class="ext">' + esc(hostOf(url)) + '</span></a>';
 }
-/* Ein Material in SuS- und Lehrkraft-Teile zerlegen */
-function materialChips(m, ids, mode){
-  var sus = [], lk = [], ref = ids + ' data-m="' + esc(m.id) + '"';
+/* Ein Material als Chip. Lehrkraft-Material (bereich "lk") erscheint nie in der Kursansicht. */
+function matChip(m, ref, mode){
+  var lk = m.bereich === 'lk', aus = !lk && m.ausgeblendet, cls = (lk ? 'lkchip' : '') + (aus ? ' aus' : '');
+  var badge = aus ? '<span title="für SuS ausgeblendet" style="display:inline-flex"><svg class="i aus-i" viewBox="0 0 24 24" aria-label="ausgeblendet">' + I.eyeoff + '</svg></span>' : '';
   if(editing && mode !== 'kurs'){
-    sus.push('<button class="chip t-' + m.typ + (m.nurLK ? ' lkchip' : '') + '" data-act="edit-m" ' + ref + '>' + ico(m.typ) + '<span>' + esc(m.titel) + '</span>'
-      + (m.nurLK ? '<span class="ext">nur LK</span>' : '') + (m.lk ? '<span class="ext">+ ' + esc((m.lk.ext || '').toUpperCase()) + '</span>' : '') + '</button>');
-    return { sus:sus, lk:lk };
+    var ext = m.datei ? (m.datei.ext || '').toUpperCase() : (m.url ? 'Link' : '');
+    var chip = '<button class="chip t-' + m.typ + (cls ? ' ' + cls : '') + '" data-act="edit-m" ' + ref + '>' + ico(m.typ === 'pruefung' ? 'lock' : m.typ)
+      + '<span>' + esc(m.titel) + '</span>' + badge + (ext ? '<span class="ext">' + esc(ext) + '</span>' : '') + '</button>';
+    if(lk) return chip;
+    var lbl = m.ausgeblendet ? 'Für SuS einblenden' : 'Für SuS ausblenden';
+    return '<span class="mwrap">' + chip + '<button class="iconbtn" data-act="vis-m" ' + ref + ' aria-label="' + lbl + '" title="' + lbl + '">' + ico(m.ausgeblendet ? 'eyeoff' : 'eye') + '</button></span>';
   }
-  if(mode === 'kurs' && m.nurLK) return { sus:sus, lk:lk };
-  var target = m.nurLK ? lk : sus;
-  if(m.sus) target.push(chipFile(m.sus, m.titel, m.typ, ref + ' data-slot="sus"', m.nurLK ? 'lkchip' : ''));
-  else if(m.url) target.push(chipLink(m.url, m.titel, m.typ, m.nurLK ? 'lkchip' : ''));
-  if(m.lk && mode !== 'kurs') lk.push(chipFile(m.lk, m.titel, m.typ, ref + ' data-slot="lk"', 'lkchip'));
-  return { sus:sus, lk:lk };
+  if(m.datei) return chipFile(m.datei, m.titel, m.typ, ref + ' data-slot="datei"', cls, badge);
+  if(m.url) return chipLink(m.url, m.titel, m.typ, cls, badge);
+  return '';
+}
+function lkEditBlock(chips, vid){
+  return '<div class="lk-area edit"><span class="lbl">Lehrkraft-Material · für SuS nie sichtbar</span><div class="chips">' + chips.join('')
+    + '<button class="chip add lkchip" data-act="add-m" data-bereich="lk" ' + vid + '>' + ico('plus') + '<span>Lehrkraft-Material</span></button></div></div>';
 }
 function lkBlock(key, chips){
   if(!chips.length) return '';
@@ -770,7 +823,13 @@ function renderStart(){
   (data.faecher || []).forEach(function(f){
     var jgs = (f.jahrgaenge || []).slice().sort(function(a, b){ return jgOrder(a.name) - jgOrder(b.name); });
     html += '<article class="fach acc-' + esc(f.farbe || 'blau') + '"><div class="fach-head"><span class="fach-icon">' + ico(fachIcon(f)) + '</span><h2>' + esc(f.name) + '</h2>'
-      + tools('f', idsAttr({f:f})) + '</div><div class="jgs">';
+      + tools('f', idsAttr({f:f})) + '</div>';
+    if(f.extern){
+      html += '<div class="fach-extern"><a class="pillbtn" href="' + esc(f.extern) + '" target="_blank" rel="noopener">' + ico('next') + 'Sammlung öffnen</a>'
+        + '<span class="muted" style="font-size:.9rem">eigene Seite (' + esc(hostOf(f.extern)) + ')</span></div></article>';
+      return;
+    }
+    html += '<div class="jgs">';
     jgs.forEach(function(j){ html += '<a class="jg" href="#/f/' + encodeURIComponent(f.id) + '/' + encodeURIComponent(j.id) + '" aria-label="' + esc(f.name + ', ' + jgLabel(j)) + '">' + esc(j.name) + '</a>'; });
     html += '<button class="jg add edit-only" data-act="add-j" ' + idsAttr({f:f}) + ' aria-label="Jahrgang hinzufügen">' + ico('plus') + '</button>';
     if(!jgs.length) html += '<p class="muted" style="margin:.3rem 0 0">Noch keine Jahrgänge.</p>';
@@ -801,33 +860,31 @@ function renderJahrgang(f, j){
   if(klpFor(f, j.name).length) html += '<button class="addbtn" data-act="klp-r" ' + idsAttr({f:f, j:j}) + '>' + ico('klp') + 'Aus dem Kernlehrplan ergänzen</button>';
   return html + '</div></div>';
 }
-function boardInner(b){
-  var byId = {}; (b.nodes || []).forEach(function(n){ byId[n.id] = n; });
-  var lines = (b.edges || []).map(function(e){
-    var a = byId[e[0]], c = byId[e[1]]; if(!a || !c) return '';
-    return '<line x1="' + (a.x * 10) + '" y1="' + (a.y * 6.25) + '" x2="' + (c.x * 10) + '" y2="' + (c.y * 6.25) + '"/>';
-  }).join('');
-  return '<svg class="edges" viewBox="0 0 1000 625" preserveAspectRatio="none" aria-hidden="true">' + lines + '</svg>'
-    + (b.nodes || []).map(function(n){ return '<div class="node ' + esc(n.art || 'begriff') + '" data-node="' + esc(n.id) + '" style="left:' + n.x + '%;top:' + n.y + '%">' + esc(n.t) + '</div>'; }).join('');
-}
-function boardSection(r, mode, ids){
-  var b = r.board, nodes = b && b.nodes && b.nodes.length, bild = b && b.bild;
-  if(!nodes && !bild){
-    return mode === 'kurs' ? '' : '<div class="edit-only" style="margin:0 0 1.2rem"><button class="addbtn" data-act="edit-board" ' + ids + '>' + ico('map') + 'Überblick anlegen – Concept-Map, Fragen, Titelbild</button></div>';
+function titelbildSection(r, mode, ids){
+  if(r.titelbild){
+    return '<section class="titelbild-wrap" aria-label="Titelbild"><button class="titelbild-btn" data-act="open-bild" ' + ids + ' aria-label="Titelbild groß anzeigen">'
+      + '<img class="titelbild" data-bild="1" ' + ids + ' alt="Titelbild der Reihe"></button>'
+      + (mode === 'kurs' ? '' : '<div class="edit-only" style="margin-top:.6rem"><button class="pillbtn" data-act="edit-bild" ' + ids + '>' + ico('image') + 'Titelbild ändern</button></div>') + '</section>';
   }
-  return '<section class="board-wrap" aria-label="Überblick">' + (bild ? '<img class="titelbild" data-bild="1" ' + ids + ' alt="Titelbild der Reihe">' : '')
-    + (nodes ? '<div class="board-scroll"><div class="board">' + boardInner(b) + '</div></div>' : '')
-    + (mode === 'kurs' ? '' : '<div class="edit-only" style="margin-top:.6rem"><button class="pillbtn" data-act="edit-board" ' + ids + '>' + ico('map') + 'Überblick bearbeiten</button></div>')
-    + '</section>';
+  return mode === 'kurs' ? '' : '<div class="edit-only" style="margin:0 0 1.2rem"><button class="addbtn" data-act="edit-bild" ' + ids + '>' + ico('image') + 'Titelbild hinzufügen – z. B. Foto der Concept-Map</button></div>';
+}
+/* Alles, was SuS in der Kursansicht sehen (für „Alle Materialien herunterladen“) */
+function susItems(r){
+  var out = [];
+  (r.vorhaben || []).forEach(function(v, vi){
+    if(v.ausgeblendet) return;
+    (v.materialien || []).forEach(function(m){ if(m.bereich !== 'lk' && !m.ausgeblendet && (m.datei || m.url)) out.push({ v:v, vi:vi, m:m }); });
+  });
+  return out;
 }
 function renderReihe(f, j, r, mode){
   document.title = r.titel;
   var kurs = mode === 'kurs', base = '#/f/' + encodeURIComponent(f.id) + '/' + encodeURIComponent(j.id), ids = idsAttr({f:f, j:j, r:r});
   var html = '<div class="acc-' + esc(f.farbe || 'blau') + '">' + (kurs ? '' : crumbs([[f.name + ' ' + j.name, base], [r.titel, base + '/' + encodeURIComponent(r.id)]]))
-    + '<div class="page-head"><h1>' + esc(r.titel) + '</h1>' + (kurs ? '<span class="pill">' + esc(f.name + ' ' + j.name) + '</span>' : tools('r', ids, {noMove:true}))
+    + '<div class="page-head"><h1>' + esc(r.titel) + '</h1>' + (kurs ? '<span class="pill" data-kurs-pill>' + esc(f.name + ' ' + j.name) + '</span>' : tools('r', ids, {noMove:true}))
     + (kurs ? '' : '<span class="spacer"></span><button class="pillbtn" data-act="share-r" ' + ids + '>' + ico('qr') + '<span class="lbl">Mit Kurs teilen</span></button>')
     + (r.inhaltsfeld ? '<span class="sub">' + esc(r.inhaltsfeld) + '</span>' : '') + '</div>';
-  html += boardSection(r, mode, ids);
+  html += titelbildSection(r, mode, ids);
   if(r.uebersicht){
     var ov = Object.assign({ id:'ov', typ:'uebersicht', titel:'Datei zur Reihe' }, r.uebersicht), parts = materialChipsOv(ov, ids);
     if(parts.sus.length || (!kurs && parts.lk.length)){
@@ -840,20 +897,26 @@ function renderReihe(f, j, r, mode){
   vs.forEach(function(v, i){
     if(kurs && v.ausgeblendet) return;
     shown++;
-    var vid = idsAttr({f:f, j:j, r:r, v:v}), sus = [], lk = [];
-    (v.materialien || []).forEach(function(m){ var p = materialChips(m, vid, mode); sus = sus.concat(p.sus); lk = lk.concat(p.lk); });
+    var vid = idsAttr({f:f, j:j, r:r, v:v}), mats = v.materialien || [];
+    function chipOf(m){ return matChip(m, vid + ' data-m="' + esc(m.id) + '"', mode); }
+    var sus = mats.filter(function(m){ return m.bereich !== 'lk' && !(kurs && m.ausgeblendet); }).map(chipOf).filter(Boolean);
+    var lk = kurs ? [] : mats.filter(function(m){ return m.bereich === 'lk'; }).map(chipOf).filter(Boolean);
     var eye = '<button class="iconbtn" data-act="vis-v" ' + vid + ' aria-label="' + (v.ausgeblendet ? 'Für SuS einblenden' : 'Für SuS ausblenden') + '" title="' + (v.ausgeblendet ? 'Für SuS einblenden' : 'Für SuS ausblenden') + '">' + ico(v.ausgeblendet ? 'eyeoff' : 'eye') + '</button>';
     html += '<div class="row' + (!kurs && v.ausgeblendet ? ' aus' : '') + '"><span class="nr">' + (i + 1) + '</span><div class="row-title"><b>' + esc(v.titel) + '</b>'
       + (v.notiz ? '<small>' + esc(v.notiz) + '</small>' : '')
       + (!kurs && v.ausgeblendet ? '<span class="aus-badge">' + ico('eyeoff') + 'für SuS ausgeblendet</span>' : '') + '</div>'
       + '<div class="row-main"><div class="chips">' + sus.join('')
       + (!sus.length && !editing ? '<span class="muted" style="font-size:.95rem;padding-top:.5rem">' + (lk.length ? '' : 'Noch kein Material.') + '</span>' : '')
-      + (kurs ? '' : '<button class="chip add edit-only" data-act="add-m" ' + vid + '>' + ico('plus') + '<span>Material</span></button>') + '</div>'
-      + (editing || kurs ? '' : lkBlock(v.id, lk)) + '</div>' + (kurs ? '' : tools('v', vid, { extra:eye })) + '</div>';
+      + (kurs ? '' : '<button class="chip add edit-only" data-act="add-m" data-bereich="sus" ' + vid + '>' + ico('plus') + '<span>Unterrichtsmaterial</span></button>') + '</div>'
+      + (kurs ? '' : (editing ? lkEditBlock(lk, vid) : lkBlock(v.id, lk))) + '</div>' + (kurs ? '' : tools('v', vid, { extra:eye })) + '</div>';
   });
   if(!shown) html += '<div class="row empty">' + (kurs ? 'Hier gibt es noch nichts zu sehen.' : 'Noch keine Unterrichtsvorhaben.') + '</div>';
   html += (kurs ? '' : '<button class="addbtn add-row edit-only" data-act="add-v" ' + ids + '>' + ico('plus') + 'Unterrichtsvorhaben</button>') + '</div>';
-  if(kurs) return html + '<p class="kurs-foot"><a href="#/" data-act="leave-kurs">Ganze Sammlung öffnen</a></p></div>';
+  var dl = susItems(r), dlMb = dl.reduce(function(s, x){ return s + (x.m.datei ? +x.m.datei.mb || 0 : 0); }, 0);
+  var foot = dl.length ? '<p class="kurs-foot"><button class="linkbtn" data-act="dl-reihe" ' + ids + (kurs ? '' : ' title="Lädt alles, was SuS in der Kursansicht sehen"') + '>' + ico('download')
+    + 'Alle Materialien herunterladen' + (dlMb ? ' (ca. ' + fmtMb(dlMb) + ')' : '') + '</button></p>' : '';
+  if(kurs) return html + foot + '</div>';
+  html += foot;
   var all = j.reihen || [], idx = all.indexOf(r), prev = all[idx - 1], next = all[idx + 1];
   if(prev || next){
     html += '<nav class="reihe-nav">' + (prev ? '<a href="' + base + '/' + encodeURIComponent(prev.id) + '"><small>Vorherige Reihe</small><b>' + esc(prev.titel) + '</b></a>' : '')
@@ -872,6 +935,10 @@ function materialChipsOv(ov, ids){
 function renderSettings(){
   document.title = 'Einstellungen';
   var html = crumbs([['Einstellungen', '#/einstellungen']]) + '<div class="page-head"><h1>Einstellungen</h1></div>';
+  if(loadJSON(KURS_KEY)){
+    html += '<section class="panel"><h2>Kursansicht</h2><p class="muted">Dieses Gerät öffnet beim Start automatisch die Kursansicht einer Reihe.</p>'
+      + '<button class="btn" data-act="leave-kurs">Kursansicht auf diesem Gerät beenden</button></section>';
+  }
   if(keyB){
     html += '<section class="panel"><h2>Zugang</h2><p class="muted">Der Code ist auf diesem Gerät gespeichert.</p>'
       + '<button class="btn" data-act="logout">Auf diesem Gerät abmelden</button></section>'
@@ -898,9 +965,26 @@ function renderSettings(){
       + '<div class="btnline" style="margin:0 0 .8rem"><button class="btn primary" data-act="import">' + ico('importi') + 'Planung importieren</button></div>'
       + '<div class="btnline" style="margin:0"><button class="btn" data-act="change-code">Zugangscode ändern</button>'
       + '<button class="btn" data-act="change-pw">Prüfungspasswort ändern</button></div></section>';
+    html += storagePanel();
   }
   if(canEdit() && !zugang) html += '<section class="panel"><h2>Ersteinrichtung</h2><p class="muted">Die Seite ist noch nicht eingerichtet.</p><a class="btn primary" href="#/einrichtung">Jetzt einrichten</a></section>';
   return html;
+}
+function storagePanel(){
+  var total = usedMb(data), pct = Math.min(100, total / LIMIT_MB * 100), warn = total >= WARN_TOTAL_MB, rows = '';
+  (data.faecher || []).forEach(function(f){
+    if(f.extern || !(f.jahrgaenge || []).length) return;
+    rows += '<li><b>' + esc(f.name) + '</b><span>' + fmtMb(usedMb(f)) + '</span></li>';
+    f.jahrgaenge.slice().sort(function(a, b){ return jgOrder(a.name) - jgOrder(b.name); }).forEach(function(j){
+      rows += '<li class="sub"><span>' + esc(jgLabel(j)) + '</span><span>' + fmtMb(usedMb(j)) + '</span></li>';
+    });
+  });
+  return '<section class="panel"><h2>Speicherplatz</h2><p style="margin-bottom:.2rem">Dateien in der Sammlung: <b>' + fmtMb(total) + '</b> von 1 GB</p>'
+    + '<div class="bar' + (warn ? ' warn' : '') + '"><i style="width:' + pct.toFixed(1) + '%"></i></div>'
+    + (warn ? '<p class="status err">Der Speicher wird knapp. Große Dateien entfernen oder ein Fach in eine eigene Sammlung auslagern.</p>' : '')
+    + '<p class="hint" id="repo-size"></p><ul class="store-list">' + rows + '</ul>'
+    + '<p class="hint">GitHub Pages erlaubt höchstens 1 GB pro Seite. Ersetzte und gelöschte Dateien bleiben im Verlauf und zählen beim Repository mit. '
+    + 'Videos deshalb verlinken; Bilder werden beim Hochladen verkleinert. Wird es eng: ein Fach in ein eigenes Repository auslagern und hier über „Fach bearbeiten → Adresse“ verlinken.</p></section>';
 }
 function renderSetup(){
   document.title = 'Einrichtung';
@@ -928,7 +1012,9 @@ function render(){
   var parts = location.hash.replace(/^#\/?/, '').split('/').map(function(p){ try{ return decodeURIComponent(p); }catch(e){ return p; } });
   var app = $('#app'), kurs = parts[0] === 'kurs';
   document.body.classList.toggle('kurs', kurs);
-  if(kurs) editing = false;
+  if(kurs){ editing = false; document.body.classList.remove('editing'); }
+  var kx = $('#kurs-exit'); kx.hidden = !(kurs && canEdit() && keyB);
+  kx.innerHTML = ico('teacher') + '<span class="lbl">Lehrkraft-Ansicht</span>';
   $('.brand').setAttribute('href', kurs ? location.hash : '#/');
   if(parts[0] === 'einstellungen'){ app.innerHTML = renderSettings(); wireSettings(); return; }
   if(parts[0] === 'einrichtung'){ app.innerHTML = renderSetup(); wireSetup(); return; }
@@ -964,7 +1050,7 @@ function blobUrl(F){
 }
 function hydrate(){
   document.querySelectorAll('img[data-bild]').forEach(function(img){
-    var c = ctx(img), F = c.r && c.r.board && c.r.board.bild;
+    var c = ctx(img), F = c.r && c.r.titelbild;
     if(F) blobUrl(F).then(function(u){ img.src = u; }, function(){ img.remove(); });
   });
 }
@@ -1144,11 +1230,20 @@ function readSlot(form, name){
   var fi = form.querySelector('input[name="' + name + '__file"]'), ui = form.querySelector('input[name="' + name + '__url"]');
   return { mode:mode, file:fi && fi.files ? fi.files[0] : null, url:ui ? ui.value.trim() : '' };
 }
-function checkSlot(s, label){
+function checkSlot(s, label, bereich){
   if(!s) return true;
   if(s.mode === 'file' && !s.file){ alert('Bitte eine Datei auswählen' + (label ? ' (' + label + ')' : '') + '.'); return false; }
   if(s.mode === 'link' && !/^https?:\/\//i.test(s.url)){ alert('Bitte einen vollständigen Link mit https:// eingeben.'); return false; }
-  if(s.mode === 'file' && s.file.size / 1048576 > WARN_MB && !confirm('„' + s.file.name + '“ ist ' + (s.file.size / 1048576).toFixed(1) + ' MB groß. Trotzdem hochladen?')) return false;
+  if(s.mode === 'file'){
+    var ext = extOf(s.file.name), mb = s.file.size / 1048576;
+    if(VIDEO_EXT.indexOf(ext) >= 0){ alert('Videos bitte nicht hochladen, sondern als Link eintragen (z. B. YouTube, Mediathek, Schulcloud). Sie würden den Speicher schnell füllen.'); return false; }
+    if(mb > MAX_MB){ alert('„' + s.file.name + '“ ist ' + mb.toFixed(1).replace('.', ',') + ' MB groß. Erlaubt sind höchstens ' + MAX_MB + ' MB.'); return false; }
+    var pres = ['pptx','ppt','key','odp'].indexOf(ext) >= 0;
+    if(mb > WARN_MB && !isImageFile(s.file) && !confirm('„' + s.file.name + '“ ist ' + mb.toFixed(1).replace('.', ',') + ' MB groß.'
+      + (pres && bereich !== 'lk' ? ' Tipp: Für SuS lieber als PDF exportieren und hochladen – das ist meist viel kleiner.' : '') + ' Trotzdem hochladen?')) return false;
+    var used = data ? usedMb(data) : 0;
+    if(used + mb > WARN_TOTAL_MB && !confirm('Der Speicher ist mit ' + fmtMb(used) + ' fast voll (Grenze: 1 GB). Trotzdem hochladen?')) return false;
+  }
   return true;
 }
 function openForm(o){
@@ -1196,28 +1291,40 @@ function applySlot(target, key, s, dir, schutz, allowLink){
   return uploadFile(s.file, dir, schutz).then(function(F){ target[key] = F; if(allowLink) target.url = null; return old; });
 }
 
-/* Material-Dialog mit Ortsauswahl */
-function materialForm(loc, m){
+/* Art aus Dateiname/Endung erraten */
+function guessTyp(name){
+  var ext = extOf(name), n = String(name).toLowerCase().replace(/\.[^.]+$/, '');
+  if(/(^|[^a-zäöüß])(klausur|klassenarbeit|test|ka)([^a-zäöüß]|$)/.test(n)) return 'pruefung';
+  if(/l(ö|oe)sung/.test(n)) return 'loesung';
+  if(ext === 'html' || ext === 'htm') return 'html';
+  if(['pptx','ppt','key','odp'].indexOf(ext) >= 0) return 'praesentation';
+  if(VIDEO_EXT.indexOf(ext) >= 0) return 'video';
+  if(ext === 'pdf' || ['docx','doc','odt','pages'].indexOf(ext) >= 0) return 'ab';
+  return null;
+}
+function titleFromFile(name){ return String(name).replace(/\.[^.]+$/, '').replace(/[_]+/g, ' ').replace(/\s+-\s+|\s{2,}/g, ' ').trim(); }
+
+/* Material-Dialog mit Ortsauswahl. bereich: "sus" = Unterrichtsmaterial, "lk" = Lehrkraft-Material */
+function materialForm(loc, m, bereich){
   var isNew = !m;
-  m = m || { typ:'ab', titel:'', nurLK:false, sus:null, lk:null, url:null };
+  m = m || { typ:'ab', titel:'', bereich:bereich === 'lk' ? 'lk' : 'sus', datei:null, url:null, ausgeblendet:false };
   var faecher = data.faecher || [];
   var ortHtml = '<fieldset><legend>Ort</legend><div class="grid2">'
     + '<label class="f"><span>Fach</span><select name="o_f"></select></label><label class="f"><span>Jahrgang</span><select name="o_j"></select></label></div>'
     + '<label class="f"><span>Reihe</span><select name="o_r"></select></label><div class="newname" data-for="o_r"><input type="text" name="o_r_new" placeholder="Name der neuen Reihe"></div>'
     + '<label class="f"><span>Unterrichtsvorhaben</span><select name="o_v"></select></label><div class="newname" data-for="o_v"><input type="text" name="o_v_new" placeholder="Name des neuen Vorhabens"></div></fieldset>';
+  var titleNew = function(b){ return b === 'lk' ? 'Lehrkraft-Material hinzufügen' : 'Unterrichtsmaterial hinzufügen'; };
   return openForm({
-    title: isNew ? 'Material hinzufügen' : 'Material bearbeiten', submit: isNew ? 'Hinzufügen' : 'Speichern', deletable: !isNew, noFocus:true,
+    title: isNew ? titleNew(m.bereich) : 'Material bearbeiten', submit: isNew ? 'Hinzufügen' : 'Speichern', deletable: !isNew, noFocus:true,
     fields:[
       { type:'html', html:ortHtml },
+      { type:'html', html:'<fieldset><legend>Bereich</legend><div class="seg">' + BEREICHE.map(function(b){
+          return '<label><input type="radio" name="bereich" value="' + b[0] + '"' + (m.bereich === b[0] ? ' checked' : '') + '>' + b[1] + '</label>'; }).join('')
+        + '</div><p class="hint" id="bereich-hint" style="margin:0 0 .6rem"></p></fieldset>' },
       { name:'typ', label:'Art', type:'select', options:TYPES, value:m.typ },
       { name:'titel', label:'Titel', value:m.titel, required:true },
-      { type:'html', html:'<fieldset><legend>Wer sieht das Material?</legend><div class="seg">'
-        + '<label><input type="radio" name="sicht" value="alle"' + (m.nurLK ? '' : ' checked') + '>SuS und Lehrkräfte</label>'
-        + '<label><input type="radio" name="sicht" value="lk"' + (m.nurLK ? ' checked' : '') + '>Nur Lehrkräfte</label></div>'
-        + '<p class="hint" id="sicht-hint" style="margin:0 0 .6rem"></p></fieldset>' },
-      { name:'sus', label:'Datei für SuS', type:'slot', allowLink:true, current: m.sus ? m.sus.name : (m.url ? m.url : ''), url:m.url,
-        defaultMode:'file', hint:'Am besten als PDF. Interaktive Seiten als HTML-Datei.' },
-      { name:'lk', label:'Bearbeitbare Version (optional)', type:'slot', current: m.lk ? m.lk.name : '', hint:'z. B. die Word- oder PowerPoint-Datei – erscheint nur im Lehrkraft-Bereich.' },
+      { name:'datei', label:'Datei oder Link', type:'slot', allowLink:true, current: m.datei ? m.datei.name : (m.url || ''), url:m.url, defaultMode:'file', hint:' ' },
+      { type:'html', html:'<label class="check" id="sichtbar-row"><input type="checkbox" name="sichtbar"' + (m.ausgeblendet ? '' : ' checked') + '>Für SuS sichtbar</label>' },
       { type:'html', html:'<p class="hint" id="pruef-hint" hidden>' + ico('lock') + ' Wird zusätzlich mit dem Prüfungspasswort verschlüsselt.</p>' }
     ],
     wire:function(form){
@@ -1228,8 +1335,8 @@ function materialForm(loc, m){
         if(!items.length && addLabel) sel.value = '__neu';
       }
       function fill(level){
-        var f = (level === 0 ? findIn(faecher, loc.f) : findIn(faecher, sf.value)) || faecher[0];
-        if(level <= 0) opts(sf, faecher.map(function(x){ return { id:x.id, label:x.name }; }), f && f.id);
+        var f = (level === 0 ? findIn(faecher, loc.f) : findIn(faecher, sf.value)) || faecher.filter(function(x){ return !x.extern; })[0];
+        if(level <= 0) opts(sf, faecher.filter(function(x){ return !x.extern; }).map(function(x){ return { id:x.id, label:x.name }; }), f && f.id);
         f = findIn(faecher, sf.value);
         var jgs = f ? f.jahrgaenge.slice().sort(function(a, b){ return jgOrder(a.name) - jgOrder(b.name); }) : [];
         if(level <= 1) opts(sj, jgs.map(function(x){ return { id:x.id, label:jgLabel(x) }; }), level === 0 ? loc.j : null);
@@ -1245,46 +1352,50 @@ function materialForm(loc, m){
       sj.addEventListener('change', function(){ fill(2); });
       sr.addEventListener('change', function(){ fill(3); });
       sv.addEventListener('change', function(){ fill(4); });
-      var typ = form.typ, hint = $('#pruef-hint', form), touched = false;
-      var rAlle = form.querySelector('input[name=sicht][value=alle]'), rLk = form.querySelector('input[name=sicht][value=lk]');
-      var legend = form.querySelector('fieldset[data-slot=sus] legend'), sh = $('#sicht-hint', form);
-      function syncSicht(){
-        var lkOnly = rLk.checked;
-        legend.textContent = lkOnly ? 'Datei' : 'Datei für SuS';
-        sh.textContent = lkOnly ? 'Erscheint nur unter „Lehrkraft-Material“ – z. B. Lösungen, Tafelbild-Vorlagen, Klassenarbeiten.'
-          : 'SuS sehen die Datei direkt in der Zeile. Eine bearbeitbare Version erscheint zusätzlich unter „Lehrkraft-Material“.';
+      var typ = form.typ, ph = $('#pruef-hint', form), bh = $('#bereich-hint', form), sRow = $('#sichtbar-row', form);
+      var fh = form.querySelector('fieldset[data-slot=datei] .slot-file .hint'), h3 = form.querySelector('h3');
+      function bereichNow(){ return (form.querySelector('input[name=bereich]:checked') || {}).value || 'sus'; }
+      function sync(){
+        if(typ.value === 'pruefung') form.querySelector('input[name=bereich][value=lk]').checked = true;
+        var lk = bereichNow() === 'lk';
+        ph.hidden = typ.value !== 'pruefung'; sRow.hidden = lk;
+        bh.textContent = lk ? 'Nur im Lehrkraft-Bereich – SuS sehen es nie, auch nicht in der Kursansicht.'
+          : 'Erscheint für SuS direkt in der Zeile. Mit dem Auge lässt es sich aus- und einblenden.';
+        if(fh) fh.textContent = lk ? 'z. B. Word- oder PowerPoint-Datei, Lösung, Klassenarbeit.' : 'Am besten PDF oder interaktive Seite (HTML). Videos bitte als Link.';
+        if(isNew) h3.textContent = titleNew(bereichNow());
       }
-      function syncTyp(){
-        var p = typ.value === 'pruefung';
-        hint.hidden = !p; rAlle.disabled = p;
-        if(p) rLk.checked = true; else if(!touched && isNew){ if(typ.value === 'loesung') rLk.checked = true; else rAlle.checked = true; }
-        syncSicht();
-      }
-      rAlle.addEventListener('change', function(){ touched = true; syncSicht(); });
-      rLk.addEventListener('change', function(){ touched = true; syncSicht(); });
-      typ.addEventListener('change', syncTyp); syncTyp();
+      Array.prototype.forEach.call(form.querySelectorAll('input[name=bereich]'), function(x){
+        x.addEventListener('change', function(){ if(bereichNow() === 'sus' && typ.value === 'pruefung') typ.value = 'ab'; sync(); });
+      });
+      typ.addEventListener('change', sync);
       form.addEventListener('change', function(e){
-        if(e.target.type === 'file' && e.target.files[0] && e.target.name === 'sus__file'){
-          var ext = extOf(e.target.files[0].name);
-          if(isNew && (ext === 'html' || ext === 'htm')) typ.value = 'html';
-          if(isNew && ['pptx','ppt','key','odp'].indexOf(ext) >= 0) typ.value = 'praesentation';
-          syncTyp();
-          var tt = form.titel; if(!tt.value) tt.value = e.target.files[0].name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ');
+        if(e.target.name === 'datei__file' && e.target.files[0]){
+          var file = e.target.files[0], g = guessTyp(file.name);
+          if(g && isNew) typ.value = g;
+          if(!form.titel.value) form.titel.value = titleFromFile(file.name);
+          sync();
         }
       });
+      form.addEventListener('input', function(e){
+        if(e.target.name === 'datei__url' && isNew && (typ.value === 'ab' || typ.value === 'link' || typ.value === 'video')){
+          typ.value = /youtu\.?be|vimeo|mediathek|ardmediathek|zdf\.de|planet-schule/i.test(e.target.value) ? 'video' : 'link';
+        }
+      });
+      sync();
     },
     collect:function(form, out){
       out.o = { f:form.o_f.value, j:form.o_j.value, r:form.o_r.value, v:form.o_v.value, rNew:form.o_r_new.value.trim(), vNew:form.o_v_new.value.trim() };
-      out.nurLK = form.typ.value === 'pruefung' || form.querySelector('input[name=sicht][value=lk]').checked;
+      out.bereich = form.typ.value === 'pruefung' ? 'lk' : ((form.querySelector('input[name=bereich]:checked') || {}).value || 'sus');
+      out.sichtbar = form.sichtbar.checked;
     }
   });
 }
-function saveMaterial(loc, existing){
+function saveMaterial(loc, existing, bereich){
   return ensureFresh().then(function(){
-    var cur = existing ? { f:existing.f, j:existing.j, r:existing.r, v:existing.v, m:existing.m } : null;
+    var cur = null;
     // Nach dem Neuladen die aktuellen Objekte suchen
-    if(cur){ var c = ctx({ dataset:{ f:cur.f.id, j:cur.j.id, r:cur.r.id, v:cur.v.id, m:cur.m.id } }); if(!c.m) throw new Error('Material nicht mehr vorhanden.'); cur = c; }
-    return materialForm(loc, cur && cur.m).then(function(v){
+    if(existing){ cur = ctx({ dataset:{ f:existing.f.id, j:existing.j.id, r:existing.r.id, v:existing.v.id, m:existing.m.id } }); if(!cur.m) throw new Error('Material nicht mehr vorhanden.'); }
+    return materialForm(loc, cur && cur.m, bereich).then(function(v){
       if(!v) return;
       if(v._delete){
         if(!confirm('„' + cur.m.titel + '“ entfernen?')) return;
@@ -1295,29 +1406,36 @@ function saveMaterial(loc, existing){
       if(!j){ alert('Bitte Fach und Jahrgang wählen. Jahrgänge legst du auf der Startseite an.'); return; }
       if(o.r === '__neu' && !o.rNew){ alert('Bitte einen Namen für die neue Reihe eingeben.'); return; }
       if(o.v === '__neu' && !o.vNew){ alert('Bitte einen Namen für das neue Unterrichtsvorhaben eingeben.'); return; }
-      if(!checkSlot(v.sus, 'Schülerinnen und Schüler') || !checkSlot(v.lk, 'Lehrkräfte')) return;
+      if(v.datei.mode === 'none'){ alert('Bitte eine Datei oder einen Link angeben.'); return; }
+      if(!checkSlot(v.datei, null, v.bereich)) return;
+      if(cur && cur.m.bereich === 'lk' && v.bereich === 'sus' && !confirm('„' + v.titel + '“ wird damit für SuS sichtbar. Fortfahren?')) return;
       var schutz = v.typ === 'pruefung' ? 'pruefung' : 'basis';
-      var needP = schutz === 'pruefung' && ((v.sus.mode === 'file') || (v.lk.mode === 'file'));
+      var keepF = v.datei.mode === 'keep' && cur && cur.m.datei;
+      var needP = (schutz === 'pruefung' && (v.datei.mode === 'file' || keepF)) || (keepF && cur.m.datei.schutz === 'pruefung');
       return (needP ? askPruefung() : Promise.resolve(true)).then(function(ok){
         if(!ok) return;
-        var target = cur ? cur.m : { id:uid() }, oldFiles = [];
+        var target = cur ? cur.m : { id:uid(), datei:null, url:null };
         return commit((cur ? 'Material geändert: ' : 'Material: ') + v.titel, function(){
           var r = o.r === '__neu' ? null : findIn(j.reihen, o.r);
-          if(!r){ r = { id:uniqueId(slug(o.rNew), j.reihen), titel:o.rNew, inhaltsfeld:'', uebersicht:null, vorhaben:[] }; j.reihen.push(r); }
+          if(!r){ r = { id:uniqueId(slug(o.rNew), j.reihen), titel:o.rNew, inhaltsfeld:'', uebersicht:null, titelbild:null, vorhaben:[] }; j.reihen.push(r); }
           var vh = o.v === '__neu' ? null : findIn(r.vorhaben, o.v);
-          if(!vh){ vh = { id:uid(), titel:o.vNew, notiz:'', materialien:[] }; r.vorhaben.push(vh); }
-          target.typ = v.typ; target.titel = v.titel; target.nurLK = !!v.nurLK;
-          var dir = dirFor(f, j, r);
-          return applySlot(target, 'sus', v.sus, dir, schutz, true).then(function(a){ oldFiles = oldFiles.concat(a); return applySlot(target, 'lk', v.lk, dir, schutz, false); })
-            .then(function(b){
-              oldFiles = oldFiles.concat(b);
-              if(cur && cur.v !== vh){ cur.v.materialien.splice(cur.v.materialien.indexOf(cur.m), 1); }
-              if(vh.materialien.indexOf(target) < 0) vh.materialien.push(target);
-              if(oldFiles.length && askDelete(oldFiles)) return deleteFiles(oldFiles);
-            }).then(function(){
-              var want = '#/f/' + encodeURIComponent(f.id) + '/' + encodeURIComponent(j.id) + '/' + encodeURIComponent(r.id);
-              if(location.hash !== want) setTimeout(function(){ location.hash = want; }, 0);
-            });
+          if(!vh){ vh = { id:uid(), titel:o.vNew, notiz:'', ausgeblendet:false, materialien:[] }; r.vorhaben.push(vh); }
+          target.typ = v.typ; target.titel = v.titel; target.bereich = v.bereich; target.ausgeblendet = v.bereich === 'sus' ? !v.sichtbar : false;
+          delete target.nurLK; delete target.sus; delete target.lk;
+          var dir = dirFor(f, j, r), oldFiles = [];
+          return applySlot(target, 'datei', v.datei, dir, schutz, true).then(function(a){
+            oldFiles = a;
+            if(target.datei === undefined) target.datei = null;
+            if(target.url === undefined) target.url = null;
+            if(v.datei.mode === 'keep' && target.datei) return reseal(target.datei, schutz);
+          }).then(function(){
+            if(cur && cur.v !== vh){ cur.v.materialien.splice(cur.v.materialien.indexOf(cur.m), 1); }
+            if(vh.materialien.indexOf(target) < 0) vh.materialien.push(target);
+            if(oldFiles.length && askDelete(oldFiles)) return deleteFiles(oldFiles);
+          }).then(function(){
+            var want = '#/f/' + encodeURIComponent(f.id) + '/' + encodeURIComponent(j.id) + '/' + encodeURIComponent(r.id);
+            if(location.hash !== want) setTimeout(function(){ location.hash = want; }, 0);
+          });
         });
       });
     });
@@ -1332,25 +1450,40 @@ function reiheForm(r){
   return openForm({ title: r.id ? 'Reihe bearbeiten' : 'Reihe hinzufügen', submit: r.id ? 'Speichern' : 'Anlegen', fields:[
     { name:'titel', label:'Titel der Reihe', value:r.titel, required:true, placeholder:'z. B. Sehhilfen für nah und fern' },
     { name:'inhaltsfeld', label:'Inhaltsfeld / Untertitel (optional)', value:r.inhaltsfeld },
-    { name:'ovSus', label:'Datei zur Reihe für SuS (optional)', type:'slot', allowLink:true, current: ov.sus ? ov.sus.name : (ov.url || ''), url:ov.url, hint:'z. B. Lernlandkarte als PDF. Concept-Map und Fragen legst du über „Überblick“ an.' },
-    { name:'ovLk', label:'Datei zur Reihe für Lehrkräfte (optional)', type:'slot', current: ov.lk ? ov.lk.name : '', hint:'z. B. Reihenplanung als Word-Datei' }
+    { name:'ovSus', label:'Datei zur Reihe für SuS (optional)', type:'slot', allowLink:true, current: ov.sus ? ov.sus.name : (ov.url || ''), url:ov.url, hint:'z. B. Lernlandkarte als PDF.' },
+    { name:'ovLk', label:'Datei zur Reihe für Lehrkräfte (optional)', type:'slot', current: ov.lk ? ov.lk.name : '', hint:'z. B. Reihenplanung als Word-Datei' },
+    { name:'bild', label:'Titelbild (optional)', type:'slot', accept:'image/*', current: r.titelbild ? r.titelbild.name : '', hint:'Foto oder Bild der Concept-Map bzw. Fragensammlung. Große Bilder werden automatisch verkleinert.' }
   ]});
 }
 function applyReihe(f, j, r, v){
   r.titel = v.titel; r.inhaltsfeld = v.inhaltsfeld;
   var ov = r.uebersicht || { sus:null, lk:null, url:null }, old = [], dir = dirFor(f, j, r);
-  if(!checkSlot(v.ovSus) || !checkSlot(v.ovLk)) return Promise.reject(new Error('abgebrochen'));
+  if(!checkSlot(v.ovSus) || !checkSlot(v.ovLk) || !checkBild(v.bild)) return Promise.reject(new Error('abgebrochen'));
   return applySlot(ov, 'sus', v.ovSus, dir, 'basis', true).then(function(a){ old = old.concat(a); return applySlot(ov, 'lk', v.ovLk, dir, 'basis', false); })
     .then(function(b){
       old = old.concat(b);
       r.uebersicht = (ov.sus || ov.lk || ov.url) ? ov : null;
       if(old.length && askDelete(old)) return deleteFiles(old);
-    });
+    }).then(function(){ return applyTitelbild(r, v.bild, dir); });
+}
+function checkBild(s){
+  if(!checkSlot(s)) return false;
+  if(s && s.mode === 'file' && !isImageFile(s.file)){ alert('Als Titelbild bitte ein Bild wählen (JPG oder PNG).'); return false; }
+  return true;
+}
+/* Titelbild setzen oder entfernen; alte Datei wird gelöscht */
+function applyTitelbild(r, s, dir){
+  if(!s || s.mode === 'keep') return Promise.resolve();
+  return applySlot(r, 'titelbild', s, dir, 'basis', false).then(function(old){ if(old.length) return deleteFiles(old); });
 }
 
 /* =====================================================================
    Aktionen
    ===================================================================== */
+function EXTERN_FIELD(val){
+  return { name:'extern', label:'Liegt in einer anderen Sammlung? Adresse (optional)', type:'url', value:val || '', placeholder:'https://name.github.io/physik/' };
+}
+function checkExtern(u){ if(u && !/^https:\/\//i.test(u)){ alert('Bitte eine vollständige Adresse mit https:// eingeben.'); return false; } return true; }
 function needAdmin(fn){ return function(c){ ensureFresh().then(function(){ var el = c && c._el; fn(el ? ctx(el) : c); }).catch(fail); }; }
 var actions = {
   'edit-titel': needAdmin(function(){
@@ -1359,14 +1492,14 @@ var actions = {
     });
   }),
   'add-f': needAdmin(function(){
-    openForm({ title:'Fach hinzufügen', fields:[{ name:'name', label:'Name', required:true }, { name:'farbe', label:'Farbe', type:'select', options:COLORS, value:'orange' }] }).then(function(v){
-      if(!v) return;
-      commit('Fach: ' + v.name, function(){ data.faecher.push({ id:uniqueId(slug(v.name), data.faecher), name:v.name, farbe:v.farbe, vorlage:null, jahrgaenge:[] }); });
+    openForm({ title:'Fach hinzufügen', fields:[{ name:'name', label:'Name', required:true }, { name:'farbe', label:'Farbe', type:'select', options:COLORS, value:'orange' }, EXTERN_FIELD('')] }).then(function(v){
+      if(!v || !checkExtern(v.extern)) return;
+      commit('Fach: ' + v.name, function(){ data.faecher.push({ id:uniqueId(slug(v.name), data.faecher), name:v.name, farbe:v.farbe, vorlage:/physik/i.test(v.name) ? 'physik' : (/mathe/i.test(v.name) ? 'mathe' : null), extern:v.extern || null, jahrgaenge:[] }); });
     });
   }),
   'edit-f': needAdmin(function(c){
-    openForm({ title:'Fach bearbeiten', fields:[{ name:'name', label:'Name', value:c.f.name, required:true }, { name:'farbe', label:'Farbe', type:'select', options:COLORS, value:c.f.farbe }] }).then(function(v){
-      if(v) commit('Fach geändert', function(){ c.f.name = v.name; c.f.farbe = v.farbe; });
+    openForm({ title:'Fach bearbeiten', fields:[{ name:'name', label:'Name', value:c.f.name, required:true }, { name:'farbe', label:'Farbe', type:'select', options:COLORS, value:c.f.farbe }, EXTERN_FIELD(c.f.extern)] }).then(function(v){
+      if(v && checkExtern(v.extern)) commit('Fach geändert', function(){ c.f.name = v.name; c.f.farbe = v.farbe; c.f.extern = v.extern || null; });
     });
   }),
   'del-f': needAdmin(function(c){
@@ -1457,16 +1590,31 @@ var actions = {
   'up-v': needAdmin(function(c){ if(move(c.r.vorhaben, c.v, -1)) commit('Reihenfolge'); }),
   'down-v': needAdmin(function(c){ if(move(c.r.vorhaben, c.v, 1)) commit('Reihenfolge'); }),
 
-  'add-m': function(c){ saveMaterial({ f:c.f.id, j:c.j.id, r:c.r.id, v:c.v.id }); },
+  'add-m': function(c){ saveMaterial({ f:c.f.id, j:c.j.id, r:c.r.id, v:c.v.id }, null, c._el.dataset.bereich || 'sus'); },
   'edit-m': function(c){ saveMaterial({ f:c.f.id, j:c.j.id, r:c.r.id, v:c.v.id }, c); },
 
   'vis-v': needAdmin(function(c){
     var an = !c.v.ausgeblendet;
     commit((an ? 'Ausgeblendet: ' : 'Eingeblendet: ') + c.v.titel, function(){ c.v.ausgeblendet = an; });
   }),
-  'edit-board': needAdmin(function(c){ openBoardEditor(c); }),
+  'vis-m': needAdmin(function(c){
+    if(!c.m || c.m.bereich === 'lk') return;
+    var an = !c.m.ausgeblendet;
+    commit((an ? 'Ausgeblendet: ' : 'Eingeblendet: ') + c.m.titel, function(){ c.m.ausgeblendet = an; });
+  }),
+  'edit-bild': needAdmin(function(c){
+    openForm({ title:'Titelbild: ' + c.r.titel, noFocus:true, fields:[
+      { name:'bild', label:'Titelbild', type:'slot', accept:'image/*', current: c.r.titelbild ? c.r.titelbild.name : '', defaultMode:'file',
+        hint:'z. B. Foto oder Export der Concept-Map bzw. Fragensammlung. Große Bilder werden automatisch verkleinert.' }
+    ]}).then(function(v){
+      if(!v || v._delete || !checkBild(v.bild) || v.bild.mode === 'keep') return;
+      commit('Titelbild: ' + c.r.titel, function(){ return applyTitelbild(c.r, v.bild, dirFor(c.f, c.j, c.r)); });
+    });
+  }),
+  'open-bild': function(c){ if(c.r && c.r.titelbild) openFile(c.r.titelbild, 'Titelbild – ' + c.r.titel, 'uebersicht'); },
+  'dl-reihe': function(c){ exportReiheSuS(c.f, c.j, c.r); },
   'share-r': function(c){ shareReihe(c.f, c.j, c.r); },
-  'leave-kurs': function(){ try{ localStorage.removeItem(KURS_KEY); }catch(e){} location.hash = '#/'; },
+  'leave-kurs': function(){ try{ localStorage.removeItem(KURS_KEY); }catch(e){} toast('Kursansicht auf diesem Gerät beendet.'); location.hash = '#/'; },
   'import': function(){ startImport(); },
   'logout': function(){
     if(!confirm('Code auf diesem Gerät vergessen?')) return;
@@ -1508,7 +1656,13 @@ var actions = {
   }
 };
 
+var kursTaps = 0, kursTapT = 0;
 document.addEventListener('click', function(e){
+  if(e.target.closest('[data-kurs-pill]')){
+    var now = Date.now(); kursTaps = now - kursTapT < 1500 ? kursTaps + 1 : 1; kursTapT = now;
+    if(kursTaps >= 5){ kursTaps = 0; location.hash = '#/einstellungen'; }
+    return;
+  }
   var o = e.target.closest('[data-open]');
   if(o){
     e.preventDefault();
@@ -1558,6 +1712,18 @@ function wireSettings(){
     cfg.token = ''; saveJSON(CFG_KEY, cfg); editing = false; form.token.value = '';
     st.className = 'status ok'; st.textContent = 'Token gelöscht.'; document.body.classList.remove('can-edit', 'editing');
   });
+  var rs = $('#repo-size');
+  if(rs && canEdit()){
+    rs.textContent = 'Repository inklusive Verlauf: wird geladen …';
+    fetch('https://api.github.com/repos/' + encodeURIComponent(cfg.owner) + '/' + encodeURIComponent(cfg.repo), {
+      headers:{ 'Accept':'application/vnd.github+json', 'Authorization':'Bearer ' + cfg.token, 'X-GitHub-Api-Version':'2022-11-28' }
+    }).then(function(r){ return r.ok ? r.json() : null; }).then(function(j){
+      if(!j || typeof j.size !== 'number'){ rs.textContent = ''; return; }
+      var mb = j.size / 1024;
+      rs.textContent = 'Repository inklusive Verlauf: ca. ' + fmtMb(mb) + (mb >= WARN_TOTAL_MB ? ' – Achtung, nahe an der Grenze von 1 GB.' : '');
+      if(mb >= WARN_TOTAL_MB) rs.className = 'status err';
+    }, function(){ rs.textContent = ''; });
+  }
   var sfSel = $('#schulform');
   if(sfSel) sfSel.addEventListener('change', function(){
     var val = sfSel.value; ensureFresh().then(function(){ commit('Schulform: ' + val, function(){ data.schulform = val; }); }).catch(fail);
@@ -1622,123 +1788,21 @@ function initialData(titel, schulform, jgP, jgM, useKlp){
 }
 
 /* =====================================================================
-   Überblick-Editor (Concept-Map, Fragen, Titelbild)
+   Bilder vor dem Hochladen verkleinern (max. 2000 px, JPEG)
    ===================================================================== */
 function shrinkImage(file){
   return new Promise(function(res){
-    if(!/^image\/(jpeg|png|webp|heic|heif)/.test(file.type)) return res(file);
-    var img = new Image(), u = URL.createObjectURL(file);
+    if(!isImageFile(file) || extOf(file.name) === 'gif') return res(file);
+    var img = new Image(), u = URL.createObjectURL(file instanceof Blob ? file : new Blob([file]));
     img.onload = function(){
-      var max = 1800, k = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      var max = 2000, k = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement('canvas');
       c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
-      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u);
-      c.toBlob(function(b){ res(b ? new File([b], file.name.replace(/\.[^.]+$/, '') + '.jpg', { type:'image/jpeg' }) : file); }, 'image/jpeg', 0.85);
+      var g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+      g.drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u);
+      c.toBlob(function(b){ res(b && b.size < file.size ? new File([b], file.name.replace(/\.[^.]+$/, '') + '.jpg', { type:'image/jpeg' }) : file); }, 'image/jpeg', 0.85);
     };
     img.onerror = function(){ URL.revokeObjectURL(u); res(file); };
     img.src = u;
-  });
-}
-function openBoardEditor(c){
-  var f = c.f, j = c.j, r = c.r;
-  var b = JSON.parse(JSON.stringify(r.board || {}));
-  b.nodes = b.nodes || []; b.edges = b.edges || [];
-  if(!b.nodes.length) b.nodes.push({ id:uid(), x:50, y:46, t:r.titel, art:'thema' });
-  var newImg = null, removeImg = false, connect = false, sel = null, previewUrl = null;
-  var v = document.createElement('div');
-  v.className = 'viewer editor acc-' + (f.farbe || 'blau');
-  v.innerHTML = '<div class="editor-bar"><button class="iconbtn" data-e="cancel" aria-label="Abbrechen">' + ico('close') + '</button><b class="grow">Überblick: ' + esc(r.titel) + '</b>'
-    + '<button class="pillbtn" data-e="save" style="background:var(--ink);color:var(--sheet);border-color:var(--ink)">Speichern</button></div>'
-    + '<div class="editor-bar">' + NODE_ARTS.map(function(a){ return '<button class="pillbtn" data-add="' + a[0] + '">' + ico('plus') + a[1] + '</button>'; }).join('')
-    + '<button class="pillbtn" data-e="connect">' + ico('link2') + 'Verbinden</button>'
-    + '<button class="pillbtn" data-e="img">' + ico('image') + 'Titelbild</button><input type="file" accept="image/*" hidden data-e="file"></div>'
-    + '<div class="editor-body"><p class="hint" data-e="hint">Karten ziehen zum Verschieben · antippen zum Bearbeiten · „Verbinden“: zwei Karten nacheinander antippen.</p>'
-    + '<div class="editor-img" data-e="imgbox"></div><div class="board-scroll"><div class="board" data-e="board"></div></div></div>';
-  document.body.appendChild(v); document.body.style.overflow = 'hidden';
-  history.pushState({ viewer:true }, '');
-  viewerState = { el:v, url:null, closed:false };
-  var board = $('[data-e=board]', v), hint = $('[data-e=hint]', v);
-  function lines(){ var svg = $('svg.edges', board), tmp = document.createElement('div'); tmp.innerHTML = boardInner({ nodes:b.nodes, edges:b.edges }); svg.innerHTML = $('svg', tmp).innerHTML; }
-  function draw(){
-    board.innerHTML = boardInner(b);
-    if(sel) { var el = board.querySelector('[data-node="' + sel + '"]'); if(el) el.classList.add('sel'); }
-  }
-  function imgBox(){
-    var box = $('[data-e=imgbox]', v), cur = !removeImg && (newImg || b.bild);
-    if(!cur){ box.innerHTML = ''; return; }
-    box.innerHTML = '<img alt="Titelbild"><span class="muted">Titelbild</span><button class="pillbtn" data-e="rmimg">' + ico('trash') + 'Entfernen</button>';
-    var im = $('img', box);
-    if(newImg){ if(previewUrl) URL.revokeObjectURL(previewUrl); previewUrl = URL.createObjectURL(newImg); im.src = previewUrl; }
-    else blobUrl(b.bild).then(function(u){ im.src = u; }, function(){});
-  }
-  draw(); imgBox();
-  function editNode(id){
-    var n = b.nodes.filter(function(x){ return x.id === id; })[0]; if(!n) return;
-    openForm({ title:'Karte bearbeiten', deletable:true, fields:[
-      { name:'t', label:'Text', type:'textarea', value:n.t, required:true }, { name:'art', label:'Art', type:'select', options:NODE_ARTS, value:n.art }
-    ]}).then(function(res){
-      if(!res) return;
-      if(res._delete){ b.nodes = b.nodes.filter(function(x){ return x !== n; }); b.edges = b.edges.filter(function(e){ return e[0] !== id && e[1] !== id; }); }
-      else { n.t = res.t; n.art = res.art; }
-      draw();
-    });
-  }
-  function tap(id){
-    if(!connect) return editNode(id);
-    if(!sel){ sel = id; draw(); return; }
-    if(sel === id){ sel = null; draw(); return; }
-    var k = -1;
-    b.edges.forEach(function(e, i){ if((e[0] === sel && e[1] === id) || (e[0] === id && e[1] === sel)) k = i; });
-    if(k >= 0) b.edges.splice(k, 1); else b.edges.push([sel, id]);
-    sel = null; draw();
-  }
-  var drag = null;
-  board.addEventListener('pointerdown', function(e){
-    var el = e.target.closest('.node'); if(!el) return;
-    e.preventDefault();
-    drag = { el:el, id:el.dataset.node, x0:e.clientX, y0:e.clientY, moved:false };
-    el.setPointerCapture(e.pointerId);
-  });
-  board.addEventListener('pointermove', function(e){
-    if(!drag) return;
-    if(!drag.moved && Math.abs(e.clientX - drag.x0) + Math.abs(e.clientY - drag.y0) < 6) return;
-    drag.moved = true;
-    var rect = board.getBoundingClientRect(), n = b.nodes.filter(function(x){ return x.id === drag.id; })[0];
-    n.x = Math.round(Math.max(4, Math.min(96, (e.clientX - rect.left) / rect.width * 100)) * 10) / 10;
-    n.y = Math.round(Math.max(5, Math.min(95, (e.clientY - rect.top) / rect.height * 100)) * 10) / 10;
-    drag.el.style.left = n.x + '%'; drag.el.style.top = n.y + '%'; lines();
-  });
-  function endDrag(){ if(!drag) return; var d = drag; drag = null; if(!d.moved) tap(d.id); }
-  board.addEventListener('pointerup', endDrag);
-  board.addEventListener('pointercancel', function(){ drag = null; });
-  v.addEventListener('click', function(e){
-    var a = e.target.closest('[data-add]');
-    if(a){
-      var art = a.dataset.add;
-      openForm({ title:'Neue Karte: ' + art.charAt(0).toUpperCase() + art.slice(1), submit:'Hinzufügen', fields:[{ name:'t', label:'Text', type:'textarea', required:true }] }).then(function(res){
-        if(!res || !res.t) return;
-        b.nodes.push({ id:uid(), x:Math.round(30 + Math.random() * 40), y:Math.round(25 + Math.random() * 50), t:res.t, art:art }); draw();
-      });
-      return;
-    }
-    var t = e.target.closest('[data-e]'); if(!t) return;
-    var k = t.dataset.e;
-    if(k === 'cancel'){ history.back(); }
-    else if(k === 'connect'){ connect = !connect; sel = null; t.classList.toggle('on', connect); hint.textContent = connect ? 'Verbinden: erst eine Karte, dann eine zweite antippen. Noch einmal antippen entfernt die Verbindung.' : 'Karten ziehen zum Verschieben · antippen zum Bearbeiten · „Verbinden“: zwei Karten nacheinander antippen.'; draw(); }
-    else if(k === 'img'){ $('[data-e=file]', v).click(); }
-    else if(k === 'rmimg'){ newImg = null; removeImg = true; imgBox(); }
-    else if(k === 'save'){
-      var old = [];
-      commit('Überblick: ' + r.titel, function(){
-        var p = Promise.resolve();
-        if(newImg){ p = uploadFile(newImg, dirFor(f, j, r), 'basis').then(function(F){ if(b.bild) old.push(b.bild.pfad); b.bild = F; }); }
-        else if(removeImg && b.bild){ old.push(b.bild.pfad); b.bild = null; }
-        return p.then(function(){ r.board = b; if(old.length) return deleteFiles(old); });
-      }).then(function(){ if(viewerState && viewerState.el === v) history.back(); });
-    }
-  });
-  $('[data-e=file]', v).addEventListener('change', function(e){
-    var file = e.target.files[0]; if(!file) return;
-    shrinkImage(file).then(function(sm){ newImg = sm; removeImg = false; imgBox(); });
   });
 }
 
@@ -1758,7 +1822,7 @@ function shareReihe(f, j, r){
     var svg = qr.createSvgTag({ cellSize:4, margin:2, scalable:true }), gif = qr.createDataURL(10, 4);
     return openForm({ title:'„' + r.titel + '“ mit dem Kurs teilen', submit:'Fertig', noFocus:true, fields:[{ type:'html', html:
       '<div class="qr-box">' + svg + '</div><div class="linkbox">' + esc(url) + '</div>'
-      + '<p class="hint" style="margin:0 0 .8rem">SuS sehen nur diese Reihe – ohne Hauptmenü, ohne ausgeblendete Stunden und ohne Lehrkraft-Material. Den Zugangscode brauchen sie trotzdem.</p>'
+      + '<p class="hint" style="margin:0 0 .8rem">SuS sehen nur diese Reihe – ohne Hauptmenü, ohne Ausgeblendetes und ohne Lehrkraft-Material. Den Zugangscode brauchen sie trotzdem.</p>'
       + '<div class="btnline" style="margin:0"><button type="button" class="btn" data-x="copy">' + ico('link') + 'Link kopieren</button>'
       + (navigator.share ? '<button type="button" class="btn" data-x="share">' + ico('share') + 'Teilen</button>' : '')
       + '<a class="btn" href="' + gif + '" download="QR ' + esc(safeName(r.titel)) + '.gif">' + ico('download') + 'QR-Code speichern</a>'
@@ -1824,6 +1888,16 @@ function collectImport(files){
     return { plan:plan, get:get };
   });
 }
+function importTitelbild(ri){ return ri.titelbild || (ri.board && ri.board.bild) || null; }
+/* Material aus import.json (Version 1 oder 2) in Einträge des aktuellen Modells zerlegen */
+function importMats(mi){
+  var typ = mi.typ || 'dokument', titel = mi.titel || 'Material';
+  if(mi.bereich) return [{ typ:typ, titel:titel, bereich:typ === 'pruefung' || mi.bereich === 'lk' ? 'lk' : 'sus', datei:mi.datei || null, url:mi.url || null, ausgeblendet:!!mi.ausgeblendet }];
+  var lkOnly = typ === 'pruefung' || mi.sicht === 'lk', out = [];
+  if(mi.sus || mi.url) out.push({ typ:typ, titel:titel, bereich:lkOnly ? 'lk' : 'sus', datei:mi.sus || null, url:mi.sus ? null : (mi.url || null), ausgeblendet:false });
+  if(mi.lk) out.push({ typ:typ, titel:titel, bereich:'lk', datei:mi.lk, url:null, ausgeblendet:false });
+  return out;
+}
 function planEntries(plan){
   if(plan.eintraege) return plan.eintraege;
   return [{ fach:plan.fach, jahrgang:plan.jahrgang, reihen:plan.reihen || [] }];
@@ -1837,8 +1911,8 @@ function startImport(){
       busy(false);
       var entries = planEntries(imp.plan), nR = 0, nV = 0, files = [], missing = [];
       entries.forEach(function(en){ (en.reihen || []).forEach(function(r){ nR++;
-        if(r.board && r.board.bild){ (imp.get(r.board.bild) ? files : missing).push(r.board.bild); }
-        (r.vorhaben || []).forEach(function(v){ nV++; (v.materialien || []).forEach(function(m){ ['sus','lk'].forEach(function(k){ if(m[k]) (imp.get(m[k]) ? files : missing).push(m[k]); }); }); }); }); });
+        var tb = importTitelbild(r); if(tb){ (imp.get(tb) ? files : missing).push(tb); }
+        (r.vorhaben || []).forEach(function(v){ nV++; (v.materialien || []).forEach(function(m){ importMats(m).forEach(function(x){ if(x.datei) (imp.get(x.datei) ? files : missing).push(x.datei); }); }); }); }); });
       var html = '<ul class="import-list">' + entries.map(function(en){ return '<li><b>' + esc(en.fach) + ' ' + esc(en.jahrgang) + '</b>: ' + (en.reihen || []).map(function(r){ return esc(r.titel); }).join(', ') + '</li>'; }).join('') + '</ul>'
         + '<p>' + nR + ' Reihe(n), ' + nV + ' Unterrichtsvorhaben, ' + files.length + ' Datei(en).</p>'
         + (missing.length ? '<p class="status err" style="margin:0 0 .6rem">Fehlt und wird übersprungen:</p><ul class="import-list">' + missing.map(function(m){ return '<li>' + esc(baseName(m)) + '</li>'; }).join('') + '</ul>' : '')
@@ -1870,25 +1944,23 @@ function runImport(imp, entries){
           (en.reihen || []).forEach(function(ri){
             rc = rc.then(function(){
               var r = j.reihen.filter(function(x){ return x.titel.toLowerCase() === String(ri.titel).toLowerCase(); })[0];
-              if(!r){ r = { id:uniqueId(slug(ri.titel), j.reihen), titel:ri.titel, inhaltsfeld:ri.inhaltsfeld || '', uebersicht:null, vorhaben:[] }; j.reihen.push(r); }
+              if(!r){ r = { id:uniqueId(slug(ri.titel), j.reihen), titel:ri.titel, inhaltsfeld:ri.inhaltsfeld || '', uebersicht:null, titelbild:null, vorhaben:[] }; j.reihen.push(r); }
               var dir = dirFor(f, j, r), p = Promise.resolve();
-              if(ri.board && !(r.board && r.board.nodes && r.board.nodes.length)){
-                var nb = { nodes:(ri.board.nodes || []).map(function(n){ return { id:n.id || uid(), x:+n.x, y:+n.y, t:n.t, art:n.art || 'begriff' }; }), edges:ri.board.edges || [], bild:null };
-                p = (ri.board.bild ? up(ri.board.bild, dir, 'basis') : Promise.resolve(null)).then(function(F){ nb.bild = F; r.board = nb; });
-              }
+              var tb = importTitelbild(ri);
+              if(tb && !r.titelbild) p = up(tb, dir, 'basis').then(function(F){ if(F) r.titelbild = F; });
               (ri.vorhaben || []).forEach(function(vi){
                 p = p.then(function(){
                   var v = r.vorhaben.filter(function(x){ return x.titel.toLowerCase() === String(vi.titel).toLowerCase(); })[0];
                   if(!v){ v = { id:uid(), titel:vi.titel, notiz:vi.notiz || '', ausgeblendet:!!vi.ausgeblendet, materialien:[] }; r.vorhaben.push(v); }
                   var mc = Promise.resolve();
                   (vi.materialien || []).forEach(function(mi){
-                    mc = mc.then(function(){
-                      if(v.materialien.some(function(x){ return x.titel === mi.titel && x.typ === (mi.typ || 'dokument'); })) return;
-                      var typ = mi.typ || 'dokument', schutz = typ === 'pruefung' ? 'pruefung' : 'basis';
-                      if(schutz === 'pruefung' && !keyP) return;
-                      var m = { id:uid(), typ:typ, titel:mi.titel, nurLK:typ === 'pruefung' || mi.sicht === 'lk', sus:null, lk:null, url:mi.url || null };
-                      return up(mi.sus, dir, schutz).then(function(F){ m.sus = F; return up(mi.lk, dir, schutz); }).then(function(F){
-                        m.lk = F; if(m.sus || m.lk || m.url) v.materialien.push(m);
+                    importMats(mi).forEach(function(x){
+                      mc = mc.then(function(){
+                        if(v.materialien.some(function(y){ return y.titel === x.titel && y.typ === x.typ && (y.bereich || 'sus') === x.bereich; })) return;
+                        var schutz = x.typ === 'pruefung' ? 'pruefung' : 'basis';
+                        if(schutz === 'pruefung' && !keyP) return;
+                        var m = { id:uid(), typ:x.typ, titel:x.titel, bereich:x.bereich, datei:null, url:x.url, ausgeblendet:x.ausgeblendet };
+                        return up(x.datei, dir, schutz).then(function(F){ m.datei = F; if(m.datei || m.url) v.materialien.push(m); });
                       });
                     });
                   });
@@ -1936,7 +2008,7 @@ function zipBlob(files){
 function safeName(s){ return String(s).replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim().slice(0, 80) || 'Datei'; }
 function pad2(n){ return (n < 10 ? '0' : '') + n; }
 function exportZip(onlyF, onlyJ){
-  var jobs = [], links = [], plan = { format:'unterrichtsmaterial-import', version:1, eintraege:[] };
+  var jobs = [], links = [], plan = { format:'unterrichtsmaterial-import', version:2, eintraege:[] };
   var html = '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Übersicht</title>'
     + '<style>body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:860px;margin:2rem auto;padding:0 1rem;line-height:1.5;color:#1B2333}h1,h2,h3{font-family:Georgia,serif}h3{margin-bottom:.2rem}li{margin:.2rem 0}small{color:#5E6A7C}</style></head><body>'
     + '<h1>' + esc(data.titel || 'Unterrichtsmaterial') + '</h1><p><small>Export vom ' + new Date().toLocaleDateString('de-DE') + ' · Mit der Datei import.json lässt sich alles in eine eigene Sammlung übernehmen.</small></p>';
@@ -1951,10 +2023,7 @@ function exportZip(onlyF, onlyJ){
       (j.reihen || []).forEach(function(r, ri){
         var rdir = jdir + '/' + pad2(ri + 1) + ' ' + safeName(r.titel), pr = { titel:r.titel, inhaltsfeld:r.inhaltsfeld || '', vorhaben:[] };
         pe.reihen.push(pr);
-        if(r.board && ((r.board.nodes && r.board.nodes.length) || r.board.bild)){
-          pr.board = { nodes:r.board.nodes || [], edges:r.board.edges || [] };
-          if(r.board.bild) job(r.board.bild, rdir + '/00 Titelbild.' + r.board.bild.ext, pr.board, 'bild');
-        }
+        if(r.titelbild) job(r.titelbild, rdir + '/00 Titelbild.' + r.titelbild.ext, pr, 'titelbild');
         html += '<h3>' + (ri + 1) + '. ' + esc(r.titel) + '</h3><ol>';
         if(r.uebersicht){
           ['sus', 'lk'].forEach(function(k){ var F = r.uebersicht[k]; if(F) job(F, rdir + '/00 Datei zur Reihe' + (k === 'lk' ? ' (Lehrkraft)' : '') + '.' + F.ext, {}, 'x'); });
@@ -1963,13 +2032,13 @@ function exportZip(onlyF, onlyJ){
           var vdir = rdir + '/' + pad2(vi + 1) + ' ' + safeName(v.titel), items = [], pv = { titel:v.titel, notiz:v.notiz || '', ausgeblendet:!!v.ausgeblendet, materialien:[] };
           pr.vorhaben.push(pv);
           (v.materialien || []).forEach(function(m){
-            var pm = { typ:m.typ, titel:m.titel, sicht:m.nurLK ? 'lk' : 'alle' }, any = false;
-            ['sus', 'lk'].forEach(function(k){
-              var F = m[k]; if(!F) return;
-              var path = vdir + '/' + safeName(m.titel) + (k === 'lk' ? ' (Lehrkraft)' : '') + '.' + F.ext;
-              if(job(F, path, pm, k)){ any = true; items.push('<a href="' + encodeURI(path) + '">' + esc(m.titel) + (k === 'lk' ? ' (Lehrkraft)' : '') + '</a> <small>' + esc((F.ext || '').toUpperCase()) + '</small>'); }
-            });
-            if(m.url){ pm.url = m.url; any = true; items.push('<a href="' + esc(m.url) + '">' + esc(m.titel) + '</a> <small>Link</small>'); links.push(m.titel + ': ' + m.url); }
+            var lk = m.bereich === 'lk', sfx = lk ? ' (Lehrkraft)' : '', any = false;
+            var pm = { typ:m.typ, titel:m.titel, bereich:lk ? 'lk' : 'sus', ausgeblendet:!!m.ausgeblendet };
+            if(m.datei){
+              var path = vdir + '/' + safeName(m.titel) + sfx + '.' + m.datei.ext;
+              if(job(m.datei, path, pm, 'datei')){ any = true; items.push('<a href="' + encodeURI(path) + '">' + esc(m.titel) + sfx + '</a> <small>' + esc((m.datei.ext || '').toUpperCase()) + '</small>'); }
+            }
+            if(m.url){ pm.url = m.url; any = true; items.push('<a href="' + esc(m.url) + '">' + esc(m.titel) + sfx + '</a> <small>Link</small>'); links.push(m.titel + ': ' + m.url); }
             if(any) pv.materialien.push(pm);
           });
           html += '<li><b>' + esc(v.titel) + '</b>' + (v.notiz ? ' <small>' + esc(v.notiz) + '</small>' : '') + (items.length ? '<br>' + items.join(' · ') : '') + '</li>';
@@ -2001,10 +2070,58 @@ function exportZip(onlyF, onlyJ){
   }).catch(fail);
 }
 
+/* Alle Materialien einer Reihe, die SuS sehen, als ZIP – ohne Lehrkraft-Material, ohne Ausgeblendetes */
+function saveBlob(blob, name){
+  var url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 30000);
+}
+function exportReiheSuS(f, j, r){
+  var jobs = [], links = [], seen = {}, files = [];
+  function uniq(p){ var q = p, n = 2; while(seen[q]) q = p.replace(/(\.[^.]+)$/, ' (' + (n++) + ')$1'); seen[q] = 1; return q; }
+  var html = '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>' + esc(r.titel) + '</title>'
+    + '<style>body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:860px;margin:2rem auto;padding:0 1rem;line-height:1.5;color:#1B2333}h1{font-family:Georgia,serif}li{margin:.5rem 0}small{color:#5E6A7C}</style></head><body>'
+    + '<h1>' + esc(r.titel) + '</h1><p><small>' + esc(f.name + ' ' + j.name) + ' · Stand ' + new Date().toLocaleDateString('de-DE') + '</small></p><ol>';
+  if(r.titelbild) jobs.push({ F:r.titelbild, path:uniq('00 Titelbild.' + r.titelbild.ext) });
+  (r.vorhaben || []).forEach(function(v, vi){
+    if(v.ausgeblendet) return;
+    var ms = (v.materialien || []).filter(function(m){ return m.bereich !== 'lk' && !m.ausgeblendet && (m.datei || m.url); });
+    if(!ms.length) return;
+    var vdir = pad2(vi + 1) + ' ' + safeName(v.titel), li = [];
+    ms.forEach(function(m){
+      if(m.datei && m.datei.schutz !== 'pruefung'){
+        var p = uniq(vdir + '/' + safeName(m.titel) + '.' + m.datei.ext); jobs.push({ F:m.datei, path:p });
+        li.push('<a href="' + encodeURI(p) + '">' + esc(m.titel) + '</a> <small>' + esc((m.datei.ext || '').toUpperCase()) + '</small>');
+      } else if(m.url){
+        links.push(v.titel + ' – ' + m.titel + ': ' + m.url);
+        li.push('<a href="' + esc(m.url) + '">' + esc(m.titel) + '</a> <small>Link</small>');
+      }
+    });
+    html += '<li><b>' + esc(v.titel) + '</b><br>' + li.join(' · ') + '</li>';
+  });
+  html += '</ol></body></html>';
+  if(!jobs.length && !links.length){ toast('Hier gibt es noch nichts zum Herunterladen.'); return; }
+  var i = 0;
+  function next(){
+    if(i >= jobs.length) return Promise.resolve();
+    var jb = jobs[i++];
+    busy('Lade Materialien … ' + i + ' / ' + jobs.length);
+    return fetchBytes(jb.F.pfad).then(function(b){ return unseal(keyB, b); })
+      .then(function(plain){ files.push({ name:jb.path, bytes:plain }); }, function(){}).then(next);
+  }
+  next().then(function(){
+    files.unshift({ name:'Übersicht.html', bytes:TE.encode(html) });
+    if(links.length) files.push({ name:'Links.txt', bytes:TE.encode(links.join('\r\n')) });
+    saveBlob(zipBlob(files), safeName(r.titel) + '.zip');
+    busy(false); toast('ZIP wird heruntergeladen.');
+  }).catch(fail);
+}
+
 /* =====================================================================
    Kopf-Buttons & Start
    ===================================================================== */
 $('#reload').innerHTML = ico('refresh');
+$('#kurs-exit').addEventListener('click', function(){ location.hash = location.hash.replace(/^#\/kurs\//, '#/f/'); });
 $('#settings-link').innerHTML = ico('gear') + 'Einstellungen';
 $('#edit-toggle').addEventListener('click', function(){
   if(editing){ editing = false; render(); return; }
@@ -2023,8 +2140,9 @@ $('#reload').addEventListener('click', function(){
 window.addEventListener('hashchange', function(){ if(viewerState) closeViewer(); render(); window.scrollTo(0, 0); });
 
 function boot(){
-  if(/^#\/kurs\//.test(location.hash)) saveJSON(KURS_KEY, location.hash);
-  else if(!location.hash){ var k = loadJSON(KURS_KEY); if(k) history.replaceState(null, '', k); }
+  var teacher = canEdit();
+  if(/^#\/kurs\//.test(location.hash)){ if(!teacher) saveJSON(KURS_KEY, location.hash); }
+  else if(!location.hash && !teacher){ var k = loadJSON(KURS_KEY); if(k) history.replaceState(null, '', k); }
   zugang = undefined; render();
   loadZugang(false).then(function(z){
     if(!z){ render(); return; }
