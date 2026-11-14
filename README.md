@@ -26,6 +26,31 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 - **Herunterladen**: Jahrgang oder alles als ZIP mit `Übersicht.html` – zum Weiterverwenden ohne diese Seite.
 - **Einstellungen → Verwaltung**: Schulform für die Lehrplan-Vorlagen, Zugangscode oder Prüfungspasswort ändern.
 
+## Mit dem Kurs teilen
+
+- In einer Reihe auf **Mit Kurs teilen** tippen: Link und QR-Code.
+- Über den Link sehen SuS nur diese Reihe – ohne Hauptmenü, ohne ausgeblendete Stunden, ohne Lehrkraft-Material.
+- Ganz unten führt ein kleiner Link „Ganze Sammlung öffnen“ trotzdem zurück. Nichts ist geheim, es lenkt nur nicht ab.
+
+## Überblick einer Reihe
+
+- Concept-Map mit Karten (Thema, Begriff, Frage, Notiz), Verbindungen und optionalem Titelbild.
+- Bearbeiten: **Bearbeiten → Überblick bearbeiten**. Karten ziehen, antippen zum Ändern, „Verbinden“ für Linien.
+
+## Stunden ausblenden
+
+- **Bearbeiten → Augen-Symbol** in der Zeile. Ausgeblendete Stunden sind in der Kursansicht nicht sichtbar.
+
+## Planung importieren
+
+- **Einstellungen → Verwaltung → Planung importieren**: ZIP mit `import.json` und Dateien (oder auf dem iPad: `import.json` und Dateien gemeinsam auswählen).
+- Jeder Export enthält eine `import.json` – so lässt sich eine Sammlung in eine andere übernehmen.
+
+## Mehrere Geräte
+
+- Zum Ansehen: auf jedem Gerät einmal den Zugangscode eingeben.
+- Zum Bearbeiten: auf jedem Gerät einmal in den Einstellungen GitHub-Name, Repository und Token eintragen.
+
 ## Als App installieren
 
 - **iPad/iPhone (Safari):** Teilen → *Zum Home-Bildschirm*
