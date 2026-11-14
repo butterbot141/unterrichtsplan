@@ -56,11 +56,31 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 - Externe Links öffnen sich in einem neuen Tab.
 - Sicherheit: Die Seiten laufen abgeschottet. Sie kommen nicht an Zugangscode, Token oder andere Daten der App.
 
-## Ausblenden
+- **Vorlage:** Einstellungen → Verwaltung → *Vorlage für interaktive Seite*. Eine HTML-Datei im Stil der App mit Schritten, Lernziel, Aufgaben, gestuften Hilfen, Quiz, Antwortfeld (wird gespeichert, mit Kopieren-Knopf), Merke-Kasten und Zurück/Weiter. Stellen zum Anpassen sind mit „ÄNDERN“ markiert.
+
+## Ausblenden und Freischalten
 
 - **Stunden:** Bearbeiten → Augen-Symbol rechts in der Zeile.
 - **Einzelne Materialien:** Bearbeiten → Augen-Symbol neben dem Material.
-- In der Kursansicht ist Ausgeblendetes unsichtbar, in der Lehrkraft-Ansicht abgedimmt.
+- **Ab Datum freischalten:** Im Dialog eines Unterrichtsvorhabens oder Materials „Für SuS sichtbar ab“ setzen. Bis dahin sehen SuS es nicht, danach automatisch – so lässt sich eine Reihe vorausplanen (z. B. Lösungen erst nach der Stunde). Das Auge gilt zusätzlich.
+- In der Kursansicht ist Ausgeblendetes unsichtbar, in der Lehrkraft-Ansicht abgedimmt (mit „für SuS ab …“).
+- Das Datum kommt vom Gerät der SuS. Es ist eine Planungshilfe, kein Schutz.
+
+## Hinweis für SuS
+
+- Bearbeiten → **Hinweis für SuS anzeigen** (oben in der Reihe), z. B. „Test am Freitag“.
+- Optional „Anzeigen bis“: Danach verschwindet der Hinweis von selbst.
+
+## Checkliste „Ich kann …“
+
+- Bearbeiten → **Checkliste „Ich kann …“ hinterlegen**. Eine Aussage pro Zeile, `#` am Zeilenanfang = Zwischenüberschrift. Oder **aus Datei übernehmen** (Word oder Text, ein Absatz pro Aussage).
+- Erscheint nur in Reihen, in denen eine Checkliste hinterlegt ist.
+- SuS tippen an: einmal = noch unsicher, zweimal = kann ich sicher. Die Einschätzung bleibt nur auf ihrem Gerät.
+
+## Suche
+
+- Lupe oben: durchsucht alle Fächer und Jahrgänge – Reihen, Unterrichtsvorhaben, Materialien, Dateinamen, Hinweise und Checklisten. Umlaute können weggelassen werden („bruche“ findet „Brüche“).
+- Nicht in der Kursansicht.
 
 ## Ordner vom Laptop hochladen (Sammel-Upload)
 

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- ÄNDERN: Titel der Seite -->
+<title>Thema – Fach Jahrgang</title>
+<!--
+  Vorlage für interaktive Seiten der Material-App
+  ------------------------------------------------
+  * Eine einzige Datei: Bilder als data:-URL einbetten, keine externen Schriften oder Skripte (Datenschutz, offline).
+  * Seiten = <article class="page" id="...">. Schritte oben und unten verlinken mit href="#id".
+  * In der App erscheinen automatisch: „‹ Übersicht“ oben und „Fertig“-Knöpfe unten (Klasse app-only).
+      #zurueck  = zurück zur Reihe      #weiter = nächstes Material der Reihe
+  * Antworten (Quiz, Textfelder) werden auf dem Gerät gespeichert (localStorage).
+  * Bausteine zum Kopieren: Lernziel, Aufgabe, Hilfe, Quiz, Antwortfeld, Merke.
+  * Alle Stellen zum Anpassen sind mit „ÄNDERN“ markiert.
+-->
+<style>
+:root{
+  --page:#F4F6FA; --sheet:#FFFFFF; --ink:#1B2333; --muted:#5E6A7C; --line:#DFE4EC; --soft:#EEF2F7;
+  --acc:#2F5FB3; --acc-soft:#E7EEFB;           /* ÄNDERN: Mathe blau #2F5FB3 / Physik grün #137A5C */
+  --ok:#177A5E; --ok-soft:#E1F3EC; --bad:#B42318; --bad-soft:#FBE8E6;
+  --help:#F3C21B; --help-soft:#FFF6D3; --help-ink:#3A2E00;
+  --serif:"Iowan Old Style","Charter","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --shadow:0 1px 2px rgba(20,30,50,.05),0 4px 14px rgba(20,30,50,.05);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --page:#0F141C; --sheet:#171E29; --ink:#E7ECF3; --muted:#A1ACBB; --line:#2A3443; --soft:#1F2733;
+    --acc:#8DB2F2; --acc-soft:#1E2B42; --ok:#5FCB9F; --ok-soft:#15302A; --bad:#F08A80; --bad-soft:#3A1C1A;
+    --help-soft:#3A3212; --help-ink:#FFE89A; --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark;
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:110px}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);font-size:1.0625rem;line-height:1.55}
+h1,h2,h3{font-family:var(--serif);line-height:1.15;margin:0}
+h1{font-size:clamp(1.8rem,4.4vw,2.5rem);margin:.2rem 0 .5rem}
+h2{font-size:1.45rem;margin:2rem 0 .6rem;padding-bottom:.25rem;border-bottom:1px solid var(--line)}
+p{margin:.5rem 0}
+img{max-width:100%;height:auto;border-radius:12px}
+a{color:var(--acc)}
+[hidden]{display:none !important}
+
+/* Kopf mit Schritten */
+header{position:sticky;top:0;z-index:5;background:var(--sheet);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.bar{max-width:900px;margin:0 auto;padding:.45rem 1rem 0;display:flex;align-items:center;gap:.5rem;color:var(--muted);font-size:.95rem}
+.bar b{color:var(--ink);font-family:var(--serif);font-size:1.1rem}
+.bar .home{color:var(--acc);text-decoration:none;font-weight:700;margin-right:.3rem;min-height:36px;align-items:center}
+.steps{max-width:900px;margin:0 auto;padding:.4rem 1rem .55rem;display:flex;gap:.4rem;overflow-x:auto}
+.step{display:flex;align-items:center;gap:.45rem;text-decoration:none;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:.3rem .8rem .3rem .35rem;white-space:nowrap;min-height:40px}
+.step .dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-weight:700}
+.step[aria-current="page"]{border-color:var(--acc);color:var(--ink)}
+.step[aria-current="page"] .dot{background:var(--acc);color:#fff}
+.step.done .dot{background:var(--ok-soft);color:var(--ok)}
+.step.done .dot::after{content:"✓"} .step.done .dot span{display:none}
+.step.extra{border-style:dashed}
+
+main{max-width:900px;margin:0 auto;padding:1rem 1rem 3rem}
+.lead{font-size:1.15rem;color:var(--muted)}
+
+/* Bausteine */
+.ziel{background:var(--acc-soft);border-radius:16px;padding:.8rem 1rem;margin:1rem 0}
+.ziel b{color:var(--acc)}
+.aufgabe{background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.aufgabe > h3{font-size:1.15rem;margin-bottom:.3rem;display:flex;gap:.5rem;align-items:baseline}
+.aufgabe > h3 .nr{flex:none;width:1.8rem;height:1.8rem;border-radius:50%;background:var(--acc);color:#fff;display:inline-grid;place-items:center;font-family:var(--sans);font-size:.95rem}
+.merke{border-left:5px solid var(--ok);background:var(--ok-soft);border-radius:0 14px 14px 0;padding:.7rem 1rem;margin:1rem 0}
+.merke b:first-child{color:var(--ok)}
+details.hilfe{background:var(--help-soft);color:var(--help-ink);border:1px solid var(--help);border-radius:12px;margin:.6rem 0;padding:0 .9rem}
+details.hilfe > summary{cursor:pointer;font-weight:700;padding:.6rem 0;min-height:44px;display:flex;align-items:center}
+details.hilfe[open]{padding-bottom:.7rem}
+
+/* Quiz */
+.quiz{margin:.6rem 0}
+.quiz .frage{font-weight:700;margin-bottom:.4rem}
+.quiz button{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:.65rem .9rem;margin:.35rem 0;min-height:48px;cursor:pointer}
+.quiz button.richtig{border-color:var(--ok);background:var(--ok-soft)}
+.quiz button.falsch{border-color:var(--bad);background:var(--bad-soft)}
+.quiz .rueck{margin:.4rem 0 0;font-weight:600}
+
+/* Antwortfeld */
+.antwort textarea{width:100%;min-height:120px;font:inherit;color:inherit;background:var(--page);border:1px solid var(--line);border-radius:12px;padding:.7rem .8rem}
+.antwort .zeile{display:flex;gap:.5rem;align-items:center;margin-top:.4rem;color:var(--muted);font-size:.9rem}
+.antwort button{font:inherit;border:1px solid var(--line);background:var(--sheet);color:inherit;border-radius:10px;padding:.4rem .8rem;min-height:40px;cursor:pointer}
+
+/* Seitenwechsel */
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:2rem}
+.pager a{display:block;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.8rem 1rem;background:var(--sheet);min-height:64px}
+.pager a small{display:block;color:var(--muted);font-size:.9rem}
+.pager a b{font-size:1.1rem;color:var(--acc)}
+.pager .next{text-align:right;grid-column:2}
+.pager .fertig{grid-column:1 / -1;text-align:center;border-color:var(--acc);background:var(--acc-soft)}
+.app-only{display:none !important}
+.in-app .app-only{display:block !important}
+.in-app .bar .app-only{display:inline-flex !important}
+a:focus-visible,button:focus-visible,summary:focus-visible,textarea:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+</style>
+</head>
+<body>
+<header>
+  <!-- ÄNDERN: Fach und Thema -->
+  <div class="bar"><a class="home app-only" href="#zurueck">‹ Übersicht</a><b>Physik 8</b><span>›</span><span>Thema</span></div>
+  <nav class="steps" aria-label="Ablauf">
+    <a class="step" href="#einstieg" data-page="einstieg"><span class="dot"><span>1</span></span><b>Einstieg</b></a>
+    <a class="step" href="#aufgaben" data-page="aufgaben"><span class="dot"><span>2</span></span><b>Aufgaben</b></a>
+    <a class="step" href="#sichern" data-page="sichern"><span class="dot"><span>3</span></span><b>Sichern</b></a>
+    <a class="step extra" href="#zusatz" data-page="zusatz"><span class="dot"><span>4</span></span><b>Zusatz</b></a>
+  </nav>
+</header>
+
+<main>
+<!-- =================== 1 EINSTIEG =================== -->
+<article class="page" id="einstieg">
+  <h1>Frage oder Phänomen als Überschrift</h1>                 <!-- ÄNDERN -->
+  <p class="lead">Ein kurzer, anschaulicher Einstieg: Was passiert hier? Warum ist das überraschend?</p>  <!-- ÄNDERN -->
+
+  <div class="ziel"><b>Am Ende kannst du …</b><br>… ein operationalisiertes Lernziel in Schülersprache formulieren.</div>  <!-- ÄNDERN -->
+
+  <!-- Bild einbetten: <img src="data:image/jpeg;base64,..." alt="Beschreibung"> -->
+
+  <nav class="pager"><a class="next" href="#aufgaben"><small>Weiter</small><b>2 Aufgaben</b></a></nav>
+</article>
+
+<!-- =================== 2 AUFGABEN =================== -->
+<article class="page" id="aufgaben" hidden>
+  <h1>Aufgaben</h1>
+
+  <section class="aufgabe">
+    <h3><span class="nr">1</span>Aufgabe mit Operator</h3>                          <!-- ÄNDERN -->
+    <p>Beschreibe … / Erkläre … / Berechne … (Operator fett, Arbeitsauftrag klar).</p> <!-- ÄNDERN -->
+    <details class="hilfe"><summary>Hilfe 1</summary><p>Erster Denkanstoß – verrät die Lösung noch nicht.</p></details>
+    <details class="hilfe"><summary>Hilfe 2</summary><p>Konkreter Hinweis, z. B. ein Satzanfang.</p></details>
+  </section>
+
+  <section class="aufgabe">
+    <h3><span class="nr">2</span>Kurz geprüft</h3>
+    <!-- Quiz: data-richtig = Nummer der richtigen Antwort (ab 0). Rückmeldungen frei formulieren. -->
+    <div class="quiz" data-quiz="q1" data-richtig="1"
+         data-ok="Genau! Kurze Begründung, warum das stimmt."
+         data-nein="Noch nicht. Ein Hinweis, woran man es erkennt.">
+      <div class="frage">Welche Aussage stimmt?</div>                 <!-- ÄNDERN -->
+      <button type="button">Antwort A</button>
+      <button type="button">Antwort B (richtig)</button>
+      <button type="button">Antwort C</button>
+      <p class="rueck" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="#einstieg"><small>Zurück</small><b>1 Einstieg</b></a>
+    <a class="next" href="#sichern"><small>Weiter</small><b>3 Sichern</b></a>
+  </nav>
+</article>
+
+<!-- =================== 3 SICHERN =================== -->
+<article class="page" id="sichern" hidden>
+  <h1>Ergebnis sichern</h1>
+
+  <section class="aufgabe antwort">
+    <h3><span class="nr">3</span>Erkläre in eigenen Worten</h3>     <!-- ÄNDERN -->
+    <p>Schreibe 2–3 Sätze. Benutze die Fachbegriffe <b>Begriff 1</b> und <b>Begriff 2</b>.</p>
+    <!-- Antwortfeld: data-antwort = eindeutiger Name; wird auf dem Gerät gespeichert -->
+    <textarea data-antwort="a1" placeholder="Deine Antwort …"></textarea>
+    <div class="zeile"><button type="button" data-kopieren="a1">Kopieren</button><span data-status="a1"></span></div>
+  </section>
+
+  <div class="merke"><b>Merke:</b> Der zentrale Merksatz in Fachsprache.</div>   <!-- ÄNDERN -->
+
+  <nav class="pager">
+    <a class="prev" href="#aufgaben"><small>Zurück</small><b>2 Aufgaben</b></a>
+    <a class="next" href="#zusatz"><small>Weiter (Zusatz)</small><b>4 Zusatz</b></a>
+    <a class="fertig app-only" href="#weiter" data-weiter><small>Fertig?</small><b>Weiter zum nächsten Material</b></a>
+    <a class="fertig app-only" href="#zurueck" data-zurueck><small>Fertig?</small><b>Zurück zur Übersicht</b></a>
+  </nav>
+</article>
+
+<!-- =================== 4 ZUSATZ =================== -->
+<article class="page" id="zusatz" hidden>
+  <h1>Für Schnelle</h1>
+  <p>Vertiefung, Knobelaufgabe oder Link zu einem Erklärvideo:</p>      <!-- ÄNDERN -->
+  <p><a href="https://example.org" target="_blank" rel="noopener">Erklärvideo (öffnet neuen Tab)</a></p>
+
+  <nav class="pager">
+    <a class="prev" href="#sichern"><small>Zurück</small><b>3 Sichern</b></a>
+    <a class="next" href="#einstieg"><small>Zum Anfang</small><b>1 Einstieg</b></a>
+    <a class="fertig app-only" href="#zurueck"><small>Fertig</small><b>Zurück zur Übersicht</b></a>
+  </nav>
+</article>
+</main>
+
+<script>
+(function(){
+  // ---------- Speicher (in der App pro Gerät und Seite, sonst im Browser) ----------
+  var KEY = 'seite';
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }catch(e){ return {}; } }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} }
+  var st = load(); st.seen = st.seen || {}; st.quiz = st.quiz || {}; st.text = st.text || {};
+
+  // ---------- In der Material-App: Rücksprung anzeigen ----------
+  if(window.Plattform){
+    document.documentElement.classList.add('in-app');
+    var w = document.querySelector('[data-weiter]'), z = document.querySelector('[data-zurueck]');
+    if(Plattform.hatWeiter){ if(z) z.remove(); } else if(w){ w.remove(); }
+  }
+
+  // ---------- Seiten über #id ----------
+  var pages = Array.prototype.map.call(document.querySelectorAll('article.page'), function(a){ return a.id; });
+  function show(name, scroll){
+    if(name === 'zurueck' || name === 'weiter') return;
+    if(pages.indexOf(name) < 0) name = pages[0];
+    pages.forEach(function(p){ document.getElementById(p).hidden = (p !== name); });
+    document.querySelectorAll('.step').forEach(function(s){
+      var p = s.getAttribute('data-page');
+      if(p === name) s.setAttribute('aria-current', 'page'); else s.removeAttribute('aria-current');
+      s.classList.toggle('done', !!st.seen[p] && p !== name);
+    });
+    st.seen[name] = true; save();
+    if(scroll) window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', function(){ show(location.hash.slice(1), true); });
+  show(location.hash.slice(1), false);
+
+  // ---------- Quiz ----------
+  document.querySelectorAll('[data-quiz]').forEach(function(q){
+    var id = q.getAttribute('data-quiz'), richtig = +q.getAttribute('data-richtig'), btns = q.querySelectorAll('button'), out = q.querySelector('.rueck');
+    function mark(i){
+      btns.forEach(function(b, k){ b.classList.remove('richtig', 'falsch'); if(k === i) b.classList.add(k === richtig ? 'richtig' : 'falsch'); });
+      out.textContent = i === richtig ? q.getAttribute('data-ok') : q.getAttribute('data-nein');
+    }
+    btns.forEach(function(b, i){ b.addEventListener('click', function(){ st.quiz[id] = i; save(); mark(i); }); });
+    if(st.quiz[id] !== undefined) mark(st.quiz[id]);
+  });
+
+  // ---------- Antwortfelder (automatisch gespeichert) ----------
+  document.querySelectorAll('[data-antwort]').forEach(function(t){
+    var id = t.getAttribute('data-antwort'), status = document.querySelector('[data-status="' + id + '"]'), timer;
+    t.value = st.text[id] || '';
+    t.addEventListener('input', function(){
+      clearTimeout(timer);
+      timer = setTimeout(function(){ st.text[id] = t.value; save(); if(status) status.textContent = 'gespeichert'; }, 400);
+    });
+  });
+  document.querySelectorAll('[data-kopieren]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var t = document.querySelector('[data-antwort="' + b.getAttribute('data-kopieren') + '"]'), status = document.querySelector('[data-status="' + b.getAttribute('data-kopieren') + '"]');
+      var ok = function(){ if(status) status.textContent = 'kopiert – jetzt z. B. ins Arbeitsblatt einfügen'; };
+      if(navigator.clipboard) navigator.clipboard.writeText(t.value).then(ok, function(){ t.select(); document.execCommand('copy'); ok(); });
+      else { t.select(); document.execCommand('copy'); ok(); }
+    });
+  });
+})();
+</script>
+</body>
+</html>
