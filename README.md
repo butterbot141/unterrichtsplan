@@ -44,6 +44,18 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 - **Bearbeiten → Titelbild hinzufügen/ändern**. Große Bilder werden beim Hochladen verkleinert.
 - Wird oben in der Reihe ganz angezeigt (nicht abgeschnitten); antippen öffnet es groß.
 
+## Interaktive HTML-Seiten
+
+- HTML-Dateien öffnen sich in der App. Oben gibt es **Zurück** und, wenn es in der Reihe weitergeht, **Weiter**.
+- Damit eine Seite selbst zur Oberfläche zurückführt, reichen normale Links:
+  - `<a href="#zurueck">Zurück zur Übersicht</a>` – schließt die Seite und zeigt wieder die Reihe
+  - `<a href="#weiter">Weiter</a>` – öffnet das nächste Material der Reihe
+  - `<a href="um:material:Nachricht an Lena">AB öffnen</a>` – öffnet ein Material der Reihe mit genau diesem Titel
+  - in JavaScript: `Plattform.zurueck()`, `Plattform.weiter()`, `Plattform.oeffne('Titel')`
+- Speichert die Seite etwas mit `localStorage` (z. B. Fortschritt oder Antworten), bleibt das auf dem Gerät erhalten – getrennt für jede Seite.
+- Externe Links öffnen sich in einem neuen Tab.
+- Sicherheit: Die Seiten laufen abgeschottet. Sie kommen nicht an Zugangscode, Token oder andere Daten der App.
+
 ## Ausblenden
 
 - **Stunden:** Bearbeiten → Augen-Symbol rechts in der Zeile.

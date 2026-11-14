@@ -1136,7 +1136,7 @@ function askPruefung(){
     return unlockPruefung(v.pw).then(function(){ busy(false); return true; }, function(){ busy(false); alert('Das Passwort stimmt nicht.'); return false; });
   });
 }
-function openFile(F, titel, typ){
+function openFile(F, titel, typ, c, replace){
   var go = F.schutz === 'pruefung' ? askPruefung() : Promise.resolve(true);
   return go.then(function(ok){
     if(!ok) return;
@@ -1146,12 +1146,14 @@ function openFile(F, titel, typ){
     v.className = 'viewer t-' + (typ || 'dokument');
     v.innerHTML = '<div class="viewer-bar"><button class="iconbtn" data-v="close" aria-label="Schließen">' + ico('back') + '</button><b>' + esc(titel) + '</b>'
       + '<button class="pillbtn" data-v="share" hidden>' + ico('share') + '<span class="lbl">Teilen</span></button>'
-      + '<a class="pillbtn" data-v="dl" hidden>' + ico('download') + '<span class="lbl">Speichern</span></a></div>'
+      + '<a class="pillbtn" data-v="dl" hidden>' + ico('download') + '<span class="lbl">Speichern</span></a>'
+      + (nextOf(c) ? '<button class="pillbtn" data-v="next">' + '<span class="lbl">Weiter</span>' + ico('next') + '</button>' : '') + '</div>'
       + '<div class="viewer-body"><div class="center-spin"><span class="spin"></span></div></div>';
+    if(viewerState) closeViewer();
     document.body.appendChild(v);
     document.body.style.overflow = 'hidden';
-    history.pushState({ viewer:true }, '');
-    viewerState = { el:v, url:null, closed:false };
+    if(replace) history.replaceState({ viewer:true }, ''); else history.pushState({ viewer:true }, '');
+    viewerState = { el:v, url:null, closed:false, c:c || null, F:F };
     var body = $('.viewer-body', v);
     fetchBytes(F.pfad).then(function(bytes){ return unseal(keyFor(F.schutz), bytes); }).then(function(plain){
       if(viewerState.closed) return;
@@ -1164,7 +1166,14 @@ function openFile(F, titel, typ){
       }
       if(ext === 'pdf') return renderPdf(body, plain);
       if(ext === 'html' || ext === 'htm'){
-        body.innerHTML = '<iframe title="' + esc(titel) + '" src="' + url + '" allow="fullscreen"></iframe>'; return;
+        /* Eigene Herkunft (sandbox ohne allow-same-origin): Die Seite kommt nicht an Code, Token oder Schlüssel heran.
+           Verbindung zur Oberfläche nur über die Brücke (postMessage). */
+        var fr = document.createElement('iframe');
+        fr.title = titel; fr.setAttribute('allow', 'fullscreen');
+        fr.setAttribute('sandbox', 'allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-downloads');
+        fr.srcdoc = withBridge(TD.decode(plain), loadJSON(seiteKey(F, c)) || {}, !!nextOf(c));
+        body.innerHTML = ''; body.appendChild(fr); viewerState.frame = fr;
+        return;
       }
       if(/^image\//.test(mime)){ body.innerHTML = '<img alt="' + esc(titel) + '" src="' + url + '">'; return; }
       if(/^video\//.test(mime) || /^audio\//.test(mime)){ body.innerHTML = '<video controls playsinline src="' + url + '"></video>'; return; }
@@ -1172,9 +1181,80 @@ function openFile(F, titel, typ){
         + '<p class="muted">Diese Datei kann hier nicht angezeigt werden. Speichere sie oder öffne sie in einer passenden App.</p>'
         + '<div class="btnline" style="justify-content:center"><a class="btn primary" href="' + url + '" download="' + esc(niceName) + '">' + ico('download') + 'Speichern</a></div></div>';
     }).catch(function(e){ if(!viewerState.closed) body.innerHTML = '<div class="file-card"><h3>Fehler</h3><p class="muted">' + esc(e.message || 'Die Datei konnte nicht geladen werden.') + '</p></div>'; });
-    v.addEventListener('click', function(e){ var b = e.target.closest('[data-v=close]'); if(b) history.back(); });
+    v.addEventListener('click', function(e){
+      if(e.target.closest('[data-v=close]')) history.back();
+      if(e.target.closest('[data-v=next]')) openNext();
+    });
   });
 }
+/* ---------- HTML-Seiten: Brücke zur Oberfläche ----------
+   In einer HTML-Seite funktionieren:
+     <a href="#zurueck">Zurück</a>            schließt die Seite, zurück zur Reihe
+     <a href="#weiter">Weiter</a>             öffnet das nächste Material der Reihe
+     <a href="um:material:Titel">…</a>        öffnet ein Material der Reihe mit diesem Titel
+     Plattform.zurueck(), Plattform.weiter(), Plattform.oeffne('Titel') in JavaScript
+     localStorage wird pro Gerät und Seite gespeichert (z. B. Fortschritt, Antworten). */
+function seiteKey(F, c){ return 'um-seite:' + (c && c.m ? c.m.id : F.pfad); }
+function withBridge(html, store, hatWeiter){
+  var js = '<script>(function(){var S=' + JSON.stringify(store).replace(/</g, '\\u003c') + ';'
+    + 'function M(a,x){x=x||{};x.um=1;x.aktion=a;parent.postMessage(x,"*");}'
+    + 'function mk(st,p){function sv(){if(p)M("speichern",{daten:st});}return{getItem:function(k){k=String(k);return Object.prototype.hasOwnProperty.call(st,k)?st[k]:null;},'
+    + 'setItem:function(k,v){st[String(k)]=String(v);sv();},removeItem:function(k){delete st[String(k)];sv();},clear:function(){for(var k in st)delete st[k];sv();},'
+    + 'key:function(i){return Object.keys(st)[i]||null;},get length(){return Object.keys(st).length;}};}'
+    + 'try{Object.defineProperty(window,"localStorage",{value:mk(S,true),configurable:true});}catch(e){}'
+    + 'try{Object.defineProperty(window,"sessionStorage",{value:mk({},false),configurable:true});}catch(e){}'
+    + 'window.Plattform={zurueck:function(){M("zurueck");},weiter:function(){M("weiter");},oeffne:function(t){M("material",{titel:String(t)});},hatWeiter:' + (hatWeiter ? 'true' : 'false') + '};'
+    + 'document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest("a[href]"):null;if(!a)return;var h=a.getAttribute("href")||"";'
+    + 'if(h==="#zurueck"||h==="um:zurueck"){e.preventDefault();M("zurueck");}'
+    + 'else if(h==="#weiter"||h==="um:weiter"){e.preventDefault();M("weiter");}'
+    + 'else if(h.indexOf("um:material:")===0){e.preventDefault();M("material",{titel:decodeURIComponent(h.slice(12))});}'
+    + 'else if(/^https?:/i.test(h)&&!a.target){a.target="_blank";a.rel="noopener";}},true);})();<\/script>';
+  var m = /<head[^>]*>/i.exec(html);
+  if(m) return html.slice(0, m.index + m[0].length) + js + html.slice(m.index + m[0].length);
+  m = /<html[^>]*>/i.exec(html);
+  if(m) return html.slice(0, m.index + m[0].length) + '<head>' + js + '</head>' + html.slice(m.index + m[0].length);
+  return js + html;
+}
+/* Materialien einer Reihe in Anzeige-Reihenfolge (was in dieser Ansicht sichtbar ist) */
+function reiheFolge(c){
+  if(!c || !c.r) return [];
+  var kurs = document.body.classList.contains('kurs'), out = [];
+  (c.r.vorhaben || []).forEach(function(v){
+    if(kurs && v.ausgeblendet) return;
+    (v.materialien || []).forEach(function(m){
+      if(m.bereich === 'lk' || (kurs && m.ausgeblendet) || !m.datei) return;
+      out.push({ f:c.f, j:c.j, r:c.r, v:v, m:m });
+    });
+  });
+  return out;
+}
+function nextOf(c){
+  if(!c || !c.m) return null;
+  var l = reiheFolge(c), i = -1;
+  l.forEach(function(x, k){ if(x.m === c.m) i = k; });
+  return i >= 0 ? l[i + 1] || null : null;
+}
+function openCtx(x, replace){ return openFile(x.m.datei, x.m.titel, x.m.typ, x, replace); }
+function openNext(){
+  var n = viewerState && nextOf(viewerState.c);
+  if(n) openCtx(n, true); else history.back();
+}
+window.addEventListener('message', function(e){
+  var st = viewerState;
+  if(!st || !st.frame || e.source !== st.frame.contentWindow) return;
+  var d = e.data || {};
+  if(!d.um) return;
+  if(d.aktion === 'zurueck') history.back();
+  else if(d.aktion === 'weiter') openNext();
+  else if(d.aktion === 'material'){
+    var t = String(d.titel || '').toLowerCase(), hit = reiheFolge(st.c).filter(function(x){ return x.m.titel.toLowerCase() === t; })[0];
+    if(hit) openCtx(hit, true); else toast('„' + d.titel + '“ gibt es in dieser Reihe nicht.');
+  }
+  else if(d.aktion === 'speichern' && d.daten && typeof d.daten === 'object'){
+    var s = JSON.stringify(d.daten);
+    if(s.length < 200000) saveJSON(seiteKey(st.F, st.c), d.daten);
+  }
+});
 function closeViewer(){
   if(!viewerState) return;
   viewerState.closed = true;
@@ -1713,7 +1793,7 @@ document.addEventListener('click', function(e){
     var c = ctx(o), slot = o.dataset.slot, F, titel, typ;
     if(o.dataset.ov){ F = c.r.uebersicht[slot]; titel = 'Reihenübersicht – ' + c.r.titel; typ = 'uebersicht'; }
     else { F = c.m[slot]; titel = c.m.titel; typ = c.m.typ; }
-    if(F) openFile(F, titel, typ);
+    if(F) openFile(F, titel, typ, o.dataset.ov ? null : c);
     return;
   }
   var t = e.target.closest('[data-lk]');
@@ -1738,7 +1818,9 @@ function wireSettings(){
   form.addEventListener('submit', function(e){
     e.preventDefault();
     var fd = new FormData(form);
-    cfg = { owner:String(fd.get('owner')).trim(), repo:String(fd.get('repo')).trim(), branch:(String(fd.get('branch')).trim() || 'main'), token:String(fd.get('token')).trim() };
+    function clean(x){ return String(x || '').replace(/[^\x21-\x7E]/g, ''); } // unsichtbare Zeichen beim Einfügen entfernen
+    cfg = { owner:clean(fd.get('owner')), repo:clean(fd.get('repo')), branch:clean(fd.get('branch')) || 'main', token:clean(fd.get('token')) };
+    form.token.value = cfg.token; form.owner.value = cfg.owner; form.repo.value = cfg.repo;
     saveJSON(CFG_KEY, cfg);
     st.className = 'status'; st.textContent = 'Teste Verbindung …';
     fetch('https://api.github.com/repos/' + encodeURIComponent(cfg.owner) + '/' + encodeURIComponent(cfg.repo), {
@@ -1750,7 +1832,19 @@ function wireSettings(){
         st.textContent = zugang ? 'Verbunden. Über „Bearbeiten“ und „Material“ trägst du Inhalte ein.' : 'Verbunden. Jetzt die Ersteinrichtung starten.';
         if(!zugang) setTimeout(function(){ location.hash = '#/einrichtung'; }, 800); else render();
       })
-      .catch(function(err){ st.className = 'status err'; st.textContent = err.message; });
+      .catch(function(err){
+        st.className = 'status err';
+        if(!(err instanceof TypeError)){ st.textContent = err.message; return; }
+        // Netzwerkfehler: prüfen, ob GitHub überhaupt erreichbar ist
+        st.textContent = 'Prüfe Verbindung zu GitHub …';
+        fetch('https://api.github.com/rate_limit', { cache:'no-store' }).then(function(r){
+          st.textContent = 'GitHub ist erreichbar, aber die Anfrage mit Token wurde blockiert. Meist ist das eine Browser-Erweiterung (Werbe-/Tracking-Blocker), '
+            + 'ein Virenscanner mit HTTPS-Prüfung oder ein Schulfilter. Tipp: Erweiterungen für diese Seite ausschalten oder einen anderen Browser testen.';
+        }, function(){
+          st.textContent = 'api.github.com ist von diesem Gerät aus nicht erreichbar (' + err.message + '). Ursache ist meist das Netzwerk (z. B. Schul-WLAN, Proxy, Firewall) '
+            + 'oder ein Blocker. Tipp: anderes Netz (z. B. Handy-Hotspot) oder anderen Browser testen.';
+        });
+      });
   });
   $('#cfg-clear').addEventListener('click', function(){
     cfg.token = ''; saveJSON(CFG_KEY, cfg); editing = false; form.token.value = '';
