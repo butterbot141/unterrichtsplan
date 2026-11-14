@@ -265,9 +265,14 @@ footer{max-width:1040px;margin:0 auto;padding:0 1rem 2rem;display:flex;justify-c
 footer a{display:inline-flex;align-items:center;gap:.35rem;color:var(--muted);text-decoration:none;font-size:.9rem;min-height:40px}
 .reihe-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
 /* Titelbild der Reihe */
-.titelbild-wrap{margin:0 0 1.3rem}
-.titelbild-btn{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in;border-radius:18px}
-.titelbild{display:block;max-width:100%;max-height:min(70vh,720px);width:auto;height:auto;margin:0 auto;border-radius:18px;box-shadow:var(--shadow);background:var(--soft)}
+.titelbild-wrap{margin:0 0 1.3rem;text-align:center}
+.titelbild-btn{position:relative;display:inline-block;max-width:100%;padding:0;border:0;background:transparent;cursor:zoom-in;border-radius:16px;vertical-align:top}
+/* erkennbar, aber nicht bildschirmfüllend: höchstens ca. ein Drittel der Höhe (iPad hoch ≈ 300 px, quer ≈ 250 px) */
+.titelbild{display:block;max-width:100%;max-height:min(32vh,300px);width:auto;height:auto;margin:0 auto;border-radius:16px;box-shadow:var(--shadow);background:var(--soft)}
+.titelbild-btn .zoom{position:absolute;right:.5rem;bottom:.5rem;display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .6rem;border-radius:999px;
+  background:rgba(15,20,28,.62);color:#fff;font-size:.8rem;font-weight:600;pointer-events:none}
+.titelbild-btn .zoom .i{width:1em;height:1em}
+@media (max-width:560px){.titelbild{max-height:min(28vh,220px)}.titelbild-btn .zoom span{display:none}}
 /* Material: Auge, ausgeblendet */
 .mwrap{display:inline-flex;align-items:center;gap:.1rem;max-width:100%}
 .mwrap .iconbtn{width:40px;height:40px}
@@ -927,7 +932,7 @@ function renderJahrgang(f, j){
 function titelbildSection(r, mode, ids){
   if(r.titelbild){
     return '<section class="titelbild-wrap" aria-label="Titelbild"><button class="titelbild-btn" data-act="open-bild" ' + ids + ' aria-label="Titelbild groß anzeigen">'
-      + '<img class="titelbild" data-bild="1" ' + ids + ' alt="Titelbild der Reihe"></button>'
+      + '<img class="titelbild" data-bild="1" ' + ids + ' alt="Titelbild der Reihe"><span class="zoom" aria-hidden="true">' + ico('search') + '<span>Vergrößern</span></span></button>'
       + (mode === 'kurs' ? '' : '<div class="edit-only" style="margin-top:.6rem"><button class="pillbtn" data-act="edit-bild" ' + ids + '>' + ico('image') + 'Titelbild ändern</button></div>') + '</section>';
   }
   return mode === 'kurs' ? '' : '<div class="edit-only" style="margin:0 0 1.2rem"><button class="addbtn" data-act="edit-bild" ' + ids + '>' + ico('image') + 'Titelbild hinzufügen – z. B. Foto der Concept-Map</button></div>';
