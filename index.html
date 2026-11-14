@@ -304,6 +304,37 @@ table.sync .fname{font-size:.82rem;color:var(--muted);word-break:break-all;min-w
 .st.geaendert{background:color-mix(in srgb,var(--primary) 16%,transparent);color:var(--primary)}
 .st.gesperrt{color:var(--danger)}
 .drop-on{outline:3px dashed var(--primary) !important;outline-offset:-3px}
+/* Hinweis-Banner */
+.hinweis{display:flex;gap:.7rem;align-items:flex-start;background:#FFF6D3;color:#3A2E00;border:1px solid #F3C21B;border-radius:16px;padding:.85rem 1rem;margin:0 0 1.2rem;font-weight:600;white-space:pre-line}
+.hinweis .i{color:#B58900;margin-top:.15rem}
+.hinweis .spacer{flex:1}
+.hinweis small{display:block;font-weight:400;color:#6B5A10}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .hinweis{background:#3A3212;color:#FFE89A;border-color:#8A7414} :root:not([data-theme="light"]) .hinweis small{color:#E6D58C} }
+.hinweis.alt{opacity:.55}
+/* Checkliste „Ich kann …“ */
+.checkbox{background:var(--sheet);border:1px solid var(--line);border-radius:18px;margin:0 0 1.2rem;box-shadow:var(--shadow)}
+.checkbox > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:.6rem;padding:.85rem 1rem;font-weight:700}
+.checkbox > summary::-webkit-details-marker{display:none}
+.checkbox > summary .count{margin-left:auto;font-weight:600;color:var(--muted);font-size:.92rem}
+.checkbox > summary .i.chev{transition:transform .2s}
+.checkbox[open] > summary .i.chev{transform:rotate(90deg)}
+.checkbox ul{list-style:none;margin:0;padding:0 .6rem .6rem}
+.checkbox li.kopf{font-family:var(--serif);font-weight:700;padding:.7rem .5rem .2rem;color:var(--acc)}
+.ck{display:flex;width:100%;align-items:center;gap:.7rem;text-align:left;background:transparent;border:0;border-top:1px solid var(--line);padding:.6rem .5rem;min-height:48px;cursor:pointer}
+.ck .dot{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-weight:800;font-size:.95rem}
+.ck.unsicher .dot{border-color:#E0A800;background:#FFF1B8;color:#6B5200}
+.ck.sicher .dot{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--sheet));color:var(--ok)}
+.check-legende{font-size:.85rem;color:var(--muted);padding:0 1.1rem .8rem}
+/* Freischalten ab Datum */
+.chip .ab, .aus-badge.ab{font-size:.72rem;font-weight:700;color:var(--muted);white-space:nowrap}
+/* Suche */
+.such-feld{width:100%;font-size:1.15rem;min-height:52px;padding:.7rem 1rem;border-radius:14px;border:1px solid var(--line);background:var(--sheet)}
+.treffer{list-style:none;margin:1rem 0 0;padding:0;display:grid;gap:.6rem}
+.treffer li{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:.75rem 1rem}
+.treffer .pfad{font-size:.85rem;color:var(--muted);margin-bottom:.15rem}
+.treffer a.ziel{font-weight:700;text-decoration:none;color:var(--acc,var(--primary))}
+.treffer .chips{margin-top:.45rem}
+mark{background:#FFE58A;color:inherit;border-radius:3px;padding:0 .1em}
 /* Ausgeblendete Stunden */
 .row.aus{background:repeating-linear-gradient(-45deg,transparent 0 10px,color-mix(in srgb,var(--line) 35%,transparent) 10px 20px)}
 .row.aus .row-title,.row.aus .row-main{opacity:.6}
@@ -331,6 +362,7 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid 
     <button class="pillbtn add admin-only" id="add-material" hidden></button>
     <button class="pillbtn admin-only" id="edit-toggle" hidden></button>
     <button class="pillbtn" id="kurs-exit" hidden></button>
+    <a class="iconbtn" id="search-btn" href="#/suche" aria-label="Suche" title="Suche" hidden></a>
     <button class="iconbtn" id="reload" aria-label="Neu laden" title="Neu laden"></button>
   </div>
 </header>
@@ -422,6 +454,10 @@ var I = {
   map:'<circle cx="12" cy="12" r="3"/><circle cx="4.5" cy="5" r="2"/><circle cx="19.5" cy="5" r="2"/><circle cx="12" cy="20.5" r="2"/><path d="M6 6.4l3.8 3.7M18 6.4l-3.8 3.7M12 15v3.5"/>',
   image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/>',
   link2:'<path d="M5 12h14"/><circle cx="5" cy="12" r="2.5"/><circle cx="19" cy="12" r="2.5"/>',
+  search:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  checklist:'<path d="M4 6l1.5 1.5L8 5M4 12l1.5 1.5L8 11M4 18l1.5 1.5L8 17M11 6h9M11 12h9M11 18h9"/>',
   importi:'<path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/>'
 };
 function ico(n){ return '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' + (I[n] || I.dokument) + '</svg>'; }
@@ -793,8 +829,9 @@ function chipLink(url, titel, typ, extraClass, badge){
 }
 /* Ein Material als Chip. Lehrkraft-Material (bereich "lk") erscheint nie in der Kursansicht. */
 function matChip(m, ref, mode){
-  var lk = m.bereich === 'lk', aus = !lk && m.ausgeblendet, cls = (lk ? 'lkchip' : '') + (aus ? ' aus' : '');
-  var badge = aus ? '<span title="für SuS ausgeblendet" style="display:inline-flex"><svg class="i aus-i" viewBox="0 0 24 24" aria-label="ausgeblendet">' + I.eyeoff + '</svg></span>' : '';
+  var lk = m.bereich === 'lk', zu = !lk && !m.ausgeblendet && gesperrt(m), aus = !lk && (m.ausgeblendet || zu), cls = (lk ? 'lkchip' : '') + (aus ? ' aus' : '');
+  var badge = !lk && m.ausgeblendet ? '<span title="für SuS ausgeblendet" style="display:inline-flex"><svg class="i aus-i" viewBox="0 0 24 24" aria-label="ausgeblendet">' + I.eyeoff + '</svg></span>'
+    : (zu ? '<span class="ab" title="für SuS sichtbar ab ' + esc(datumKurz(m.ab)) + '">ab ' + esc(datumKurz(m.ab)) + '</span>' : '');
   if(editing && mode !== 'kurs'){
     var ext = m.datei ? (m.datei.ext || '').toUpperCase() : (m.url ? 'Link' : '');
     var chip = '<button class="chip t-' + m.typ + (cls ? ' ' + cls : '') + '" data-act="edit-m" ' + ref + '>' + ico(m.typ === 'pruefung' ? 'lock' : m.typ)
@@ -899,10 +936,52 @@ function titelbildSection(r, mode, ids){
 function susItems(r){
   var out = [];
   (r.vorhaben || []).forEach(function(v, vi){
-    if(v.ausgeblendet) return;
-    (v.materialien || []).forEach(function(m){ if(m.bereich !== 'lk' && !m.ausgeblendet && (m.datei || m.url)) out.push({ v:v, vi:vi, m:m }); });
+    if(!sichtbarSuS(v)) return;
+    (v.materialien || []).forEach(function(m){ if(m.bereich !== 'lk' && sichtbarSuS(m) && (m.datei || m.url)) out.push({ v:v, vi:vi, m:m }); });
   });
   return out;
+}
+/* Freischalten ab Datum: ab = "JJJJ-MM-TT" (lokales Datum des Geräts) */
+function heute(){ var d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+function gesperrt(x){ return !!(x && x.ab && String(x.ab) > heute()); }
+function sichtbarSuS(x){ return !!x && !x.ausgeblendet && !gesperrt(x); }
+function datumKurz(iso){
+  var d = new Date(String(iso) + 'T12:00:00'); if(isNaN(d)) return iso;
+  return d.toLocaleDateString('de-DE', { weekday:'short', day:'numeric', month:'numeric' });
+}
+/* Hinweis-Banner der Reihe */
+function hinweisAktiv(r){ var h = r.hinweis; return !!(h && h.text && (!h.bis || String(h.bis) >= heute())); }
+function hinweisSection(r, mode, ids){
+  var h = r.hinweis, on = hinweisAktiv(r), kurs = mode === 'kurs';
+  if(!h || !h.text){ return kurs ? '' : '<div class="edit-only" style="margin:0 0 .8rem"><button class="addbtn" data-act="edit-hinweis" ' + ids + '>' + ico('info') + 'Hinweis für SuS anzeigen</button></div>'; }
+  if(!on && kurs) return '';
+  if(!on && !editing) return '';
+  return '<div class="hinweis' + (on ? '' : ' alt') + '" role="note">' + ico('info') + '<div class="spacer">' + esc(h.text)
+    + (!kurs && h.bis ? '<small>' + (on ? 'sichtbar bis ' : 'abgelaufen am ') + esc(datumKurz(h.bis)) + '</small>' : '') + '</div>'
+    + (kurs ? '' : '<span class="tools"><button class="iconbtn" data-act="edit-hinweis" ' + ids + ' aria-label="Hinweis bearbeiten">' + ico('edit') + '</button></span>') + '</div>';
+}
+/* Checkliste „Ich kann …“ – nur sichtbar, wenn eine hinterlegt ist. Einschätzung bleibt auf dem Gerät. */
+function checkKey(r){ return 'um-check:' + r.id; }
+function checkItems(r){ return (r.checkliste || []).filter(function(t){ return String(t).trim(); }); }
+function checkCount(r){
+  var st = loadJSON(checkKey(r)) || {}, items = checkItems(r).filter(function(t){ return !/^#/.test(t); });
+  return { sicher:items.filter(function(t){ return st[t] === 'sicher'; }).length, alle:items.length };
+}
+function checklisteSection(r, mode, ids){
+  var items = checkItems(r), kurs = mode === 'kurs';
+  if(!items.length) return kurs ? '' : '<div class="edit-only" style="margin:0 0 .8rem"><button class="addbtn" data-act="edit-check" ' + ids + '>' + ico('checklist') + 'Checkliste „Ich kann …“ hinterlegen</button></div>';
+  var st = loadJSON(checkKey(r)) || {}, n = checkCount(r), offen = loadJSON('um-check-offen') || {};
+  return '<details class="checkbox" data-checkbox="' + esc(r.id) + '"' + (offen[r.id] ? ' open' : '') + '><summary>' + ico('checklist') + 'Checkliste: Was kann ich schon?'
+    + '<span class="count" data-checkcount>' + n.sicher + ' / ' + n.alle + ' sicher</span>' + '<svg class="i chev" viewBox="0 0 24 24" aria-hidden="true">' + I.next + '</svg></summary>'
+    + '<p class="check-legende">Tippe an: einmal = noch unsicher, zweimal = kann ich sicher. Deine Einschätzung bleibt nur auf diesem Gerät.</p><ul>'
+    + items.map(function(t, i){
+      if(/^#/.test(t)) return '<li class="kopf">' + esc(t.replace(/^#+\s*/, '')) + '</li>';
+      var z = st[t] || '';
+      return '<li><button type="button" class="ck ' + z + '" data-ck="' + i + '" ' + ids + ' aria-label="' + esc(t) + ': ' + (z === 'sicher' ? 'kann ich sicher' : (z === 'unsicher' ? 'noch unsicher' : 'noch nicht eingeschätzt')) + '">'
+        + '<span class="dot">' + (z === 'sicher' ? '✓' : (z === 'unsicher' ? '~' : '')) + '</span><span>' + esc(t) + '</span></button></li>';
+    }).join('') + '</ul>'
+    + (kurs ? '' : '<div class="edit-only" style="margin:0 1rem 1rem"><button class="pillbtn" data-act="edit-check" ' + ids + '>' + ico('edit') + 'Checkliste bearbeiten</button></div>')
+    + '</details>';
 }
 function renderReihe(f, j, r, mode){
   document.title = r.titel;
@@ -911,7 +990,9 @@ function renderReihe(f, j, r, mode){
     + '<div class="page-head"><h1>' + esc(r.titel) + '</h1>' + (kurs ? '<span class="pill" data-kurs-pill>' + esc(f.name + ' ' + j.name) + '</span>' : tools('r', ids, {noMove:true}))
     + (kurs ? '' : '<span class="spacer"></span><button class="pillbtn" data-act="share-r" ' + ids + '>' + ico('qr') + '<span class="lbl">Mit Kurs teilen</span></button>')
     + (r.inhaltsfeld ? '<span class="sub">' + esc(r.inhaltsfeld) + '</span>' : '') + '</div>';
+  html += hinweisSection(r, mode, ids);
   html += titelbildSection(r, mode, ids);
+  html += checklisteSection(r, mode, ids);
   if(r.uebersicht){
     var ov = Object.assign({ id:'ov', typ:'uebersicht', titel:'Datei zur Reihe' }, r.uebersicht), parts = materialChipsOv(ov, ids);
     if(parts.sus.length || (!kurs && parts.lk.length)){
@@ -922,16 +1003,18 @@ function renderReihe(f, j, r, mode){
   var vs = r.vorhaben || [], shown = 0;
   html += '<div class="rows">';
   vs.forEach(function(v, i){
-    if(kurs && v.ausgeblendet) return;
+    if(kurs && !sichtbarSuS(v)) return;
     shown++;
     var vid = idsAttr({f:f, j:j, r:r, v:v}), mats = v.materialien || [];
     function chipOf(m){ return matChip(m, vid + ' data-m="' + esc(m.id) + '"', mode); }
-    var sus = mats.filter(function(m){ return m.bereich !== 'lk' && !(kurs && m.ausgeblendet); }).map(chipOf).filter(Boolean);
+    var sus = mats.filter(function(m){ return m.bereich !== 'lk' && !(kurs && !sichtbarSuS(m)); }).map(chipOf).filter(Boolean);
     var lk = kurs ? [] : mats.filter(function(m){ return m.bereich === 'lk'; }).map(chipOf).filter(Boolean);
     var eye = '<button class="iconbtn" data-act="vis-v" ' + vid + ' aria-label="' + (v.ausgeblendet ? 'Für SuS einblenden' : 'Für SuS ausblenden') + '" title="' + (v.ausgeblendet ? 'Für SuS einblenden' : 'Für SuS ausblenden') + '">' + ico(v.ausgeblendet ? 'eyeoff' : 'eye') + '</button>';
-    html += '<div class="row' + (!kurs && v.ausgeblendet ? ' aus' : '') + '" ' + vid + '><span class="nr">' + (i + 1) + '</span><div class="row-title"><b>' + esc(v.titel) + '</b>'
+    html += '<div class="row' + (!kurs && !sichtbarSuS(v) ? ' aus' : '') + '" ' + vid + '><span class="nr">' + (i + 1) + '</span><div class="row-title"><b>' + esc(v.titel) + '</b>'
       + (v.notiz ? '<small>' + esc(v.notiz) + '</small>' : '')
-      + (!kurs && v.ausgeblendet ? '<span class="aus-badge">' + ico('eyeoff') + 'für SuS ausgeblendet</span>' : '') + '</div>'
+      + (!kurs && v.ausgeblendet ? '<span class="aus-badge">' + ico('eyeoff') + 'für SuS ausgeblendet</span>' : '')
+      + (!kurs && !v.ausgeblendet && gesperrt(v) ? '<span class="aus-badge ab">' + ico('clock') + 'für SuS ab ' + esc(datumKurz(v.ab)) + '</span>' : '')
+      + (!kurs && editing && v.ab && !gesperrt(v) ? '<span class="aus-badge ab">' + ico('clock') + 'freigeschaltet seit ' + esc(datumKurz(v.ab)) + '</span>' : '') + '</div>'
       + '<div class="row-main"><div class="chips">' + sus.join('')
       + (!sus.length && !editing ? '<span class="muted" style="font-size:.95rem;padding-top:.5rem">' + (lk.length ? '' : 'Noch kein Material.') + '</span>' : '')
       + (kurs ? '' : '<button class="chip add edit-only" data-act="add-m" data-bereich="sus" ' + vid + '>' + ico('plus') + '<span>Unterrichtsmaterial</span></button>') + '</div>'
@@ -960,6 +1043,72 @@ function materialChipsOv(ov, ids){
   return { sus:sus, lk:lk };
 }
 
+/* ================= Suche über alle Reihen ================= */
+var suchText = '';
+function norm(s){ return String(s || '').toLowerCase().replace(/ß/g, 'ss').normalize('NFKD').replace(/[\u0300-\u036f]/g, ''); }
+function renderSuche(){
+  document.title = 'Suche';
+  return crumbs([['Suche', '#/suche']]) + '<div class="page-head"><h1>Suche</h1><span class="sub">Reihen, Unterrichtsvorhaben, Materialien und Dateinamen</span></div>'
+    + '<input type="search" class="such-feld" id="such-feld" placeholder="z. B. Spiegel, Lösung, Brüche …" autocomplete="off" value="' + esc(suchText) + '">'
+    + '<div id="such-treffer"></div>';
+}
+function suchErgebnisse(q){
+  var terms = norm(q).split(/\s+/).filter(Boolean), out = [];
+  if(!terms.length) return out;
+  function hit(txt){ var n = norm(txt); return terms.every(function(t){ return n.indexOf(t) >= 0; }); }
+  (data.faecher || []).forEach(function(f){ if(f.extern) return; (f.jahrgaenge || []).forEach(function(j){ (j.reihen || []).forEach(function(r){
+    var base = { f:f, j:j, r:r }, rTxt = [f.name, j.name, r.titel, r.inhaltsfeld, r.hinweis && r.hinweis.text, checkItems(r).join(' ')].join(' ');
+    var vHits = [];
+    (r.vorhaben || []).forEach(function(v, vi){
+      var vTxt = rTxt + ' ' + v.titel + ' ' + (v.notiz || ''), ms = (v.materialien || []).filter(function(m){
+        return hit(vTxt + ' ' + m.titel + ' ' + (TYPE_LABEL[m.typ] || '') + ' ' + (m.datei ? m.datei.name : '') + ' ' + (m.url ? hostOf(m.url) : '') + ' ' + (m.bereich === 'lk' ? 'Lehrkraft' : ''));
+      });
+      if(ms.length || hit(vTxt)) vHits.push({ v:v, vi:vi, ms:ms });
+    });
+    if(vHits.length || hit(rTxt)) out.push(Object.assign(base, { vHits:vHits }));
+  }); }); });
+  return out;
+}
+function mark(txt, q){
+  var t = esc(txt), terms = norm(q).split(/\s+/).filter(function(x){ return x.length > 1; });
+  if(!terms.length) return t;
+  var n = norm(txt); if(n.length !== String(txt).length) return t;
+  var ranges = [];
+  terms.forEach(function(term){ var i = n.indexOf(term); while(i >= 0){ ranges.push([i, i + term.length]); i = n.indexOf(term, i + term.length); } });
+  if(!ranges.length) return t;
+  ranges.sort(function(a, b){ return a[0] - b[0]; });
+  var res = '', pos = 0, raw = String(txt);
+  ranges.forEach(function(rg){ if(rg[0] < pos) return; res += esc(raw.slice(pos, rg[0])) + '<mark>' + esc(raw.slice(rg[0], rg[1])) + '</mark>'; pos = rg[1]; });
+  return res + esc(raw.slice(pos));
+}
+function suchHtml(q){
+  if(!norm(q).trim()) return '<p class="muted" style="margin-top:1rem">Suchbegriff eingeben – gesucht wird in allen Fächern und Jahrgängen.</p>';
+  var res = suchErgebnisse(q), n = 0;
+  if(!res.length) return '<p class="muted" style="margin-top:1rem">Nichts gefunden.</p>';
+  var h = '<ul class="treffer">';
+  res.slice(0, 60).forEach(function(x){
+    var link = '#/f/' + encodeURIComponent(x.f.id) + '/' + encodeURIComponent(x.j.id) + '/' + encodeURIComponent(x.r.id);
+    h += '<li class="acc-' + esc(x.f.farbe || 'blau') + '"><div class="pfad">' + esc(x.f.name + ' ' + x.j.name) + (x.r.inhaltsfeld ? ' · ' + esc(x.r.inhaltsfeld) : '') + '</div>'
+      + '<a class="ziel" href="' + link + '">' + mark(x.r.titel, q) + '</a>';
+    x.vHits.slice(0, 12).forEach(function(vh){
+      var vid = idsAttr({ f:x.f, j:x.j, r:x.r, v:vh.v });
+      h += '<div style="margin-top:.45rem"><span class="muted">' + (vh.vi + 1) + '.</span> ' + mark(vh.v.titel, q)
+        + (vh.ms.length ? '<div class="chips">' + vh.ms.map(function(m){
+          var ref = vid + ' data-m="' + esc(m.id) + '"', cls = m.bereich === 'lk' ? 'lkchip' : '';
+          return m.datei ? chipFile(m.datei, m.titel, m.typ, ref + ' data-slot="datei"', cls) : (m.url ? chipLink(m.url, m.titel, m.typ, cls) : '');
+        }).join('') + '</div>' : '') + '</div>';
+      n++;
+    });
+    h += '</li>';
+  });
+  return h + '</ul>';
+}
+function wireSuche(){
+  var inp = $('#such-feld'), out = $('#such-treffer');
+  function go(){ suchText = inp.value; out.innerHTML = suchHtml(suchText); }
+  inp.addEventListener('input', go); go();
+  setTimeout(function(){ inp.focus(); }, 30);
+}
 function renderSettings(){
   document.title = 'Einstellungen';
   var html = crumbs([['Einstellungen', '#/einstellungen']]) + '<div class="page-head"><h1>Einstellungen</h1></div>';
@@ -992,7 +1141,8 @@ function renderSettings(){
       + '<span class="hint">Betrifft nur die Vorschläge beim Anlegen von Reihen (Sek I Physik). Sek II ist für beide gleich.</span></label>'
       + '<div class="btnline" style="margin:0 0 .3rem"><button class="btn primary" data-act="sync">' + ico('importi') + 'Ordner oder Dateien hochladen</button>'
       + '<button class="btn" data-act="import">' + ico('importi') + 'Planung importieren / Sicherung wiederherstellen</button></div>'
-      + '<p class="hint" style="margin:0 0 .9rem">Sammel-Upload: Ordner vom Laptop (oder ZIP) verschlüsselt hochladen und automatisch zuordnen – erneut ausführen gleicht ab. Sicherung: die ZIP aus „Alles herunterladen“.</p>'
+      + '<div class="btnline" style="margin:0 0 .3rem"><button class="btn" data-act="vorlage">' + ico('download') + 'Vorlage für interaktive Seite</button></div>'
+      + '<p class="hint" style="margin:0 0 .9rem">Vorlage: HTML-Seite im Stil der App – mit Lernziel, Aufgaben, Quiz, Antwortfeld, Hilfen und Zurück/Weiter. In einem Editor anpassen und als Unterrichtsmaterial hochladen.<br>Sammel-Upload: Ordner vom Laptop (oder ZIP) verschlüsselt hochladen und automatisch zuordnen – erneut ausführen gleicht ab. Sicherung: die ZIP aus „Alles herunterladen“.</p>'
       + '<div class="btnline" style="margin:0"><button class="btn" data-act="change-code">Zugangscode ändern</button>'
       + '<button class="btn" data-act="change-pw">Prüfungspasswort ändern</button></div></section>';
     html += storagePanel();
@@ -1043,6 +1193,7 @@ function render(){
   var app = $('#app'), kurs = parts[0] === 'kurs';
   document.body.classList.toggle('kurs', kurs);
   if(kurs){ editing = false; document.body.classList.remove('editing'); }
+  $('#search-btn').hidden = kurs || !data || !keyB;
   var kx = $('#kurs-exit'); kx.hidden = !(kurs && canEdit() && keyB);
   kx.innerHTML = ico('teacher') + '<span class="lbl">Lehrkraft-Ansicht</span>';
   $('.brand').setAttribute('href', kurs ? location.hash : '#/');
@@ -1058,6 +1209,7 @@ function render(){
     app.innerHTML = kr ? renderReihe(kf, kj, kr, 'kurs') : '<div class="empty-state">Diese Reihe gibt es nicht (mehr).</div>';
     hydrate(); return;
   }
+  if(parts[0] === 'suche'){ app.innerHTML = renderSuche(); wireSuche(); return; }
   if(parts[0] === 'f'){
     var f = findIn(data.faecher, parts[1]), j = f && findIn(f.jahrgaenge, parts[2]);
     if(!j){ app.innerHTML = crumbs([]) + '<div class="empty-state">Diese Seite gibt es nicht (mehr).</div>'; return; }
@@ -1169,7 +1321,7 @@ function openFile(F, titel, typ, c, replace){
         /* Eigene Herkunft (sandbox ohne allow-same-origin): Die Seite kommt nicht an Code, Token oder Schlüssel heran.
            Verbindung zur Oberfläche nur über die Brücke (postMessage). */
         var fr = document.createElement('iframe');
-        fr.title = titel; fr.setAttribute('allow', 'fullscreen');
+        fr.title = titel; fr.setAttribute('allow', 'fullscreen; clipboard-write');
         fr.setAttribute('sandbox', 'allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-downloads');
         fr.srcdoc = withBridge(TD.decode(plain), loadJSON(seiteKey(F, c)) || {}, !!nextOf(c));
         body.innerHTML = ''; body.appendChild(fr); viewerState.frame = fr;
@@ -1203,11 +1355,15 @@ function withBridge(html, store, hatWeiter){
     + 'key:function(i){return Object.keys(st)[i]||null;},get length(){return Object.keys(st).length;}};}'
     + 'try{Object.defineProperty(window,"localStorage",{value:mk(S,true),configurable:true});}catch(e){}'
     + 'try{Object.defineProperty(window,"sessionStorage",{value:mk({},false),configurable:true});}catch(e){}'
+    + 'function J(h){var o=location.href;try{history.replaceState(history.state,"",o.split("#")[0]+h);}catch(x){location.hash=h;return;}'
+    + 'try{window.dispatchEvent(new HashChangeEvent("hashchange",{oldURL:o,newURL:location.href}));}catch(x){}'
+    + 'var t=document.getElementById(decodeURIComponent(h.slice(1)));if(t&&!t.hidden&&t.tagName!=="ARTICLE")t.scrollIntoView();}'
     + 'window.Plattform={zurueck:function(){M("zurueck");},weiter:function(){M("weiter");},oeffne:function(t){M("material",{titel:String(t)});},hatWeiter:' + (hatWeiter ? 'true' : 'false') + '};'
     + 'document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest("a[href]"):null;if(!a)return;var h=a.getAttribute("href")||"";'
     + 'if(h==="#zurueck"||h==="um:zurueck"){e.preventDefault();M("zurueck");}'
     + 'else if(h==="#weiter"||h==="um:weiter"){e.preventDefault();M("weiter");}'
     + 'else if(h.indexOf("um:material:")===0){e.preventDefault();M("material",{titel:decodeURIComponent(h.slice(12))});}'
+    + 'else if(h.charAt(0)==="#"){e.preventDefault();if(h.length>1&&location.hash!==h)J(h);}'
     + 'else if(/^https?:/i.test(h)&&!a.target){a.target="_blank";a.rel="noopener";}},true);})();<\/script>';
   var m = /<head[^>]*>/i.exec(html);
   if(m) return html.slice(0, m.index + m[0].length) + js + html.slice(m.index + m[0].length);
@@ -1220,9 +1376,9 @@ function reiheFolge(c){
   if(!c || !c.r) return [];
   var kurs = document.body.classList.contains('kurs'), out = [];
   (c.r.vorhaben || []).forEach(function(v){
-    if(kurs && v.ausgeblendet) return;
+    if(kurs && !sichtbarSuS(v)) return;
     (v.materialien || []).forEach(function(m){
-      if(m.bereich === 'lk' || (kurs && m.ausgeblendet) || !m.datei) return;
+      if(m.bereich === 'lk' || (kurs && !sichtbarSuS(m)) || !m.datei) return;
       out.push({ f:c.f, j:c.j, r:c.r, v:v, m:m });
     });
   });
@@ -1374,6 +1530,7 @@ function openForm(o){
       var out = {};
       o.fields.forEach(function(fd){
         if(!fd.name) return;
+        if(fd.type === 'html'){ var he = form.querySelector('[name="' + fd.name + '"]'); out[fd.name] = he ? he.value.trim() : ''; return; }
         if(fd.type === 'slot') out[fd.name] = readSlot(form, fd.name);
         else if(fd.type === 'check') out[fd.name] = form.querySelector('[name="' + fd.name + '"]').checked;
         else if(fd.type === 'checklist') out[fd.name] = Array.prototype.map.call(form.querySelectorAll('[name="' + fd.name + '"]:checked'), function(x){ return +x.value; });
@@ -1436,7 +1593,8 @@ function materialForm(loc, m, bereich){
       { name:'titel', label:'Titel', value:m.titel, required:true },
       { name:'datei', label:'Datei oder Link', type:'slot', allowLink:true, current: m.datei ? m.datei.name : (m.url || ''), url:m.url, defaultMode:'file', hint:' ' },
       isNewM(m) ? { type:'html', html:'<p class="hint" style="margin:-.4rem 0 .8rem">Tipp: Mehrere Dateien auf einmal auswählen – dann ordnet die App sie automatisch zu.</p>' } : { type:'html', html:'' },
-      { type:'html', html:'<label class="check" id="sichtbar-row"><input type="checkbox" name="sichtbar"' + (m.ausgeblendet ? '' : ' checked') + '>Für SuS sichtbar</label>' },
+      { type:'html', html:'<div id="sichtbar-row"><label class="check"><input type="checkbox" name="sichtbar"' + (m.ausgeblendet ? '' : ' checked') + '>Für SuS sichtbar</label>'
+        + '<label class="f"><span>Erst sichtbar ab (optional)</span><input type="date" name="ab" value="' + esc(m.ab || '') + '"><span class="hint">Z. B. Lösungen erst nach der Stunde freischalten. Leer = sofort.</span></label></div>' },
       { type:'html', html:'<p class="hint" id="pruef-hint" hidden>' + ico('lock') + ' Wird zusätzlich mit dem Prüfungspasswort verschlüsselt.</p>' }
     ],
     wire:function(form){
@@ -1508,6 +1666,7 @@ function materialForm(loc, m, bereich){
       out.o = { f:form.o_f.value, j:form.o_j.value, r:form.o_r.value, v:form.o_v.value, rNew:form.o_r_new.value.trim(), vNew:form.o_v_new.value.trim() };
       out.bereich = form.typ.value === 'pruefung' ? 'lk' : ((form.querySelector('input[name=bereich]:checked') || {}).value || 'sus');
       out.sichtbar = form.sichtbar.checked;
+      out.ab = form.ab.value || '';
     }
   });
 }
@@ -1542,6 +1701,7 @@ function saveMaterial(loc, existing, bereich){
           var vh = o.v === '__neu' ? null : findIn(r.vorhaben, o.v);
           if(!vh){ vh = { id:uid(), titel:o.vNew, notiz:'', ausgeblendet:false, materialien:[] }; r.vorhaben.push(vh); }
           target.typ = v.typ; target.titel = v.titel; target.bereich = v.bereich; target.ausgeblendet = v.bereich === 'sus' ? !v.sichtbar : false;
+          if(v.bereich === 'sus' && v.ab) target.ab = v.ab; else delete target.ab;
           delete target.nurLK; delete target.sus; delete target.lk;
           var dir = dirFor(f, j, r), oldFiles = [];
           return applySlot(target, 'datei', v.datei, dir, schutz, true).then(function(a){
@@ -1601,10 +1761,29 @@ function applyTitelbild(r, s, dir){
 /* =====================================================================
    Aktionen
    ===================================================================== */
+function AB_FIELD(val){
+  return { type:'html', name:'ab', html:'<label class="f"><span>Für SuS sichtbar ab (optional)</span><input type="date" name="ab" value="' + esc(val || '') + '">'
+    + '<span class="hint">So lässt sich die Reihe vorausplanen: Bis zu diesem Tag sehen SuS das Vorhaben nicht. Leer = sofort (Auge gilt weiterhin).</span></label>' };
+}
 function EXTERN_FIELD(val){
   return { name:'extern', label:'Liegt in einer anderen Sammlung? Adresse (optional)', type:'url', value:val || '', placeholder:'https://name.github.io/physik/' };
 }
 function checkExtern(u){ if(u && !/^https:\/\//i.test(u)){ alert('Bitte eine vollständige Adresse mit https:// eingeben.'); return false; } return true; }
+/* Text aus .txt/.md oder .docx (word/document.xml, ein Absatz pro Zeile) */
+function textAusDatei(f){
+  return f.arrayBuffer().then(function(b){
+    var u8 = new Uint8Array(b);
+    if(!/\.docx$/i.test(f.name)) return TD.decode(u8);
+    return readZip(u8).then(function(m){
+      var x = m['word/document.xml']; if(!x) throw new Error('Keine Word-Datei (.docx).');
+      x = TD.decode(x);
+      return (x.match(/<w:p[ >][\s\S]*?<\/w:p>/g) || []).map(function(p){
+        return (p.match(/<w:t[^>]*>[^<]*<\/w:t>/g) || []).map(function(t){ return t.replace(/<[^>]+>/g, ''); }).join('')
+          .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&');
+      }).join('\n');
+    });
+  });
+}
 function needAdmin(fn){ return function(c){ ensureFresh().then(function(){ var el = c && c._el; fn(el ? ctx(el) : c); }).catch(fail); }; }
 var actions = {
   'edit-titel': needAdmin(function(){
@@ -1695,13 +1874,15 @@ var actions = {
   'add-v': needAdmin(function(c){
     openForm({ title:'Unterrichtsvorhaben hinzufügen', submit:'Anlegen', fields:[
       { name:'titel', label:'Unterrichtsvorhaben', required:true, placeholder:'z. B. Camera obscura' },
-      { name:'notiz', label:'Notiz (optional)', placeholder:'z. B. 1–2 Stunden' }
-    ]}).then(function(v){ if(v) commit('Vorhaben: ' + v.titel, function(){ c.r.vorhaben.push({ id:uid(), titel:v.titel, notiz:v.notiz, materialien:[] }); }); });
+      { name:'notiz', label:'Notiz (optional)', placeholder:'z. B. 1–2 Stunden' },
+      AB_FIELD('')
+    ]}).then(function(v){ if(v) commit('Vorhaben: ' + v.titel, function(){ var nv = { id:uid(), titel:v.titel, notiz:v.notiz, ausgeblendet:false, materialien:[] }; if(v.ab) nv.ab = v.ab; c.r.vorhaben.push(nv); }); });
   }),
   'edit-v': needAdmin(function(c){
     openForm({ title:'Unterrichtsvorhaben bearbeiten', fields:[
-      { name:'titel', label:'Unterrichtsvorhaben', value:c.v.titel, required:true }, { name:'notiz', label:'Notiz (optional)', value:c.v.notiz }
-    ]}).then(function(v){ if(v) commit('Vorhaben geändert', function(){ c.v.titel = v.titel; c.v.notiz = v.notiz; }); });
+      { name:'titel', label:'Unterrichtsvorhaben', value:c.v.titel, required:true }, { name:'notiz', label:'Notiz (optional)', value:c.v.notiz },
+      AB_FIELD(c.v.ab)
+    ]}).then(function(v){ if(v) commit('Vorhaben geändert', function(){ c.v.titel = v.titel; c.v.notiz = v.notiz; if(v.ab) c.v.ab = v.ab; else delete c.v.ab; }); });
   }),
   'del-v': needAdmin(function(c){
     if(!confirm('„' + c.v.titel + '“ mit allen Materialien löschen?')) return;
@@ -1734,6 +1915,48 @@ var actions = {
   }),
   'open-bild': function(c){ if(c.r && c.r.titelbild) openFile(c.r.titelbild, 'Titelbild – ' + c.r.titel, 'uebersicht'); },
   'dl-reihe': function(c){ exportReiheSuS(c.f, c.j, c.r); },
+  'vorlage': function(){
+    fetch('vorlagen/interaktive-seite.html', { cache:'no-store' }).then(function(r){ if(!r.ok) throw new Error('Vorlage nicht gefunden.'); return r.blob(); })
+      .then(function(b){ saveBlob(new Blob([b], { type:'text/html' }), 'Vorlage interaktive Seite.html'); }).catch(fail);
+  },
+  'edit-hinweis': needAdmin(function(c){
+    var h = c.r.hinweis || {};
+    openForm({ title:'Hinweis für SuS', deletable:!!h.text, fields:[
+      { name:'text', label:'Hinweis (erscheint oben in der Reihe, auch in der Kursansicht)', type:'textarea', value:h.text || '', required:true },
+      { name:'bis', label:'Anzeigen bis einschließlich (optional)', type:'date', value:h.bis || '' }
+    ]}).then(function(v){
+      if(!v) return;
+      if(v._delete) return commit('Hinweis entfernt', function(){ delete c.r.hinweis; });
+      commit('Hinweis: ' + c.r.titel, function(){ c.r.hinweis = { text:v.text }; if(v.bis) c.r.hinweis.bis = v.bis; });
+    });
+  }),
+  'edit-check': needAdmin(function(c){
+    openForm({ title:'Checkliste „Ich kann …“', deletable:checkItems(c.r).length > 0, noFocus:true,
+      intro:'Eine Aussage pro Zeile. Zeilen mit # am Anfang werden Zwischenüberschriften. Die Checkliste erscheint nur, wenn hier etwas steht.',
+      fields:[
+        { type:'html', html:'<div class="btnline" style="margin:0 0 .6rem"><button type="button" class="btn" data-x="datei">' + ico('importi') + 'Aus Datei übernehmen (Word oder Text)</button></div>' },
+        { name:'liste', label:'Aussagen', type:'textarea', value:checkItems(c.r).join('\n') }
+      ],
+      wire:function(form){
+        var ta = form.liste; ta.style.minHeight = '220px';
+        if(!ta.value) ta.placeholder = '# Lichtausbreitung\nIch kann erklären, warum wir Gegenstände sehen.\nIch kann den Strahlengang an einer Camera obscura zeichnen.';
+        form.addEventListener('click', function(e){
+          if(!e.target.closest('[data-x=datei]')) return;
+          var inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.docx,.txt,.md'; inp.hidden = true; form.appendChild(inp);
+          inp.onchange = function(){
+            var f = inp.files[0]; inp.remove(); if(!f) return;
+            textAusDatei(f).then(function(t){ ta.value = t.split(/\r?\n/).map(function(x){ return x.trim(); }).filter(Boolean).join('\n'); }, function(err){ alert(err.message || 'Die Datei konnte nicht gelesen werden.'); });
+          };
+          inp.click();
+        });
+      }
+    }).then(function(v){
+      if(!v) return;
+      if(v._delete) return commit('Checkliste entfernt', function(){ delete c.r.checkliste; });
+      var list = String(v.liste || '').split(/\r?\n/).map(function(x){ return x.replace(/^[\s•\-–*□☐]+/, '').trim(); }).filter(Boolean);
+      commit('Checkliste: ' + c.r.titel, function(){ if(list.length) c.r.checkliste = list; else delete c.r.checkliste; });
+    });
+  }),
   'share-r': function(c){ shareReihe(c.f, c.j, c.r); },
   'leave-kurs': function(){ try{ localStorage.removeItem(KURS_KEY); }catch(e){} toast('Kursansicht auf diesem Gerät beendet.'); location.hash = '#/'; },
   'import': function(){ startImport(); },
@@ -1785,6 +2008,17 @@ document.addEventListener('click', function(e){
   if(e.target.closest('[data-kurs-pill]')){
     var now = Date.now(); kursTaps = now - kursTapT < 1500 ? kursTaps + 1 : 1; kursTapT = now;
     if(kursTaps >= 5){ kursTaps = 0; location.hash = '#/einstellungen'; }
+    return;
+  }
+  var ck = e.target.closest('[data-ck]');
+  if(ck){
+    var cr = ctx(ck).r; if(!cr) return;
+    var items = checkItems(cr), t = items[+ck.dataset.ck], st = loadJSON(checkKey(cr)) || {};
+    var z = st[t] === 'unsicher' ? 'sicher' : (st[t] === 'sicher' ? '' : 'unsicher');
+    if(z) st[t] = z; else delete st[t];
+    saveJSON(checkKey(cr), st);
+    ck.className = 'ck ' + z; $('.dot', ck).textContent = z === 'sicher' ? '✓' : (z === 'unsicher' ? '~' : '');
+    var n = checkCount(cr), cc = ck.closest('details').querySelector('[data-checkcount]'); if(cc) cc.textContent = n.sicher + ' / ' + n.alle + ' sicher';
     return;
   }
   var o = e.target.closest('[data-open]');
@@ -2428,7 +2662,7 @@ function importTitelbild(ri){ return ri.titelbild || (ri.board && ri.board.bild)
 /* Material aus import.json (Version 1 oder 2) in Einträge des aktuellen Modells zerlegen */
 function importMats(mi){
   var typ = mi.typ || 'dokument', titel = mi.titel || 'Material';
-  if(mi.bereich) return [{ typ:typ, titel:titel, bereich:typ === 'pruefung' || mi.bereich === 'lk' ? 'lk' : 'sus', datei:mi.datei || null, url:mi.url || null, ausgeblendet:!!mi.ausgeblendet, quelle:mi.quelle || null, hash:mi.hash || null }];
+  if(mi.bereich) return [{ typ:typ, titel:titel, bereich:typ === 'pruefung' || mi.bereich === 'lk' ? 'lk' : 'sus', datei:mi.datei || null, url:mi.url || null, ausgeblendet:!!mi.ausgeblendet, quelle:mi.quelle || null, hash:mi.hash || null, ab:mi.ab || null }];
   var lkOnly = typ === 'pruefung' || mi.sicht === 'lk', out = [];
   if(mi.sus || mi.url) out.push({ typ:typ, titel:titel, bereich:lkOnly ? 'lk' : 'sus', datei:mi.sus || null, url:mi.sus ? null : (mi.url || null), ausgeblendet:false });
   if(mi.lk) out.push({ typ:typ, titel:titel, bereich:'lk', datei:mi.lk, url:null, ausgeblendet:false });
@@ -2519,6 +2753,8 @@ function runImport(imp, plan, modus){
               if(!r){
                 r = { id:ri.id && !findIn(j.reihen, ri.id) ? ri.id : uniqueId(slug(ri.titel), j.reihen), titel:ri.titel, inhaltsfeld:ri.inhaltsfeld || '', uebersicht:null, titelbild:null, vorhaben:[] };
                 if(ri.ordner) r.ordner = ri.ordner;
+                if(ri.hinweis && ri.hinweis.text) r.hinweis = ri.hinweis;
+                if(ri.checkliste && ri.checkliste.length) r.checkliste = ri.checkliste.slice();
                 j.reihen.push(r);
               }
               var dir = dirFor(f, j, r), p = Promise.resolve(), tb = importTitelbild(ri), ou = ri.uebersicht;
@@ -2531,7 +2767,7 @@ function runImport(imp, plan, modus){
               (ri.vorhaben || []).forEach(function(vi){
                 p = p.then(function(){
                   var v = r.vorhaben.filter(function(x){ return x.titel.toLowerCase() === String(vi.titel).toLowerCase(); })[0];
-                  if(!v){ v = { id:uid(), titel:vi.titel, notiz:vi.notiz || '', ausgeblendet:!!vi.ausgeblendet, materialien:[] }; if(vi.quelle) v.quelle = vi.quelle; r.vorhaben.push(v); }
+                  if(!v){ v = { id:uid(), titel:vi.titel, notiz:vi.notiz || '', ausgeblendet:!!vi.ausgeblendet, materialien:[] }; if(vi.quelle) v.quelle = vi.quelle; if(vi.ab) v.ab = vi.ab; r.vorhaben.push(v); }
                   var mc = Promise.resolve();
                   (vi.materialien || []).forEach(function(mi){
                     importMats(mi).forEach(function(x){
@@ -2539,7 +2775,7 @@ function runImport(imp, plan, modus){
                         if(v.materialien.some(function(y){ return y.titel === x.titel && y.typ === x.typ && (y.bereich || 'sus') === x.bereich; })) return;
                         var schutz = x.typ === 'pruefung' ? 'pruefung' : 'basis';
                         var m = { id:uid(), typ:x.typ, titel:x.titel, bereich:x.bereich, datei:null, url:x.url, ausgeblendet:x.ausgeblendet };
-                        if(x.quelle) m.quelle = x.quelle; if(x.hash) m.hash = x.hash;
+                        if(x.quelle) m.quelle = x.quelle; if(x.hash) m.hash = x.hash; if(x.ab) m.ab = x.ab;
                         return up(x.datei, dir, schutz).then(function(F){ m.datei = F; if(m.datei || m.url) v.materialien.push(m); });
                       });
                     });
@@ -2613,6 +2849,8 @@ function exportZip(onlyF, onlyJ){
       (j.reihen || []).forEach(function(r, ri){
         var rdir = jdir + '/' + pad2(ri + 1) + ' ' + safeName(r.titel), pr = { id:r.id, titel:r.titel, inhaltsfeld:r.inhaltsfeld || '', vorhaben:[] };
         if(r.ordner) pr.ordner = r.ordner;
+        if(r.hinweis) pr.hinweis = r.hinweis;
+        if(r.checkliste && r.checkliste.length) pr.checkliste = r.checkliste.slice();
         pe.reihen.push(pr);
         if(r.titelbild) job(r.titelbild, rdir + '/00 Titelbild.' + r.titelbild.ext, pr, 'titelbild');
         html += '<h3>' + (ri + 1) + '. ' + esc(r.titel) + '</h3><ol>';
@@ -2623,11 +2861,12 @@ function exportZip(onlyF, onlyJ){
         (r.vorhaben || []).forEach(function(v, vi){
           var vdir = rdir + '/' + pad2(vi + 1) + ' ' + safeName(v.titel), items = [], pv = { titel:v.titel, notiz:v.notiz || '', ausgeblendet:!!v.ausgeblendet, materialien:[] };
           if(v.quelle) pv.quelle = v.quelle;
+          if(v.ab) pv.ab = v.ab;
           pr.vorhaben.push(pv);
           (v.materialien || []).forEach(function(m){
             var lk = m.bereich === 'lk', sfx = lk ? ' (Lehrkraft)' : '', any = false;
             var pm = { typ:m.typ, titel:m.titel, bereich:lk ? 'lk' : 'sus', ausgeblendet:!!m.ausgeblendet };
-            if(m.quelle) pm.quelle = m.quelle; if(m.hash) pm.hash = m.hash;
+            if(m.quelle) pm.quelle = m.quelle; if(m.hash) pm.hash = m.hash; if(m.ab) pm.ab = m.ab;
             if(m.datei){
               var path = vdir + '/' + safeName(m.titel) + sfx + '.' + m.datei.ext;
               if(job(m.datei, path, pm, 'datei')){ any = true; items.push('<a href="' + encodeURI(path) + '">' + esc(m.titel) + sfx + '</a> <small>' + esc((m.datei.ext || '').toUpperCase()) + '</small>'); }
@@ -2678,8 +2917,8 @@ function exportReiheSuS(f, j, r){
     + '<h1>' + esc(r.titel) + '</h1><p><small>' + esc(f.name + ' ' + j.name) + ' · Stand ' + new Date().toLocaleDateString('de-DE') + '</small></p><ol>';
   if(r.titelbild) jobs.push({ F:r.titelbild, path:uniq('00 Titelbild.' + r.titelbild.ext) });
   (r.vorhaben || []).forEach(function(v, vi){
-    if(v.ausgeblendet) return;
-    var ms = (v.materialien || []).filter(function(m){ return m.bereich !== 'lk' && !m.ausgeblendet && (m.datei || m.url); });
+    if(!sichtbarSuS(v)) return;
+    var ms = (v.materialien || []).filter(function(m){ return m.bereich !== 'lk' && sichtbarSuS(m) && (m.datei || m.url); });
     if(!ms.length) return;
     var vdir = pad2(vi + 1) + ' ' + safeName(v.titel), li = [];
     ms.forEach(function(m){
@@ -2693,7 +2932,9 @@ function exportReiheSuS(f, j, r){
     });
     html += '<li><b>' + esc(v.titel) + '</b><br>' + li.join(' · ') + '</li>';
   });
-  html += '</ol></body></html>';
+  html += '</ol>';
+  if(checkItems(r).length) html += '<h2>Checkliste: Was kann ich schon?</h2><ul>' + checkItems(r).map(function(t){ return /^#/.test(t) ? '</ul><h3>' + esc(t.replace(/^#+\s*/, '')) + '</h3><ul>' : '<li>☐ ' + esc(t) + '</li>'; }).join('') + '</ul>';
+  html += '</body></html>';
   if(!jobs.length && !links.length){ toast('Hier gibt es noch nichts zum Herunterladen.'); return; }
   var i = 0;
   function next(){
@@ -2715,6 +2956,7 @@ function exportReiheSuS(f, j, r){
    Kopf-Buttons & Start
    ===================================================================== */
 $('#reload').innerHTML = ico('refresh');
+$('#search-btn').innerHTML = ico('search');
 $('#kurs-exit').addEventListener('click', function(){ location.hash = location.hash.replace(/^#\/kurs\//, '#/f/'); });
 $('#settings-link').innerHTML = ico('gear') + 'Einstellungen';
 $('#edit-toggle').addEventListener('click', function(){
@@ -2731,6 +2973,10 @@ $('#reload').addEventListener('click', function(){
   loadData(canEdit() && editing).then(function(){ busy(false); render(); toast('Aktualisiert.'); })
     .catch(function(){ busy(false); toast('Keine Verbindung – zeige gespeicherten Stand.'); });
 });
+document.addEventListener('toggle', function(e){
+  var d = e.target; if(!d || !d.dataset || !d.dataset.checkbox) return;
+  var o = loadJSON('um-check-offen') || {}; if(d.open) o[d.dataset.checkbox] = 1; else delete o[d.dataset.checkbox]; saveJSON('um-check-offen', o);
+}, true);
 window.addEventListener('hashchange', function(){ if(viewerState) closeViewer(); render(); window.scrollTo(0, 0); });
 
 function boot(){
