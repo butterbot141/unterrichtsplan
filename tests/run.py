@@ -704,6 +704,52 @@ with sync_playwright() as p:
       r.hinweis = { text:'Test am Freitag', bis:'2099-12-31' }; r.vorhaben[1].ab = '2099-02-01';
       const m = r.vorhaben[1].materialien.find(x => x.bereich === 'sus'); m.ab = '2099-02-02'; await T.putData(K, d); }""")
 
+    # ================= F: Fach NW + Sonstiges (Lehrplan-Vorlagen), Reihe im Bearbeitungsmodus öffnen =================
+    page.goto(SITE + '#/'); page.reload(); page.wait_for_selector('.fach'); time.sleep(0.3)
+    if 'editing' not in (page.get_attribute('body', 'class') or ''): page.click('#edit-toggle'); page.wait_for_selector('body.editing')
+    page.click('[data-act=add-f]'); page.wait_for_selector('dialog#sheet[open] input[name=name]')
+    check('F: Fach-Dialog mit Vorlage-Auswahl', page.locator('dialog#sheet select[name=vorlage] option[value=nw]').count() == 1)
+    page.fill('dialog#sheet input[name=name]', 'NW'); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    nw = [f for f in data_now()['faecher'] if f['name'] == 'NW']
+    check('F: NW angelegt mit Vorlage nw', len(nw) == 1 and nw[0].get('vorlage') == 'nw', nw)
+    nwid = nw[0]['id'] if nw else 'nw'
+    check('F: NW hat eigenes Symbol', 'M9.5 3h5' in page.inner_html('.fach:has(h2:text-is("NW")) .fach-icon'))
+    page.click(f'[data-act=add-j][data-f="{nwid}"]'); page.wait_for_selector('dialog#sheet[open] input[name=name]')
+    page.fill('dialog#sheet input[name=name]', '6'); page.click('dialog#sheet button[value=ok]')
+    page.wait_for_selector('dialog#sheet[open] .checklist, dialog#sheet[open] input[type=checkbox]'); time.sleep(0.3)
+    txt = page.inner_text('dialog#sheet')
+    check('F: KLP-Vorschläge NW 5/6', 'Sinne und Wahrnehmung' in txt and 'Stoffe im Alltag' in txt and 'Körper und Bewegung' in txt, txt[:200])
+    page.click('dialog#sheet button[value=ok]'); wait_saved()
+    j6 = [f for f in data_now()['faecher'] if f['id'] == nwid][0]['jahrgaenge'][0]
+    check('F: NW 6 mit 10 Reihen', j6['name'] == '6' and len(j6['reihen']) == 10, len(j6['reihen']))
+    page.goto(SITE + f'#/f/{nwid}/{j6["id"]}'); page.wait_for_selector('.reihe-card'); time.sleep(0.3)
+    check('F: Bearbeitungsmodus aktiv, Werkzeuge sichtbar', 'editing' in (page.get_attribute('body', 'class') or '') and page.locator('.reihe-card [data-act=edit-r]').count() == 10)
+    page.locator('.reihe-card').nth(0).locator('.reihe-nr').click(); page.wait_for_selector('.rows, .empty-state', timeout=5000); time.sleep(0.3)
+    check('F: Reihe im Bearbeitungsmodus öffnen', page.url.endswith('/' + j6['reihen'][0]['id']) and 'editing' in (page.get_attribute('body', 'class') or ''), page.url)
+    page.goto(SITE + f'#/f/{nwid}/{j6["id"]}'); page.wait_for_selector('.reihe-card'); time.sleep(0.3)
+    page.locator('.reihe-card').nth(1).locator('[data-act=edit-r]').click(); page.wait_for_selector('dialog#sheet[open]')
+    check('F: Stift in der Karte öffnet Dialog statt Reihe', page.url.endswith(f'/f/{nwid}/{j6["id"]}'), page.url)
+    page.keyboard.press('Escape'); time.sleep(0.3)
+    page.goto(SITE + '#/'); page.wait_for_selector('.fach'); time.sleep(0.3)
+    page.click('[data-act=add-f]'); page.wait_for_selector('dialog#sheet[open] input[name=name]')
+    page.fill('dialog#sheet input[name=name]', 'Sonstiges'); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    so = [f for f in data_now()['faecher'] if f['name'] == 'Sonstiges'][0]
+    check('F: Sonstiges mit Vorlage klasse + Symbol', so.get('vorlage') == 'klasse' and 'cx="17"' in page.inner_html('.fach:has(h2:text-is("Sonstiges")) .fach-icon'), so)
+    page.click(f'[data-act=add-j][data-f="{so["id"]}"]'); page.wait_for_selector('dialog#sheet[open] input[name=name]')
+    page.fill('dialog#sheet input[name=name]', '6'); page.click('dialog#sheet button[value=ok]')
+    page.wait_for_selector('dialog#sheet[open] .checklist'); time.sleep(0.3)
+    txt = page.inner_text('dialog#sheet'); bo = page.locator('dialog#sheet .checklist label:has-text("Berufsorientierung") input')
+    check('F: Klassenleitungs-Vorschläge (BO erst ab 8 abgewählt)', 'Klassenrat' in txt and bo.count() == 1 and not bo.is_checked(), txt[:150])
+    page.click('dialog#sheet button[value=cancel]'); time.sleep(0.3)
+    page.click(f'[data-act=edit-f][data-f="{nwid}"]'); page.wait_for_selector('dialog#sheet[open] select[name=vorlage]')
+    check('F: Fach bearbeiten zeigt gespeicherte Vorlage', page.eval_on_selector('dialog#sheet select[name=vorlage]', 'e => e.value') == 'nw')
+    page.select_option('dialog#sheet select[name=vorlage]', 'keine'); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    check('F: Vorlage „keine“ → Buch-Symbol', [f for f in data_now()['faecher'] if f['id'] == nwid][0].get('vorlage') == 'keine' and 'M9.5 3h5' not in page.inner_html(f'.fach:has(h2:text-is("NW")) .fach-icon'))
+    page.click(f'[data-act=edit-f][data-f="{nwid}"]'); page.wait_for_selector('dialog#sheet[open] select[name=vorlage]')
+    page.select_option('dialog#sheet select[name=vorlage]', 'nw'); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    shot('27-nw-sonstiges')
+    page.click('#edit-toggle'); time.sleep(0.3)
+
     # ================= C: Sicherung -> „Alles ersetzen“ =================
     page.evaluate("""async () => { const K = await T.keys('1234','pruefung123'); const d = await T.getData(K);
       const r = d.faecher[1].jahrgaenge[0].reihen.find(x => x.id === 'optische-instrumente');
@@ -744,7 +790,7 @@ with sync_playwright() as p:
     def norm(d):
         out = []
         for f in d['faecher']:
-            out.append(('F', f['id'], f['name'], f.get('farbe'), f.get('extern')))
+            out.append(('F', f['id'], f['name'], f.get('farbe'), f.get('extern'), f.get('vorlage')))
             for j in f['jahrgaenge']:
                 out.append(('J', j['id'], j['name']))
                 for r in j['reihen']:

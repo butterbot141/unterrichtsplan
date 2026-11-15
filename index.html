@@ -128,8 +128,6 @@ a.reihe-card:hover{border-color:var(--acc)}
 .reihe-card b{display:block;font-size:1.15rem}
 .reihe-card small{display:block;color:var(--muted)}
 .reihe-card .go{color:var(--muted)}
-.editing a.reihe-card{pointer-events:none}
-.editing .reihe-card .tools{pointer-events:auto}
 
 /* Reihe */
 .overview{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;background:var(--acc-soft);border-radius:16px;padding:.85rem 1rem;margin:0 0 1.2rem}
@@ -465,6 +463,8 @@ var I = {
   atom:'<circle cx="12" cy="12" r="1.6"/><ellipse cx="12" cy="12" rx="9.5" ry="3.8"/><ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(120 12 12)"/>',
   mathe:'<path d="M4 6h7M7.5 2.5v7M14 5.5l5 0M4.5 15.5l5 5M9.5 15.5l-5 5M13.5 16h6M13.5 20h6"/>',
   buch:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/>',
+  nw:'<path d="M9.5 3h5M10.5 3v5.5L5.2 18.3A1.8 1.8 0 0 0 6.8 21h10.4a1.8 1.8 0 0 0 1.6-2.7L13.5 8.5V3"/><path d="M12 19v-3.5"/><path d="M12 16.5c-1.9 0-3-1-3-2.6 1.8 0 3 .9 3 2.6z"/><path d="M12 15.5c0-1.9 1.2-3.1 3.2-3.1 0 1.9-1.3 3.1-3.2 3.1z"/>',
+  klasse:'<circle cx="9" cy="8" r="3"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.3c.5-.2 1-.3 1.5-.3 2.2 0 3.9 1.5 4.4 4"/>',
   klp:'<path d="M9 4h6v3H9z"/><path d="M7 5H5v16h14V5h-2"/><path d="M8.5 12l2 2 4-4"/>',
   eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   eyeoff:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/>',
@@ -704,6 +704,30 @@ var KLP = {
       ]
     }
   },
+  /* NW Gesamtschule (KLP Naturwissenschaften 2011, fächerintegriert, 1. Progressionsstufe 5/6) */
+  nw: {
+    '5-6': [
+      ['Tiere in unserer Umgebung', 'Lebensräume und Lebensbedingungen · Erkundung eines Lebensraums · Züchtung von Tieren'],
+      ['Pflanzen und ihre Lebensräume', 'Lebensräume und Lebensbedingungen · Blüte, Bestäubung · Keimung und Wachstum'],
+      ['Leben im Jahreslauf', 'Sonne, Wetter, Jahreszeiten · Angepasstheit an die Jahreszeiten · Tiere im Winter'],
+      ['Temperatur, Wärme und Wetter', 'Sonne, Wetter, Jahreszeiten · Temperatur und Wärme · Wetterbeobachtung · Brennerführerschein'],
+      ['Sinne und Wahrnehmung', 'Sinne und Wahrnehmung · Sinnesorgane · Sehen und Hören · Grenzen der Wahrnehmung'],
+      ['Körper und Bewegung', 'Körper und Leistungsfähigkeit · Bewegungssystem · Atmung und Blutkreislauf'],
+      ['Ernährung und Verdauung', 'Körper und Leistungsfähigkeit · Nährstoffe · Verdauungsorgane'],
+      ['Pubertät und Sexualerziehung', 'Körper und Leistungsfähigkeit · Veränderungen in der Pubertät · Geschlechtsorgane'],
+      ['Stoffe im Alltag', 'Stoffe und Geräte des Alltags · Stoffeigenschaften · Stofftrennung · Laborgeräte'],
+      ['Elektrische Geräte im Alltag', 'Stoffe und Geräte des Alltags · Wirkungen des elektrischen Stroms · Stromkreis']
+    ]
+  },
+  /* Klassenleitung / Sonstiges – keine KLP-Vorgabe, nur Ordner-Vorschläge */
+  klasse: {
+    alle: [
+      ['Klassenrat', 'Klassenleitung'], ['Soziales Lernen und Klassengemeinschaft', 'Klassenleitung'],
+      ['Methoden und Lernen lernen', 'Klassenleitung'], ['Organisation: Stundenplan, Dienste, Regeln', 'Klassenleitung'],
+      ['Elternabend und Elternsprechtag', 'Klassenleitung (Lehrkraft)'], ['Ausflüge und Klassenfahrt', 'Klassenleitung'],
+      ['Berufsorientierung', 'Klassenleitung (ab Jahrgang 8)']
+    ]
+  },
   mathe: {
     sek1: {
       '5-6': [
@@ -741,8 +765,10 @@ var KLP = {
   }
 };
 function klpFor(fach, jgName){
-  var v = fach.vorlage, sf = (data && data.schulform) || 'ge', n = String(jgName).toUpperCase(), num = /^\d+$/.test(n) ? parseInt(n, 10) : null;
+  var v = fachVorlage(fach), sf = (data && data.schulform) || 'ge', n = String(jgName).toUpperCase(), num = /^\d+$/.test(n) ? parseInt(n, 10) : null;
   var t = KLP[v]; if(!t) return [];
+  if(t.alle) return t.alle;
+  if(v === 'nw') return num !== null && num <= 6 ? t['5-6'] : [];
   if(n === 'EF') return t.sek2.EF;
   if(n === 'Q1' || n === 'Q2') return t.sek2.Q;
   if(num === null) return [];
@@ -838,7 +864,18 @@ function fmtMb(mb){
   if(mb < 1024) return (mb < 10 ? mb.toFixed(1) : Math.round(mb)).toString().replace('.', ',') + ' MB';
   return (mb / 1024).toFixed(2).replace('.', ',') + ' GB';
 }
-function fachIcon(f){ return f.vorlage === 'physik' ? 'atom' : (f.vorlage === 'mathe' ? 'mathe' : 'buch'); }
+/* Lehrplan-Vorlage eines Fachs: gespeichert (vorlage) oder aus dem Namen erraten. 'keine' = bewusst ohne. */
+var VORLAGEN = [['', 'automatisch (nach Name)'], ['mathe', 'Mathematik'], ['physik', 'Physik'], ['nw', 'Naturwissenschaften (NW)'], ['klasse', 'Klassenleitung / Sonstiges'], ['keine', 'keine Vorlage']];
+function vorlageAusName(n){
+  n = String(n || '');
+  if(/physik/i.test(n)) return 'physik';
+  if(/mathe/i.test(n)) return 'mathe';
+  if(/^\s*nw\s*$|naturwiss/i.test(n)) return 'nw';
+  if(/sonstig|klassenleit|klassenlehr|^\s*kl\s*$/i.test(n)) return 'klasse';
+  return null;
+}
+function fachVorlage(f){ return f.vorlage === 'keine' ? null : (f.vorlage || vorlageAusName(f.name)); }
+function fachIcon(f){ return ({ physik:'atom', mathe:'mathe', nw:'nw', klasse:'klasse' })[fachVorlage(f)] || 'buch'; }
 
 /* =====================================================================
    Bausteine
@@ -945,7 +982,7 @@ function renderJahrgang(f, j){
     var n = (r.vorhaben || []).length;
     html += '<a class="reihe-card" href="' + base + '/' + encodeURIComponent(r.id) + '"><span class="reihe-nr">' + (i + 1) + '</span><span><b>' + esc(r.titel) + '</b>'
       + '<small>' + (r.inhaltsfeld ? esc(r.inhaltsfeld) + ' · ' : '') + n + (n === 1 ? ' Unterrichtsvorhaben' : ' Unterrichtsvorhaben') + '</small></span>'
-      + (editing ? tools('r', idsAttr({f:f, j:j, r:r})) : '<span class="go">' + ico('next') + '</span>') + '</a>';
+      + (editing ? tools('r', idsAttr({f:f, j:j, r:r}), { extra:'<span class="go" style="order:9">' + ico('next') + '</span>' }) : '<span class="go">' + ico('next') + '</span>') + '</a>';
   });
   html += '</div><div class="btnline edit-only"><button class="addbtn" data-act="add-r" ' + idsAttr({f:f, j:j}) + '>' + ico('plus') + 'Reihe hinzufügen</button>'
     + '<button class="addbtn" data-act="sync-j" ' + idsAttr({f:f, j:j}) + '>' + ico('importi') + 'Ordner hochladen</button>'
@@ -1926,6 +1963,9 @@ function neuesSchuljahr(f, j, r){
       .then(function(){ location.hash = '#/f/' + encodeURIComponent(zf.id) + '/' + encodeURIComponent(zj.id) + '/' + encodeURIComponent(neu.id); });
   });
 }
+function VORLAGE_FIELD(val){
+  return { name:'vorlage', label:'Lehrplan-Vorlage und Symbol', type:'select', options:VORLAGEN, value:(val && VORLAGEN.some(function(o){ return o[0] === val; })) ? val : '' };
+}
 function EXTERN_FIELD(val){
   return { name:'extern', label:'Liegt in einer anderen Sammlung? Adresse (optional)', type:'url', value:val || '', placeholder:'https://name.github.io/physik/' };
 }
@@ -1953,14 +1993,14 @@ var actions = {
     });
   }),
   'add-f': needAdmin(function(){
-    openForm({ title:'Fach hinzufügen', fields:[{ name:'name', label:'Name', required:true }, { name:'farbe', label:'Farbe', type:'select', options:COLORS, value:'orange' }, EXTERN_FIELD('')] }).then(function(v){
+    openForm({ title:'Fach hinzufügen', fields:[{ name:'name', label:'Name', placeholder:'z. B. NW, Sonstiges', required:true }, { name:'farbe', label:'Farbe', type:'select', options:COLORS, value:'orange' }, VORLAGE_FIELD(''), EXTERN_FIELD('')] }).then(function(v){
       if(!v || !checkExtern(v.extern)) return;
-      commit('Fach: ' + v.name, function(){ data.faecher.push({ id:uniqueId(slug(v.name), data.faecher), name:v.name, farbe:v.farbe, vorlage:/physik/i.test(v.name) ? 'physik' : (/mathe/i.test(v.name) ? 'mathe' : null), extern:v.extern || null, jahrgaenge:[] }); });
+      commit('Fach: ' + v.name, function(){ data.faecher.push({ id:uniqueId(slug(v.name), data.faecher), name:v.name, farbe:v.farbe, vorlage:v.vorlage || vorlageAusName(v.name), extern:v.extern || null, jahrgaenge:[] }); });
     });
   }),
   'edit-f': needAdmin(function(c){
-    openForm({ title:'Fach bearbeiten', fields:[{ name:'name', label:'Name', value:c.f.name, required:true }, { name:'farbe', label:'Farbe', type:'select', options:COLORS, value:c.f.farbe }, EXTERN_FIELD(c.f.extern)] }).then(function(v){
-      if(v && checkExtern(v.extern)) commit('Fach geändert', function(){ c.f.name = v.name; c.f.farbe = v.farbe; c.f.extern = v.extern || null; });
+    openForm({ title:'Fach bearbeiten', fields:[{ name:'name', label:'Name', value:c.f.name, required:true }, { name:'farbe', label:'Farbe', type:'select', options:COLORS, value:c.f.farbe }, VORLAGE_FIELD(c.f.vorlage), EXTERN_FIELD(c.f.extern)] }).then(function(v){
+      if(v && checkExtern(v.extern)) commit('Fach geändert', function(){ c.f.name = v.name; c.f.farbe = v.farbe; c.f.vorlage = v.vorlage || vorlageAusName(v.name); c.f.extern = v.extern || null; });
     });
   }),
   'del-f': needAdmin(function(c){
@@ -1974,7 +2014,7 @@ var actions = {
   'add-j': needAdmin(function(c){
     openForm({ title:c.f.name + ': Jahrgang hinzufügen', fields:[
       { name:'name', label:'Jahrgang', placeholder:'z. B. 8, EF, Q1', required:true },
-      { name:'klp', label:'Reihen aus dem Kernlehrplan vorschlagen', type:'check', value:!!c.f.vorlage }
+      { name:'klp', label:'Reihen aus dem Kernlehrplan vorschlagen', type:'check', value:!!fachVorlage(c.f) }
     ]}).then(function(v){
       if(!v) return;
       var tpl = v.klp ? klpFor(c.f, v.name) : [];
@@ -1987,7 +2027,7 @@ var actions = {
       };
       if(!tpl.length) return go([]);
       openForm({ title:'Reihen für ' + c.f.name + ' ' + v.name, submit:'Anlegen', intro:'Vorschläge aus dem Kernlehrplan – alles lässt sich später umbenennen.', noFocus:true,
-        fields:[{ name:'sel', type:'checklist', items:tpl.map(function(t){ return { label:t[0], sub:t[1], checked:!/Leistungskurs|\(LK\)/.test(t[1]) }; }) }] })
+        fields:[{ name:'sel', type:'checklist', items:tpl.map(function(t){ return { label:t[0], sub:t[1], checked:!/Leistungskurs|\(LK\)|ab Jahrgang/.test(t[1]) }; }) }] })
         .then(function(s){ if(s) go(s.sel); });
     });
   }),
@@ -2433,19 +2473,18 @@ function shareReihe(f, j, r, k){
 var SYNC_KEY = 'um-sync';
 var SKIP_RE = /(^|\/)(\.[^\/]*|~\$[^\/]*|__MACOSX|Thumbs\.db|desktop\.ini)(\/|$)/i;
 var LK_EXT = ['docx','doc','odt','pages','pptx','ppt','key','odp','xlsx','xls','ods','numbers','tex'];
-var KURS_RE = /(?:^|[\s_-])(mathematik|mathe|ma|m|physik|ph|p)[\s_-]*(\d{1,2}|ef|q1|q2)(?=$|[\s_-])/i;
+var KURS_RE = /(?:^|[\s_-])(mathematik|mathe|ma|m|physik|ph|p|naturwissenschaften|nw)[\s_-]*(\d{1,2}|ef|q1|q2)(?=$|[\s_-])/i;
 var STATUS_LABEL = { neu:'neu', geaendert:'geändert', gleich:'unverändert', vorhanden:'schon da?', gesperrt:'' };
 function isIOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
 function hashParts(){ return location.hash.replace(/^#\/?/, '').split('/').map(function(x){ try{ return decodeURIComponent(x); }catch(e){ return x; } }); }
 function parseKurs(seg){
   var m = KURS_RE.exec(seg || ''); if(!m) return null;
   var rest = (seg.slice(0, m.index) + ' ' + seg.slice(m.index + m[0].length)).replace(/^[\s_-]*\d{4}(?=[\s_-]|$)/, '').replace(/[\s_-]+/g, ' ').trim();
-  return { fach:/^(m|ma|mathe|mathematik)$/i.test(m[1]) ? 'mathe' : 'physik', jg:m[2].toUpperCase(), rest:rest };
+  return { fach:/^(m|ma|mathe|mathematik)$/i.test(m[1]) ? 'mathe' : (/^(nw|naturwissenschaften)$/i.test(m[1]) ? 'nw' : 'physik'), jg:m[2].toUpperCase(), rest:rest };
 }
 function activeFaecher(){ return (data.faecher || []).filter(function(f){ return !f.extern; }); }
 function fachByCode(code){
-  var re = code === 'mathe' ? /mathe/i : /physik/i;
-  return activeFaecher().filter(function(f){ return f.vorlage === code || re.test(f.name); })[0];
+  return activeFaecher().filter(function(f){ return fachVorlage(f) === code; })[0];
 }
 function cleanTitle(t){ return String(t).replace(/_+/g, ' ').replace(/\s{2,}/g, ' ').replace(/^[\s.-]+|[\s.-]+$/g, '').trim(); }
 
@@ -2940,7 +2979,7 @@ function runImport(imp, plan, modus){
       if(f) return f;
       var mt = metaFor(name), nid = mt.id || id || slug(name);
       f = { id:findIn(T.faecher, nid) ? uniqueId(slug(name), T.faecher) : nid, name:name, farbe:mt.farbe || 'orange',
-        vorlage:mt.vorlage !== undefined ? mt.vorlage : (/physik/i.test(name) ? 'physik' : (/mathe/i.test(name) ? 'mathe' : null)), extern:mt.extern || null, jahrgaenge:[] };
+        vorlage:mt.vorlage !== undefined ? mt.vorlage : vorlageAusName(name), extern:mt.extern || null, jahrgaenge:[] };
       T.faecher.push(f); return f;
     }
     if(replace) meta.forEach(function(m){ getFach(m.name, m.id); });
