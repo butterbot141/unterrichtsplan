@@ -116,7 +116,7 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 
 - **Einstellungen → Verwaltung → Ordner oder Dateien hochladen**, im Bearbeiten-Modus auch in Jahrgang und Reihe. Am Laptop: Ordner wählen oder einfach auf die Seite bzw. auf eine Zeile ziehen. Auf dem iPad: Ordner in der Dateien-App komprimieren und die ZIP wählen, oder mehrere Dateien auf einmal auswählen.
 - Erwartete Ablage (wie bisher): `… / 2526 M 6 / M 6 Brüche / M 6 Brüche - 2 Bruchrechnung Fehler.pdf`
-  - **Fach und Jahrgang** aus Ordnernamen wie „2526 M 6“, „M 6 Brüche“ oder „Ph Q2“ (M/Ma/Mathe, P/Ph/Physik; 5–10, EF, Q1, Q2).
+  - **Fach und Jahrgang** aus Ordnernamen wie „2526 M 6“, „M 6 Brüche“ oder „Ph Q2“ (M/Ma/Mathe, P/Ph/Physik, NW; 5–10, EF, Q1, Q2). Für NW muss das Fach vorher angelegt sein.
   - **Reihe** = Ordner, in dem die Dateien liegen („M 6 Brüche“ → Reihe „Brüche“).
   - **Unterrichtsvorhaben** = Nummer am Anfang des Dateinamens (einstellbar: Unterordner oder alles in ein Vorhaben).
   - **Art** aus Dateiname und Endung („Lösung“, „Klausur/Test/KA“, `.html`, `.pptx` …), **Titel** aus dem Dateinamen.
