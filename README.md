@@ -71,6 +71,24 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 - Bearbeiten → **Hinweis für SuS anzeigen** (oben in der Reihe), z. B. „Test am Freitag“.
 - Optional „Anzeigen bis“: Danach verschwindet der Hinweis von selbst.
 
+## Parallelkurse (z. B. 8a und 8b)
+
+- Bearbeiten → in der Reihe **Parallelkurs anlegen**, Namen eingeben (z. B. „8a“). Weitere Kurse über **+ Kurs** in der Leiste „Freischalten für“.
+- Leiste „Freischalten für“: **Standard** oder einen Kurs wählen. Augen, „sichtbar ab“-Termine und der Kurs-Hinweis gelten dann nur für diesen Kurs. Material, Notizen und Checkliste bleiben gemeinsam.
+- **Mit 8a teilen:** Jeder Kurs hat einen eigenen Link und QR-Code (`…#/kurs/FACH/JG/REIHE/8a`). Der allgemeine Link zeigt den Standard.
+- Neue Vorhaben und Materialien übernehmen den Standard, bis man sie im Kurs anders einstellt.
+- Der Hinweis der Reihe gilt für alle Kurse; „Hinweis nur für 8a“ erscheint zusätzlich nur bei 8a.
+- Kurs umbenennen behält den Link. Kurs löschen entfernt nur seine Freischaltungen.
+
+## Neues Schuljahr
+
+- Bearbeiten → in der Reihe **Neues Schuljahr: zurücksetzen oder kopieren**.
+  - **Diese Reihe zurücksetzen** oder **Kopie anlegen in …** (beliebiges Fach/Jahrgang).
+  - Voreingestellt: alle Vorhaben ausblenden, Lösungen wieder ausblenden, Termine löschen, Hinweise löschen, Parallelkurse entfernen. Optional jedes Material einzeln ausblenden.
+  - Material, Notizen (inkl. Reflexion), Checkliste, Titelbild und Reihenfolge bleiben.
+- Für alle Reihen eines Jahrgangs auf einmal: auf der Jahrgangsseite **Neues Schuljahr: alle Reihen zurücksetzen**.
+- Eine Kopie nutzt dieselben Dateien (nichts wird neu hochgeladen). Gemeinsam genutzte Dateien werden beim Löschen nicht aus dem Speicher entfernt.
+
 ## Checkliste „Ich kann …“
 
 - Bearbeiten → **Checkliste „Ich kann …“ hinterlegen**. Eine Aussage pro Zeile, `#` am Zeilenanfang = Zwischenüberschrift. Oder **aus Datei übernehmen** (Word oder Text, ein Absatz pro Aussage).

@@ -23,6 +23,7 @@ python tests/run.py                     # prüft die App im übergeordneten Ordn
 * HTML-Seiten: Abschottung, `#zurueck`/`#weiter`, Sprunglinks, gespeicherter Fortschritt
 * Freischalten ab Datum, Hinweis-Banner, Checkliste (auch aus Word), Suche, Vorlage
 * Notizen pro Vorhaben (nur Lehrkraft), Niveau ★/★★/★★★ (auch Kursansicht)
+* Parallelkurse (eigene Freischaltung, Termine, Hinweis, Link), neues Schuljahr (Kopie mit gemeinsamen Dateien, Zurücksetzen)
 * Export → Import („Ergänzen“) und Sicherung → „Alles ersetzen“ (verlustfrei)
 
 ## Erweitern

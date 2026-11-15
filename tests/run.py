@@ -100,6 +100,15 @@ def png(w, h):
     return b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 2, 0, 0, 0)) + chunk(b'IDAT', zlib.compress(raw, 1)) + chunk(b'IEND', b'')
 open(FILES + '/Conceptmap.png', 'wb').write(png(2600, 1400))
 
+def paths_of(o):
+    out = []
+    if isinstance(o, dict):
+        if isinstance(o.get('pfad'), str): out.append(o['pfad'])
+        for v in o.values(): out += paths_of(v)
+    elif isinstance(o, list):
+        for v in o: out += paths_of(v)
+    return out
+
 results = []
 def check(name, cond, info=''):
     results.append((name, bool(cond), info)); print(('OK   ' if cond else 'FAIL ') + name + ('  ' + str(info) if info and not cond else ''))
@@ -590,6 +599,87 @@ with sync_playwright() as p:
     page.goto(SITE + '#/suche'); page.wait_for_selector('#such-feld'); page.fill('#such-feld', 'Gruppenphase'); time.sleep(0.6)
     check('D: Suche findet Notizen (Lehrkraft)', 'Spiegel' in page.inner_text('#such-treffer') or page.locator('#such-treffer .chip, #such-treffer a').count() > 0, page.inner_text('#such-treffer')[:200])
 
+    # ================= E: Parallelkurse + neues Schuljahr =================
+    def data_now(): return page.evaluate("async () => { const K = await T.keys('1234','pruefung123'); return T.getData(K); }")
+    def reihe(d, rid='optische-instrumente'): return [x for x in d['faecher'][1]['jahrgaenge'][0]['reihen'] if x['id'] == rid][0]
+    def stand_items(r): return [v for v in r['vorhaben']] + [m for v in r['vorhaben'] for m in v['materialien'] if m['bereich'] != 'lk']
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.3)
+    if 'editing' not in (page.get_attribute('body', 'class') or ''): page.click('#edit-toggle'); time.sleep(0.3)
+    page.click('.btnline [data-act=add-k]'); page.wait_for_selector('dialog#sheet[open] input[name=name]')
+    page.fill('input[name=name]', '8a'); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    page.click('.kursbar [data-act=add-k]'); page.wait_for_selector('dialog#sheet[open] input[name=name]')
+    page.fill('input[name=name]', '8b'); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    d = data_now(); r = reihe(d)
+    check('E: zwei Parallelkurse angelegt', [k['id'] for k in r.get('kurse', [])] == ['8a', '8b'], r.get('kurse'))
+    check('E: Kurse übernehmen aktuellen Stand', all(x.get('kurse', {}).get('8b', {}).get('ausgeblendet') == bool(x.get('ausgeblendet')) for x in stand_items(r)))
+    check('E: Kursleiste mit Standard/8a/8b, 8b gewählt', page.locator('.kursbar .kchip.on').inner_text().strip() == '8b' and page.locator('.kursbar [data-act=kurs-wahl]').count() == 3)
+    # 8b: Vorhaben 2 ausblenden, eigener Hinweis
+    page.locator('.row').nth(1).locator('[data-act=vis-v]').click(); wait_saved()
+    page.click('[data-act=edit-hinweis][data-k="8b"]'); page.wait_for_selector('dialog#sheet[open] textarea[name=text]')
+    page.fill('textarea[name=text]', 'Test 8b am Montag'); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    # 8a: Vorhaben 2 erst ab 2099
+    page.click('.kursbar [data-act=kurs-wahl][data-k="8a"]'); time.sleep(0.3)
+    check('E: Hinweis zeigt Kurs-Hinweis nur bei gewähltem Kurs', 'Test 8b am Montag' not in page.inner_text('main'))
+    page.locator('.row').nth(1).locator('[data-act=edit-v]').click(); page.wait_for_selector('dialog#sheet[open] input[name=ab]')
+    check('E: Termin-Feld nennt den Kurs', 'nur 8a' in page.inner_text('dialog#sheet'))
+    page.fill('input[name=ab]', '2099-01-01'); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    d = data_now(); r = reihe(d); v1 = r['vorhaben'][1]
+    check('E: Stand pro Kurs gespeichert', v1['kurse']['8b']['ausgeblendet'] is True and v1['kurse']['8a'].get('ab') == '2099-01-01' and not v1.get('ausgeblendet') and not v1.get('ab'), (v1.get('kurse'), v1.get('ausgeblendet'), v1.get('ab')))
+    check('E: Kurs-Hinweis gespeichert', [k.get('hinweis', {}).get('text') for k in r['kurse']] == [None, 'Test 8b am Montag'])
+    page.locator('.row').nth(1).locator('.row-main > .chips [data-act=edit-m]').first.click(); page.wait_for_selector('dialog#sheet[open] input[name=sichtbar]')
+    check('E: Material-Dialog nennt den Kurs', 'nur 8a' in page.inner_text('dialog#sheet'))
+    page.keyboard.press('Escape'); time.sleep(0.3)
+    page.click('[data-act=share-r]'); page.wait_for_selector('dialog#sheet[open] .linkbox')
+    check('E: Teilen-Link pro Kurs', page.inner_text('.linkbox').strip().endswith('#/kurs/physik/8/optische-instrumente/8a'), page.inner_text('.linkbox'))
+    page.click('dialog#sheet button[value=ok]'); time.sleep(0.3)
+    shot('25-parallelkurse')
+    t1 = v1['titel']
+    page.goto(SITE + '#/kurs/physik/8/optische-instrumente/8b'); page.wait_for_selector('.rows'); time.sleep(0.4); txt = page.inner_text('main')
+    check('E: Kursansicht 8b: eigenes Tempo + eigener Hinweis', t1 not in txt and 'Test 8b am Montag' in txt and '8b' in page.inner_text('[data-kurs-pill]'))
+    shot('26-kurs-8b')
+    page.goto(SITE + '#/kurs/physik/8/optische-instrumente/8a'); page.wait_for_selector('.rows'); time.sleep(0.4); txt = page.inner_text('main')
+    check('E: Kursansicht 8a: Termin greift, kein 8b-Hinweis', t1 not in txt and 'Test 8b' not in txt)
+    page.goto(SITE + '#/kurs/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.4); txt = page.inner_text('main')
+    check('E: Standard-Link unverändert', t1 in txt and 'Test 8b' not in txt)
+    page.click('#kurs-exit'); page.wait_for_selector('.crumbs')
+
+    # Neues Schuljahr: Kopie in denselben Jahrgang
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.3)
+    if 'editing' not in (page.get_attribute('body', 'class') or ''): page.click('#edit-toggle'); time.sleep(0.3)
+    files_orig = set(paths_of(reihe(data_now())))
+    page.click('[data-act=neu-r]'); page.wait_for_selector('dialog#sheet[open] select[name=ziel]')
+    check('E: Schuljahr-Dialog mit Ziel + Optionen', page.locator('select[name=ziel] option[value="physik|8"]').count() == 1 and page.is_checked('input[name=kurse]') and page.is_checked('input[name=aus]'))
+    page.select_option('select[name=ziel]', 'physik|8'); page.click('dialog#sheet button[value=ok]'); wait_saved(); time.sleep(0.4)
+    d = data_now(); rs = d['faecher'][1]['jahrgaenge'][0]['reihen']; orig = reihe(d)
+    cp = [x for x in rs if x['titel'].endswith('(Kopie)')]
+    check('E: Kopie angelegt und geöffnet', len(cp) == 1 and page.url.endswith('/' + cp[0]['id']), page.url)
+    cp = cp[0] if cp else {'vorhaben': []}
+    check('E: Kopie: alles ausgeblendet, keine Termine/Hinweise/Kurse', all(v.get('ausgeblendet') for v in cp['vorhaben']) and not any(x.get('ab') or x.get('kurse') for x in stand_items(cp)) and not cp.get('hinweis') and not cp.get('kurse'))
+    check('E: Kopie: Lösungen ausgeblendet, Notizen/Niveau bleiben', all(m.get('ausgeblendet') for v in cp['vorhaben'] for m in v['materialien'] if m['typ'] == 'loesung' and m['bereich'] == 'sus')
+          and [json.dumps(v.get('planung')) for v in cp['vorhaben']] == [json.dumps(v.get('planung')) for v in orig['vorhaben']])
+    check('E: Kopie nutzt dieselben Dateien, neue IDs', set(paths_of(cp)) == files_orig and not ({m['id'] for v in cp['vorhaben'] for m in v['materialien']} & {m['id'] for v in orig['vorhaben'] for m in v['materialien']}))
+    check('E: Original unverändert', [k['id'] for k in orig.get('kurse', [])] == ['8a', '8b'] and orig['vorhaben'][1]['kurse']['8a'].get('ab') == '2099-01-01')
+    page.click('[data-act=del-r]'); wait_saved(); time.sleep(0.4)
+    check('E: Kopie gelöscht, gemeinsame Dateien bleiben', all(f in repo for f in files_orig), sorted(f for f in files_orig if f not in repo))
+    # Zurücksetzen an Ort und Stelle, Kurse behalten
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.3)
+    page.click('[data-act=neu-r]'); page.wait_for_selector('dialog#sheet[open] select[name=ziel]')
+    page.uncheck('input[name=kurse]'); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    r = reihe(data_now())
+    check('E: Zurücksetzen mit Kursen: alles aus, Termine + Hinweise weg', [k['id'] for k in r.get('kurse', [])] == ['8a', '8b'] and not any(k.get('hinweis') for k in r['kurse'])
+          and all(v.get('ausgeblendet') and all(z.get('ausgeblendet') for z in v.get('kurse', {}).values()) for v in r['vorhaben'])
+          and not any(x.get('ab') or any(z.get('ab') for z in x.get('kurse', {}).values()) for x in stand_items(r)) and not r.get('hinweis'))
+    # 8b für die Sicherung wieder etwas freischalten
+    page.click('.kursbar [data-act=kurs-wahl][data-k="8b"]'); time.sleep(0.3)
+    page.locator('.row').nth(0).locator('[data-act=vis-v]').click(); wait_saved()
+    page.click('.kursbar [data-act=kurs-wahl]:not([data-k])'); time.sleep(0.2)
+    page.click('#edit-toggle'); time.sleep(0.3)
+    # Hinweis/Termine für die Sicherungs-Prüfung wieder setzen (wurden eben zurückgesetzt)
+    page.evaluate("""async () => { const K = await T.keys('1234','pruefung123'); const d = await T.getData(K);
+      const r = d.faecher[1].jahrgaenge[0].reihen.find(x => x.id === 'optische-instrumente');
+      r.hinweis = { text:'Test am Freitag', bis:'2099-12-31' }; r.vorhaben[1].ab = '2099-02-01';
+      const m = r.vorhaben[1].materialien.find(x => x.bereich === 'sus'); m.ab = '2099-02-02'; await T.putData(K, d); }""")
+
     # ================= C: Sicherung -> „Alles ersetzen“ =================
     page.evaluate("""async () => { const K = await T.keys('1234','pruefung123'); const d = await T.getData(K);
       const r = d.faecher[1].jahrgaenge[0].reihen.find(x => x.id === 'optische-instrumente');
@@ -634,15 +724,16 @@ with sync_playwright() as p:
             for j in f['jahrgaenge']:
                 out.append(('J', j['id'], j['name']))
                 for r in j['reihen']:
-                    out.append(('R', r['id'], r['titel'], r.get('ordner'), bool(r.get('titelbild')), bool(r.get('uebersicht') and r['uebersicht'].get('sus')), json.dumps(r.get('hinweis')), json.dumps(r.get('checkliste'))))
+                    out.append(('R', r['id'], r['titel'], r.get('ordner'), bool(r.get('titelbild')), bool(r.get('uebersicht') and r['uebersicht'].get('sus')), json.dumps(r.get('hinweis')), json.dumps(r.get('checkliste')), json.dumps(r.get('kurse'))))
                     for v in r['vorhaben']:
-                        out.append(('V', v['titel'], bool(v.get('ausgeblendet')), v.get('ab'), json.dumps(v.get('planung'))))
+                        out.append(('V', v['titel'], bool(v.get('ausgeblendet')), v.get('ab'), json.dumps(v.get('planung')), json.dumps(v.get('kurse'), sort_keys=True)))
                         for m in v['materialien']:
-                            out.append(('M', m['titel'], m['typ'], m['bereich'], bool(m.get('ausgeblendet')), bool(m.get('datei')), m.get('url'), (m.get('datei') or {}).get('schutz'), m.get('hash'), m.get('ab'), m.get('niveau')))
+                            out.append(('M', m['titel'], m['typ'], m['bereich'], bool(m.get('ausgeblendet')), bool(m.get('datei')), m.get('url'), (m.get('datei') or {}).get('schutz'), m.get('hash'), m.get('ab'), m.get('niveau'), json.dumps(m.get('kurse'), sort_keys=True)))
         return out
     nb, na = norm(before), norm(after)
     check('C: „Alles ersetzen“ stellt Stand verlustfrei wieder her', nb == na, [x for x in nb if x not in na][:5] + ['---'] + [x for x in na if x not in nb][:5])
     check('C: Datum/Hinweis/Checkliste in Sicherung', any(x[0]=='R' and x[7] != 'null' for x in na) and any(x[0]=='V' and x[3] for x in na) and any(x[0]=='M' and x[9] for x in na))
+    check('C: Parallelkurse in Sicherung', any(x[0]=='R' and x[8] != 'null' for x in na) and any(x[0]=='V' and x[5] != 'null' for x in na))
     check('C: Notizen + Niveau in Sicherung', any(x[0]=='V' and x[4] != 'null' for x in na) and any(x[0]=='M' and x[10] for x in na))
     check('C: Prüfung wiederhergestellt', any(x[0] == 'M' and x[2] == 'pruefung' and x[7] == 'pruefung' for x in na))
     check('C: alte Dateien gelöscht', not (files_before & set(k for k in repo if k.startswith('material/'))), sorted(files_before & set(repo)))
