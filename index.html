@@ -1237,8 +1237,9 @@ function renderSettings(){
       + '<span class="hint">Betrifft nur die Vorschläge beim Anlegen von Reihen (Sek I Physik). Sek II ist für beide gleich.</span></label>'
       + '<div class="btnline" style="margin:0 0 .3rem"><button class="btn primary" data-act="sync">' + ico('importi') + 'Ordner oder Dateien hochladen</button>'
       + '<button class="btn" data-act="import">' + ico('importi') + 'Planung importieren / Sicherung wiederherstellen</button></div>'
-      + '<div class="btnline" style="margin:0 0 .3rem"><button class="btn" data-act="vorlage">' + ico('download') + 'Vorlage für interaktive Seite</button></div>'
-      + '<p class="hint" style="margin:0 0 .9rem">Vorlage: HTML-Seite im Stil der App – mit Lernziel, Aufgaben, Quiz, Antwortfeld, Hilfen und Zurück/Weiter. In einem Editor anpassen und als Unterrichtsmaterial hochladen.<br>Sammel-Upload: Ordner vom Laptop (oder ZIP) verschlüsselt hochladen und automatisch zuordnen – erneut ausführen gleicht ab. Sicherung: die ZIP aus „Alles herunterladen“.</p>'
+      + '<div class="btnline" style="margin:0 0 .3rem"><button class="btn" data-act="vorlage" data-typ="lernpfad">' + ico('download') + 'Vorlage Lernpfad</button>'
+      + '<button class="btn" data-act="vorlage" data-typ="simulation">' + ico('download') + 'Vorlage Simulation</button></div>'
+      + '<p class="hint" style="margin:0 0 .9rem">Vorlagen für interaktive HTML-Seiten im Stil der App: <b>Lernpfad</b> (Schritte mit Auftrag, Hilfen, Quiz, Antwortfeld) oder <b>Simulation</b> (ein Bildschirm: Bild in der Mitte, Steuerung unten). Kopfzeile „‹ P8 › Thema › Titel“ führt zurück zur Reihe. Anpassen und als Unterrichtsmaterial hochladen.<br>Sammel-Upload: Ordner vom Laptop (oder ZIP) verschlüsselt hochladen und automatisch zuordnen – erneut ausführen gleicht ab. Sicherung: die ZIP aus „Alles herunterladen“.</p>'
       + '<div class="btnline" style="margin:0"><button class="btn" data-act="change-code">Zugangscode ändern</button>'
       + '<button class="btn" data-act="change-pw">Prüfungspasswort ändern</button></div></section>';
     html += storagePanel();
@@ -2123,9 +2124,10 @@ var actions = {
   }),
   'open-bild': function(c){ if(c.r && c.r.titelbild) openFile(c.r.titelbild, 'Titelbild – ' + c.r.titel, 'uebersicht'); },
   'dl-reihe': function(c){ exportReiheSuS(c.f, c.j, c.r, c.k); },
-  'vorlage': function(){
-    fetch('vorlagen/interaktive-seite.html', { cache:'no-store' }).then(function(r){ if(!r.ok) throw new Error('Vorlage nicht gefunden.'); return r.blob(); })
-      .then(function(b){ saveBlob(new Blob([b], { type:'text/html' }), 'Vorlage interaktive Seite.html'); }).catch(fail);
+  'vorlage': function(c){
+    var sim = c && c._el && c._el.dataset.typ === 'simulation';
+    fetch(sim ? 'vorlagen/simulation.html' : 'vorlagen/interaktive-seite.html', { cache:'no-store' }).then(function(r){ if(!r.ok) throw new Error('Vorlage nicht gefunden.'); return r.blob(); })
+      .then(function(b){ saveBlob(new Blob([b], { type:'text/html' }), sim ? 'Vorlage Simulation.html' : 'Vorlage Lernpfad.html'); }).catch(fail);
   },
   'edit-hinweis': needAdmin(function(c){
     var hold = c.k || c.r, h = hold.hinweis || {};

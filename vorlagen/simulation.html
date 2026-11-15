@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- ÄNDERN: Titel der Seite -->
+<title>Titel – M EF Kurzthema</title>
+<!--
+  Vorlage SIMULATION / WERKZEUG für die Material-App (z. B. Riesenrad, 3D-Szene, Messwerte aufnehmen)
+  -------------------------------------------------------------------------------------------------
+  * EIN Bildschirm, kein Scrollen: Kopfzeile oben · Bühne in der Mitte · Steuerleiste unten (immer sichtbar).
+  * Kopfzeile: „‹ M EF › Kurzthema › Titel“ (zurück zur Reihe) + nummerierte Punkte für die Schritte.
+  * Schritte: <body data-schritt="1">. Elemente mit data-nur="1 2" sind nur in diesen Schritten sichtbar.
+      Auftrag pro Schritt: <p class="auftrag-text" data-nur="1">…</p> (1–2 Sätze, Operator fett).
+  * Nur Regler zeigen, die der Auftrag braucht. Spielereien (Farben, Radius, Startwerte …) erst im Zusatz-Schritt „+“.
+  * Bibliotheken (z. B. three.js) INLINE einbetten, keine CDNs, keine externen Schriften.
+  * Alle Stellen zum Anpassen sind mit „ÄNDERN“ markiert. Das Beispiel (Punkt auf einem Kreis) einfach ersetzen.
+-->
+<style>
+:root{
+  --page:#F4F6FA; --sheet:#FFFFFF; --ink:#1B2333; --muted:#5E6A7C; --line:#DFE4EC; --soft:#EEF2F7;
+  --acc:#2F5FB3; --acc-soft:#E7EEFB;           /* ÄNDERN: Mathe blau #2F5FB3 / Physik grün #137A5C */
+  --ok:#177A5E; --ok-soft:#E1F3EC; --mark:#C5531A;
+  --serif:"Iowan Old Style","Charter","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --page:#0F141C; --sheet:#171E29; --ink:#E7ECF3; --muted:#A1ACBB; --line:#2A3443; --soft:#1F2733;
+    --acc:#8DB2F2; --acc-soft:#1E2B42; --ok:#5FCB9F; --ok-soft:#15302A; --mark:#F0A347; color-scheme:dark;
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{height:100%}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);font-size:1rem;line-height:1.45;
+  height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+
+/* ---------- Kopfzeile: eine schmale Zeile ---------- */
+.kopf{flex:none;background:var(--sheet);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.kopf-in{padding:0 .75rem;height:48px;display:flex;align-items:center;gap:.75rem}
+.pfad{flex:1;min-width:0;display:flex;align-items:center;gap:.35rem;color:var(--muted);text-decoration:none;font-size:.95rem;white-space:nowrap;overflow:hidden;min-height:44px}
+.pfad i{font-style:normal;opacity:.6}
+.pfad b{color:var(--ink);font-family:var(--serif);font-size:1.05rem;overflow:hidden;text-overflow:ellipsis}
+.pfad .zur{display:none;color:var(--acc);font-weight:700;font-size:1.3rem;line-height:1;margin-right:.1rem}
+.in-app .pfad .zur{display:inline}
+html:not(.in-app) .pfad{pointer-events:none}
+.punkte{flex:none;display:flex;gap:.15rem}
+.punkte button{width:40px;height:44px;display:grid;place-items:center;background:none;border:0;padding:0;cursor:pointer;font:inherit}
+.punkte button span{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:700;
+  background:var(--soft);color:var(--muted);border:1px solid var(--line)}
+.punkte button.done span{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.punkte button[aria-current="step"] span{background:var(--acc);color:#fff;border-color:var(--acc)}
+.punkte button.extra span{border-style:dashed}
+
+/* ---------- Bühne ---------- */
+.buehne{flex:1;min-height:0;position:relative;background:var(--sheet)}
+.buehne svg,.buehne canvas{display:block;width:100%;height:100%;touch-action:none}
+.auftrag{position:absolute;top:.6rem;left:.6rem;right:.6rem;max-width:30rem;background:var(--sheet);border:1px solid var(--line);
+  border-left:4px solid var(--acc);border-radius:12px;padding:.5rem .7rem .5rem .8rem;box-shadow:0 2px 10px rgba(20,30,50,.08);display:flex;gap:.5rem;align-items:flex-start}
+.auftrag .txt{flex:1}
+.auftrag-text{margin:0}
+.auftrag .zu{flex:none;width:32px;height:32px;border:0;background:var(--soft);color:var(--muted);border-radius:8px;font:inherit;font-weight:700;cursor:pointer}
+.auftrag.klein .txt{display:none}
+.auftrag.klein{right:auto}
+.auftrag.klein .zu::after{content:"Auftrag"}
+.auftrag.klein .zu{width:auto;padding:0 .6rem}
+.auftrag:not(.klein) .zu::after{content:"–"}
+
+/* ---------- Steuerleiste unten ---------- */
+.leiste{flex:none;background:var(--sheet);border-top:1px solid var(--line);padding:.5rem .75rem calc(.5rem + env(safe-area-inset-bottom,0px));
+  display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .9rem}
+.gruppe{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.gruppe label{display:flex;align-items:center;gap:.4rem;color:var(--muted);font-size:.9rem}
+.gruppe input[type=range]{width:170px;height:44px;accent-color:var(--acc)}
+.wert{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+.anzeige{display:flex;gap:.4rem;align-items:baseline;background:var(--soft);border-radius:10px;padding:.35rem .7rem}
+.anzeige span{color:var(--muted);font-size:.85rem}
+.anzeige b{font-family:var(--mono);font-size:1.1rem}
+.leiste button.k{font:inherit;min-height:44px;padding:0 .9rem;border-radius:10px;border:1px solid var(--line);background:var(--page);color:var(--ink);cursor:pointer}
+.leiste button.k.haupt{background:var(--acc);border-color:var(--acc);color:#fff}
+.schritt-nav{margin-left:auto;display:flex;gap:.5rem}
+.schritt-nav a,.schritt-nav button{font:inherit;min-height:44px;padding:0 1rem;border-radius:10px;border:1px solid var(--acc);background:var(--acc-soft);color:var(--acc);font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
+.app-only{display:none !important}
+.in-app .app-only{display:inline-flex !important}
+button:focus-visible,a:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+@media (max-width:600px){ .gruppe input[type=range]{width:130px} }
+</style>
+</head>
+<body data-schritt="1">
+<header class="kopf">
+  <div class="kopf-in">
+    <!-- ÄNDERN: Fach+Jahrgang › Kurzthema › Titel -->
+    <a class="pfad" href="#zurueck" aria-label="Zurück zur Übersicht"><span class="zur" aria-hidden="true">‹</span>M EF <i>›</i> Kurzthema <i>›</i> <b>Titel</b></a>
+    <!-- ÄNDERN: ein Knopf pro Schritt; data-s = Schritt, title = Name -->
+    <nav class="punkte" aria-label="Schritte">
+      <button type="button" data-s="1" title="Beobachten"><span>1</span></button>
+      <button type="button" data-s="2" title="Messen"><span>2</span></button>
+      <button type="button" data-s="zusatz" title="Zusatz" class="extra"><span>+</span></button>
+    </nav>
+  </div>
+</header>
+
+<div class="buehne">
+  <!-- ÄNDERN: eigene Darstellung (SVG oder canvas). Beispiel: Punkt auf einem Kreis -->
+  <svg id="bild" viewBox="-12 -12 24 24" preserveAspectRatio="xMidYMid meet" aria-label="Kreis mit beweglichem Punkt">
+    <line x1="-11" y1="0" x2="11" y2="0" stroke="currentColor" stroke-opacity=".25" stroke-width=".08"/>
+    <circle id="kreis" cx="0" cy="0" r="8" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width=".12"/>
+    <line id="hoehe" x1="0" y1="0" x2="0" y2="0" stroke="var(--mark)" stroke-width=".15" stroke-dasharray=".4 .3"/>
+    <circle id="punkt" cx="8" cy="0" r=".7" fill="var(--mark)"/>
+  </svg>
+
+  <div class="auftrag" id="auftrag">
+    <div class="txt">
+      <!-- ÄNDERN: ein Auftrag pro Schritt, 1–2 Sätze -->
+      <p class="auftrag-text" data-nur="1"><b>Drehe</b> den Punkt mit dem Regler. <b>Beschreibe</b>, wie sich die Höhe ändert.</p>
+      <p class="auftrag-text" data-nur="2"><b>Trage</b> für 5 Winkel die Höhe ein und <b>notiere</b> die Werte im Heft.</p>
+      <p class="auftrag-text" data-nur="zusatz"><b>Verändere</b> den Radius. Was ändert sich an der größten Höhe?</p>
+    </div>
+    <button type="button" class="zu" aria-label="Auftrag ein- oder ausklappen"></button>
+  </div>
+</div>
+
+<nav class="leiste" aria-label="Steuerung">
+  <!-- ÄNDERN: nur Regler, die der Auftrag braucht -->
+  <div class="gruppe">
+    <label>Winkel <input type="range" id="rWinkel" min="0" max="360" step="5" value="0"> <span class="wert" id="oWinkel">0°</span></label>
+  </div>
+  <div class="gruppe" data-nur="zusatz">
+    <label>Radius <input type="range" id="rRadius" min="2" max="10" step="1" value="8"> <span class="wert" id="oRadius">8</span></label>
+  </div>
+  <div class="anzeige"><span>Höhe</span><b id="oHoehe">0,0</b></div>
+  <div class="gruppe" data-nur="2">
+    <button type="button" class="k haupt" id="eintragen">Punkt eintragen</button>
+    <button type="button" class="k" id="loeschen">Löschen</button>
+  </div>
+
+  <div class="schritt-nav">
+    <button type="button" data-weiter-schritt>Weiter ›</button>
+    <a class="app-only" href="#zurueck" data-fertig>Fertig – zur Übersicht</a>
+  </div>
+</nav>
+
+<script>
+(function(){
+  // ---------- Speicher ----------
+  var KEY = 'seite';
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }catch(e){ return {}; } }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} }
+  var st = load(); st.seen = st.seen || {};
+
+  if(window.Plattform) document.documentElement.classList.add('in-app');
+
+  // ---------- Schritte ----------
+  var knoepfe = Array.prototype.slice.call(document.querySelectorAll('.punkte button'));
+  var schritte = knoepfe.map(function(b){ return b.getAttribute('data-s'); });
+  var weiter = document.querySelector('[data-weiter-schritt]'), fertig = document.querySelector('[data-fertig]');
+  function zeige(s){
+    if(schritte.indexOf(s) < 0) s = schritte[0];
+    document.body.setAttribute('data-schritt', s);
+    document.querySelectorAll('[data-nur]').forEach(function(el){
+      el.hidden = el.getAttribute('data-nur').split(' ').indexOf(s) < 0;
+    });
+    knoepfe.forEach(function(b){
+      var x = b.getAttribute('data-s');
+      if(x === s) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+      b.classList.toggle('done', !!st.seen[x] && x !== s);
+    });
+    var i = schritte.indexOf(s), naechster = schritte[i + 1];
+    weiter.hidden = !naechster;
+    if(naechster) weiter.textContent = 'Weiter: ' + (knoepfe[i + 1].title || naechster) + ' ›';
+    fertig.hidden = !!naechster && naechster !== 'zusatz';   // „Fertig“ ab dem letzten Pflichtschritt
+    document.getElementById('auftrag').classList.remove('klein');
+    st.seen[s] = true; st.schritt = s; save();
+  }
+  knoepfe.forEach(function(b){ b.addEventListener('click', function(){ zeige(b.getAttribute('data-s')); }); });
+  weiter.addEventListener('click', function(){ zeige(schritte[schritte.indexOf(document.body.getAttribute('data-schritt')) + 1]); });
+  document.querySelector('.auftrag .zu').addEventListener('click', function(){ document.getElementById('auftrag').classList.toggle('klein'); });
+  zeige(st.schritt || schritte[0]);
+
+  // ---------- ÄNDERN: Beispiel-Simulation ----------
+  var rW = document.getElementById('rWinkel'), rR = document.getElementById('rRadius');
+  var punkte = st.punkte || [];
+  function fmt(x){ return x.toFixed(1).replace('.', ','); }
+  function zeichne(){
+    var w = +rW.value * Math.PI / 180, r = +rR.value, x = r * Math.cos(w), y = r * Math.sin(w);
+    document.getElementById('kreis').setAttribute('r', r);
+    var p = document.getElementById('punkt'); p.setAttribute('cx', x); p.setAttribute('cy', -y);
+    var h = document.getElementById('hoehe'); h.setAttribute('x1', x); h.setAttribute('x2', x); h.setAttribute('y2', -y);
+    document.getElementById('oWinkel').textContent = rW.value + '°';
+    document.getElementById('oRadius').textContent = r;
+    document.getElementById('oHoehe').textContent = fmt(y);
+  }
+  rW.addEventListener('input', zeichne); rR.addEventListener('input', zeichne);
+  document.getElementById('eintragen').addEventListener('click', function(){ punkte.push(+rW.value); st.punkte = punkte; save(); });
+  document.getElementById('loeschen').addEventListener('click', function(){ punkte = []; st.punkte = punkte; save(); });
+  zeichne();
+})();
+</script>
+</body>
+</html>
