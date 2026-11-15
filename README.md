@@ -25,7 +25,8 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
   - Art und Titel werden aus dem Dateinamen vorgeschlagen („Lösung“ → Lösung, „Klausur/Test/KA“ → Prüfung, `.html` → interaktive Seite).
   - *Klassenarbeit / Test / Klausur* landet immer im Lehrkraft-Bereich und wird zusätzlich mit dem Prüfungspasswort verschlüsselt.
 - **+ Material** (oben): wie oben, mit Auswahl von Fach, Jahrgang, Reihe und Vorhaben – auch neue anlegen.
-- **Bearbeiten**: außerdem Reihen und Vorhaben anlegen, umbenennen, sortieren, löschen; Titelbild hinterlegen; Reihen aus dem Kernlehrplan ergänzen.
+- **Bearbeiten**: außerdem Reihen und Vorhaben anlegen, umbenennen, sortieren, löschen; Titelbild hinterlegen; Reihen aus dem Kernlehrplan ergänzen. Reihen-Karten lassen sich auch im Bearbeiten-Modus öffnen.
+- **Fach hinzufügen/bearbeiten → Lehrplan-Vorlage und Symbol**: Mathematik, Physik, Naturwissenschaften (NW 5/6, KLP Gesamtschule) oder Klassenleitung/Sonstiges (Ordner-Vorschläge wie Klassenrat, Elternabend); „automatisch“ erkennt das Fach am Namen.
 - **Herunterladen**: Jahrgang oder alles als ZIP mit `Übersicht.html` – zum Weiterverwenden ohne diese Seite.
 - **Einstellungen → Verwaltung**: Schulform für die Lehrplan-Vorlagen, Zugangscode oder Prüfungspasswort ändern.
 
