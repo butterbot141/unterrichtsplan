@@ -22,6 +22,7 @@ python tests/run.py                     # prüft die App im übergeordneten Ordn
 * Sammel-Upload mit Ordnerstruktur `2526 M 6 / M 6 Brüche / …`, Abgleich (unverändert/geändert), Drag-and-drop, Mehrfachauswahl
 * HTML-Seiten: Abschottung, `#zurueck`/`#weiter`, Sprunglinks, gespeicherter Fortschritt
 * Freischalten ab Datum, Hinweis-Banner, Checkliste (auch aus Word), Suche, Vorlage
+* Notizen pro Vorhaben (nur Lehrkraft), Niveau ★/★★/★★★ (auch Kursansicht)
 * Export → Import („Ergänzen“) und Sicherung → „Alles ersetzen“ (verlustfrei)
 
 ## Erweitern
