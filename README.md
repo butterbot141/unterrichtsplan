@@ -77,9 +77,20 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 - Erscheint nur in Reihen, in denen eine Checkliste hinterlegt ist.
 - SuS tippen an: einmal = noch unsicher, zweimal = kann ich sicher. Die Einschätzung bleibt nur auf ihrem Gerät.
 
+## Notizen pro Vorhaben
+
+- Bearbeiten → im Lehrkraft-Bereich eines Vorhabens **Notizen**: Schwerpunktziel, Verlaufsplan, Reflexion („Was lief gut?“). Einfacher Text, kein extra Dokument.
+- Nur in der Lehrkraft-Ansicht (aufklappbar wie das Lehrkraft-Material), nie in der Kursansicht oder im SuS-Download. Mit Export und Sicherung gesichert.
+- Keine Schülernamen eintragen (Notizen sind mit dem Zugangscode verschlüsselt, siehe unten).
+
+## Niveau ★ / ★★ / ★★★
+
+- Im Material-Dialog **Niveau**: ★ Basis, ★★ Standard, ★★★ Erweiterung (optional).
+- Sterne erscheinen am Material – auch für SuS in der Kursansicht, mit kurzer Legende unter der Reihe.
+
 ## Suche
 
-- Lupe oben: durchsucht alle Fächer und Jahrgänge – Reihen, Unterrichtsvorhaben, Materialien, Dateinamen, Hinweise und Checklisten. Umlaute können weggelassen werden („bruche“ findet „Brüche“).
+- Lupe oben: durchsucht alle Fächer und Jahrgänge – Reihen, Unterrichtsvorhaben, Materialien, Dateinamen, Hinweise, Checklisten und Notizen. Umlaute können weggelassen werden („bruche“ findet „Brüche“).
 - Nicht in der Kursansicht.
 
 ## Ordner vom Laptop hochladen (Sammel-Upload)
@@ -120,6 +131,7 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 - Klassenarbeiten deshalb mit einem **langen** Prüfungspasswort schützen.
 - Ein geänderter Code gilt für neue Anmeldungen. Alte Versionen der Zugangsdatei bleiben im Git-Verlauf.
 - Keine Namen, Fotos oder Noten von SuS hochladen.
+- Notizen und Titel des Lehrkraft-Materials stehen in der Übersicht, die mit dem Zugangscode verschlüsselt ist. Wer den Code kennt und technisch versiert ist, könnte sie lesen – daher nichts Vertrauliches hineinschreiben.
 
 ## Dateigrößen
 

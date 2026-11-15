@@ -160,6 +160,12 @@ a.reihe-card:hover{border-color:var(--acc)}
 .lk-toggle[aria-expanded="true"] .i{transform:rotate(90deg)}
 .lk-area{margin-top:.4rem;padding:.65rem;border-radius:12px;background:var(--lk-soft)}
 .lk-area .lbl{display:block;font-size:.8rem;font-weight:700;color:var(--lk);text-transform:none;margin-bottom:.4rem}
+.chip .niv{font-size:.8rem;letter-spacing:-.08em;color:#B7791F;white-space:nowrap}
+.niv-hint{font-size:.85rem;color:var(--muted);margin:.3rem 0 0}
+.lk-notizen{display:grid;gap:.5rem;margin-bottom:.6rem}
+.lk-notizen div{background:var(--sheet);border-radius:10px;padding:.5rem .7rem}
+.lk-notizen b{display:block;font-size:.8rem;color:var(--lk)}
+.lk-notizen p{margin:0;white-space:pre-wrap;font-size:.95rem}
 .reihe-nav{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1.4rem}
 .reihe-nav a{display:block;text-decoration:none;background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:.75rem 1rem;min-height:60px}
 .reihe-nav a:hover{border-color:var(--acc)}
@@ -837,6 +843,7 @@ function matChip(m, ref, mode){
   var lk = m.bereich === 'lk', zu = !lk && !m.ausgeblendet && gesperrt(m), aus = !lk && (m.ausgeblendet || zu), cls = (lk ? 'lkchip' : '') + (aus ? ' aus' : '');
   var badge = !lk && m.ausgeblendet ? '<span title="für SuS ausgeblendet" style="display:inline-flex"><svg class="i aus-i" viewBox="0 0 24 24" aria-label="ausgeblendet">' + I.eyeoff + '</svg></span>'
     : (zu ? '<span class="ab" title="für SuS sichtbar ab ' + esc(datumKurz(m.ab)) + '">ab ' + esc(datumKurz(m.ab)) + '</span>' : '');
+  badge = nivBadge(m) + badge;
   if(editing && mode !== 'kurs'){
     var ext = m.datei ? (m.datei.ext || '').toUpperCase() : (m.url ? 'Link' : '');
     var chip = '<button class="chip t-' + m.typ + (cls ? ' ' + cls : '') + '" data-act="edit-m" ' + ref + '>' + ico(m.typ === 'pruefung' ? 'lock' : m.typ)
@@ -849,15 +856,17 @@ function matChip(m, ref, mode){
   if(m.url) return chipLink(m.url, m.titel, m.typ, cls, badge);
   return '';
 }
-function lkEditBlock(chips, vid){
-  return '<div class="lk-area edit"><span class="lbl">Lehrkraft-Material · für SuS nie sichtbar</span><div class="chips">' + chips.join('')
-    + '<button class="chip add lkchip" data-act="add-m" data-bereich="lk" ' + vid + '>' + ico('plus') + '<span>Lehrkraft-Material</span></button></div></div>';
+function lkEditBlock(chips, vid, notizen){
+  return '<div class="lk-area edit"><span class="lbl">Lehrkraft-Bereich · für SuS nie sichtbar</span>' + (notizen || '') + '<div class="chips">' + chips.join('')
+    + '<button class="chip add lkchip" data-act="add-m" data-bereich="lk" ' + vid + '>' + ico('plus') + '<span>Lehrkraft-Material</span></button>'
+    + '<button class="chip add lkchip" data-act="notiz-v" ' + vid + '>' + ico('edit') + '<span>Notizen</span></button></div></div>';
 }
-function lkBlock(key, chips){
-  if(!chips.length) return '';
+function lkBlock(key, chips, notizen){
+  if(!chips.length && !notizen) return '';
   var open = !!lkOpen[key];
-  return '<button class="lk-toggle" data-lk="' + esc(key) + '" aria-expanded="' + open + '">' + ico('next') + 'Lehrkraft-Material (' + chips.length + ')</button>'
-    + '<div class="lk-area"' + (open ? '' : ' hidden') + '><div class="chips">' + chips.join('') + '</div></div>';
+  var lbl = chips.length ? 'Lehrkraft-Material (' + chips.length + ')' + (notizen ? ' · Notizen' : '') : 'Notizen';
+  return '<button class="lk-toggle" data-lk="' + esc(key) + '" aria-expanded="' + open + '">' + ico('next') + lbl + '</button>'
+    + '<div class="lk-area"' + (open ? '' : ' hidden') + '>' + (notizen || '') + (chips.length ? '<div class="chips">' + chips.join('') + '</div>' : '') + '</div>';
 }
 function tools(act, ids, opts){
   opts = opts || {};
@@ -946,6 +955,24 @@ function susItems(r){
   });
   return out;
 }
+/* Niveau-Kennzeichnung: material.niveau = 1 Basis, 2 Standard, 3 Erweiterung (optional) */
+var NIVEAUS = [['', 'ohne'], ['1', '★ Basis'], ['2', '★★ Standard'], ['3', '★★★ Erweiterung']];
+var NIV_NAME = { 1:'Basis', 2:'Standard', 3:'Erweiterung' };
+function niveauOf(m){ var n = m && +m.niveau; return n >= 1 && n <= 3 ? n : 0; }
+function sterne(n){ return n ? new Array(n + 1).join('★') : ''; }
+function nivBadge(m){ var n = niveauOf(m); return n ? '<span class="niv" title="Niveau: ' + NIV_NAME[n] + '" aria-label="Niveau ' + NIV_NAME[n] + '">' + sterne(n) + '</span>' : ''; }
+/* Notizen pro Vorhaben (nur Lehrkraft): vorhaben.planung = { ziel, verlauf, reflexion } */
+var PLANUNG = [['ziel', 'Schwerpunktziel'], ['verlauf', 'Verlaufsplan'], ['reflexion', 'Reflexion – was lief gut?']];
+function planungOf(v){
+  var p = v && v.planung, out = {}, any = false;
+  if(!p || typeof p !== 'object') return null;
+  PLANUNG.forEach(function(k){ var t = String(p[k[0]] || '').trim(); if(t){ out[k[0]] = t; any = true; } });
+  return any ? out : null;
+}
+function planungHtml(v){
+  var p = planungOf(v); if(!p) return '';
+  return '<div class="lk-notizen">' + PLANUNG.filter(function(k){ return p[k[0]]; }).map(function(k){ return '<div><b>' + esc(k[1]) + '</b><p>' + esc(p[k[0]]) + '</p></div>'; }).join('') + '</div>';
+}
 /* Freischalten ab Datum: ab = "JJJJ-MM-TT" (lokales Datum des Geräts) */
 function heute(){ var d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
 function gesperrt(x){ return !!(x && x.ab && String(x.ab) > heute()); }
@@ -1023,11 +1050,13 @@ function renderReihe(f, j, r, mode){
       + '<div class="row-main"><div class="chips">' + sus.join('')
       + (!sus.length && !editing ? '<span class="muted" style="font-size:.95rem;padding-top:.5rem">' + (lk.length ? '' : 'Noch kein Material.') + '</span>' : '')
       + (kurs ? '' : '<button class="chip add edit-only" data-act="add-m" data-bereich="sus" ' + vid + '>' + ico('plus') + '<span>Unterrichtsmaterial</span></button>') + '</div>'
-      + (kurs ? '' : (editing ? lkEditBlock(lk, vid) : lkBlock(v.id, lk))) + '</div>' + (kurs ? '' : tools('v', vid, { extra:eye })) + '</div>';
+      + (kurs ? '' : (editing ? lkEditBlock(lk, vid, planungHtml(v)) : lkBlock(v.id, lk, planungHtml(v)))) + '</div>' + (kurs ? '' : tools('v', vid, { extra:eye })) + '</div>';
   });
   if(!shown) html += '<div class="row empty">' + (kurs ? 'Hier gibt es noch nichts zu sehen.' : 'Noch keine Unterrichtsvorhaben.') + '</div>';
   html += (kurs ? '' : '<button class="addbtn add-row edit-only" data-act="add-v" ' + ids + '>' + ico('plus') + 'Unterrichtsvorhaben</button>') + '</div>';
   if(!kurs) html += '<div class="btnline edit-only"><button class="addbtn" data-act="sync-r" ' + ids + '>' + ico('importi') + 'Ordner oder mehrere Dateien hochladen</button></div>';
+  if(susItems(r).some(function(x){ return niveauOf(x.m); }) || (!kurs && (r.vorhaben || []).some(function(v){ return (v.materialien || []).some(niveauOf); })))
+    html += '<p class="niv-hint">Niveau: ★ Basis · ★★ Standard · ★★★ Erweiterung</p>';
   var dl = susItems(r), dlMb = dl.reduce(function(s, x){ return s + (x.m.datei ? +x.m.datei.mb || 0 : 0); }, 0);
   var foot = dl.length ? '<p class="kurs-foot"><button class="linkbtn" data-act="dl-reihe" ' + ids + (kurs ? '' : ' title="Lädt alles, was SuS in der Kursansicht sehen"') + '>' + ico('download')
     + 'Alle Materialien herunterladen' + (dlMb ? ' (ca. ' + fmtMb(dlMb) + ')' : '') + '</button></p>' : '';
@@ -1065,7 +1094,7 @@ function suchErgebnisse(q){
     var base = { f:f, j:j, r:r }, rTxt = [f.name, j.name, r.titel, r.inhaltsfeld, r.hinweis && r.hinweis.text, checkItems(r).join(' ')].join(' ');
     var vHits = [];
     (r.vorhaben || []).forEach(function(v, vi){
-      var vTxt = rTxt + ' ' + v.titel + ' ' + (v.notiz || ''), ms = (v.materialien || []).filter(function(m){
+      var pl = planungOf(v), vTxt = rTxt + ' ' + v.titel + ' ' + (v.notiz || '') + (pl ? ' ' + PLANUNG.map(function(k){ return pl[k[0]] || ''; }).join(' ') : ''), ms = (v.materialien || []).filter(function(m){
         return hit(vTxt + ' ' + m.titel + ' ' + (TYPE_LABEL[m.typ] || '') + ' ' + (m.datei ? m.datei.name : '') + ' ' + (m.url ? hostOf(m.url) : '') + ' ' + (m.bereich === 'lk' ? 'Lehrkraft' : ''));
       });
       if(ms.length || hit(vTxt)) vHits.push({ v:v, vi:vi, ms:ms });
@@ -1596,6 +1625,7 @@ function materialForm(loc, m, bereich){
         + '</div><p class="hint" id="bereich-hint" style="margin:0 0 .6rem"></p></fieldset>' },
       { name:'typ', label:'Art', type:'select', options:TYPES, value:m.typ },
       { name:'titel', label:'Titel', value:m.titel, required:true },
+      { name:'niveau', label:'Niveau (optional)', type:'select', options:NIVEAUS, value:niveauOf(m) ? String(niveauOf(m)) : '' },
       { name:'datei', label:'Datei oder Link', type:'slot', allowLink:true, current: m.datei ? m.datei.name : (m.url || ''), url:m.url, defaultMode:'file', hint:' ' },
       isNewM(m) ? { type:'html', html:'<p class="hint" style="margin:-.4rem 0 .8rem">Tipp: Mehrere Dateien auf einmal auswählen – dann ordnet die App sie automatisch zu.</p>' } : { type:'html', html:'' },
       { type:'html', html:'<div id="sichtbar-row"><label class="check"><input type="checkbox" name="sichtbar"' + (m.ausgeblendet ? '' : ' checked') + '>Für SuS sichtbar</label>'
@@ -1672,6 +1702,7 @@ function materialForm(loc, m, bereich){
       out.bereich = form.typ.value === 'pruefung' ? 'lk' : ((form.querySelector('input[name=bereich]:checked') || {}).value || 'sus');
       out.sichtbar = form.sichtbar.checked;
       out.ab = form.ab.value || '';
+      out.niveau = +form.niveau.value || 0;
     }
   });
 }
@@ -1707,6 +1738,7 @@ function saveMaterial(loc, existing, bereich){
           if(!vh){ vh = { id:uid(), titel:o.vNew, notiz:'', ausgeblendet:false, materialien:[] }; r.vorhaben.push(vh); }
           target.typ = v.typ; target.titel = v.titel; target.bereich = v.bereich; target.ausgeblendet = v.bereich === 'sus' ? !v.sichtbar : false;
           if(v.bereich === 'sus' && v.ab) target.ab = v.ab; else delete target.ab;
+          if(v.niveau) target.niveau = v.niveau; else delete target.niveau;
           delete target.nurLK; delete target.sus; delete target.lk;
           var dir = dirFor(f, j, r), oldFiles = [];
           return applySlot(target, 'datei', v.datei, dir, schutz, true).then(function(a){
@@ -1888,6 +1920,22 @@ var actions = {
       { name:'titel', label:'Unterrichtsvorhaben', value:c.v.titel, required:true }, { name:'notiz', label:'Notiz (optional)', value:c.v.notiz },
       AB_FIELD(c.v.ab)
     ]}).then(function(v){ if(v) commit('Vorhaben geändert', function(){ c.v.titel = v.titel; c.v.notiz = v.notiz; if(v.ab) c.v.ab = v.ab; else delete c.v.ab; }); });
+  }),
+  'notiz-v': needAdmin(function(c){
+    var p = planungOf(c.v) || {};
+    openForm({ title:'Notizen: ' + c.v.titel, fields:[
+      { type:'html', html:'<p class="hint" style="margin:0 0 .8rem">Nur für dich – erscheint nie in der Kursansicht. Bitte keine Schülernamen.</p>' },
+      { name:'ziel', label:'Schwerpunktziel', type:'textarea', value:p.ziel || '' },
+      { name:'verlauf', label:'Verlaufsplan', type:'textarea', value:p.verlauf || '' },
+      { name:'reflexion', label:'Reflexion – was lief gut?', type:'textarea', value:p.reflexion || '' }
+    ]}).then(function(v){
+      if(!v) return;
+      commit('Notizen: ' + c.v.titel, function(){
+        var n = planungOf({ planung:{ ziel:v.ziel, verlauf:v.verlauf, reflexion:v.reflexion } });
+        if(n) c.v.planung = n; else delete c.v.planung;
+        lkOpen[c.v.id] = 1; saveJSON(LK_KEY, lkOpen);
+      });
+    });
   }),
   'del-v': needAdmin(function(c){
     if(!confirm('„' + c.v.titel + '“ mit allen Materialien löschen?')) return;
@@ -2667,7 +2715,7 @@ function importTitelbild(ri){ return ri.titelbild || (ri.board && ri.board.bild)
 /* Material aus import.json (Version 1 oder 2) in Einträge des aktuellen Modells zerlegen */
 function importMats(mi){
   var typ = mi.typ || 'dokument', titel = mi.titel || 'Material';
-  if(mi.bereich) return [{ typ:typ, titel:titel, bereich:typ === 'pruefung' || mi.bereich === 'lk' ? 'lk' : 'sus', datei:mi.datei || null, url:mi.url || null, ausgeblendet:!!mi.ausgeblendet, quelle:mi.quelle || null, hash:mi.hash || null, ab:mi.ab || null }];
+  if(mi.bereich) return [{ typ:typ, titel:titel, bereich:typ === 'pruefung' || mi.bereich === 'lk' ? 'lk' : 'sus', datei:mi.datei || null, url:mi.url || null, ausgeblendet:!!mi.ausgeblendet, quelle:mi.quelle || null, hash:mi.hash || null, ab:mi.ab || null, niveau:niveauOf(mi) || null }];
   var lkOnly = typ === 'pruefung' || mi.sicht === 'lk', out = [];
   if(mi.sus || mi.url) out.push({ typ:typ, titel:titel, bereich:lkOnly ? 'lk' : 'sus', datei:mi.sus || null, url:mi.sus ? null : (mi.url || null), ausgeblendet:false });
   if(mi.lk) out.push({ typ:typ, titel:titel, bereich:'lk', datei:mi.lk, url:null, ausgeblendet:false });
@@ -2773,6 +2821,7 @@ function runImport(imp, plan, modus){
                 p = p.then(function(){
                   var v = r.vorhaben.filter(function(x){ return x.titel.toLowerCase() === String(vi.titel).toLowerCase(); })[0];
                   if(!v){ v = { id:uid(), titel:vi.titel, notiz:vi.notiz || '', ausgeblendet:!!vi.ausgeblendet, materialien:[] }; if(vi.quelle) v.quelle = vi.quelle; if(vi.ab) v.ab = vi.ab; r.vorhaben.push(v); }
+                  if(!planungOf(v) && planungOf(vi)) v.planung = planungOf(vi);
                   var mc = Promise.resolve();
                   (vi.materialien || []).forEach(function(mi){
                     importMats(mi).forEach(function(x){
@@ -2780,7 +2829,7 @@ function runImport(imp, plan, modus){
                         if(v.materialien.some(function(y){ return y.titel === x.titel && y.typ === x.typ && (y.bereich || 'sus') === x.bereich; })) return;
                         var schutz = x.typ === 'pruefung' ? 'pruefung' : 'basis';
                         var m = { id:uid(), typ:x.typ, titel:x.titel, bereich:x.bereich, datei:null, url:x.url, ausgeblendet:x.ausgeblendet };
-                        if(x.quelle) m.quelle = x.quelle; if(x.hash) m.hash = x.hash; if(x.ab) m.ab = x.ab;
+                        if(x.quelle) m.quelle = x.quelle; if(x.hash) m.hash = x.hash; if(x.ab) m.ab = x.ab; if(x.niveau) m.niveau = x.niveau;
                         return up(x.datei, dir, schutz).then(function(F){ m.datei = F; if(m.datei || m.url) v.materialien.push(m); });
                       });
                     });
@@ -2867,19 +2916,23 @@ function exportZip(onlyF, onlyJ){
           var vdir = rdir + '/' + pad2(vi + 1) + ' ' + safeName(v.titel), items = [], pv = { titel:v.titel, notiz:v.notiz || '', ausgeblendet:!!v.ausgeblendet, materialien:[] };
           if(v.quelle) pv.quelle = v.quelle;
           if(v.ab) pv.ab = v.ab;
+          if(planungOf(v)) pv.planung = planungOf(v);
           pr.vorhaben.push(pv);
           (v.materialien || []).forEach(function(m){
             var lk = m.bereich === 'lk', sfx = lk ? ' (Lehrkraft)' : '', any = false;
             var pm = { typ:m.typ, titel:m.titel, bereich:lk ? 'lk' : 'sus', ausgeblendet:!!m.ausgeblendet };
-            if(m.quelle) pm.quelle = m.quelle; if(m.hash) pm.hash = m.hash; if(m.ab) pm.ab = m.ab;
+            if(m.quelle) pm.quelle = m.quelle; if(m.hash) pm.hash = m.hash; if(m.ab) pm.ab = m.ab; if(niveauOf(m)) pm.niveau = niveauOf(m);
+            var st = niveauOf(m) ? ' ' + sterne(niveauOf(m)) : '';
             if(m.datei){
               var path = vdir + '/' + safeName(m.titel) + sfx + '.' + m.datei.ext;
-              if(job(m.datei, path, pm, 'datei')){ any = true; items.push('<a href="' + encodeURI(path) + '">' + esc(m.titel) + sfx + '</a> <small>' + esc((m.datei.ext || '').toUpperCase()) + '</small>'); }
+              if(job(m.datei, path, pm, 'datei')){ any = true; items.push('<a href="' + encodeURI(path) + '">' + esc(m.titel) + sfx + '</a>' + st + ' <small>' + esc((m.datei.ext || '').toUpperCase()) + '</small>'); }
             }
-            if(m.url){ pm.url = m.url; any = true; items.push('<a href="' + esc(m.url) + '">' + esc(m.titel) + sfx + '</a> <small>Link</small>'); links.push(m.titel + ': ' + m.url); }
+            if(m.url){ pm.url = m.url; any = true; items.push('<a href="' + esc(m.url) + '">' + esc(m.titel) + sfx + '</a>' + st + ' <small>Link</small>'); links.push(m.titel + ': ' + m.url); }
             if(any) pv.materialien.push(pm);
           });
-          html += '<li><b>' + esc(v.titel) + '</b>' + (v.notiz ? ' <small>' + esc(v.notiz) + '</small>' : '') + (items.length ? '<br>' + items.join(' · ') : '') + '</li>';
+          var pl = planungOf(v);
+          html += '<li><b>' + esc(v.titel) + '</b>' + (v.notiz ? ' <small>' + esc(v.notiz) + '</small>' : '') + (items.length ? '<br>' + items.join(' · ') : '')
+            + (pl ? '<details><summary><small>Notizen (Lehrkraft)</small></summary>' + PLANUNG.filter(function(k){ return pl[k[0]]; }).map(function(k){ return '<p><b>' + esc(k[1]) + ':</b><br><span style="white-space:pre-wrap">' + esc(pl[k[0]]) + '</span></p>'; }).join('') + '</details>' : '') + '</li>';
         });
         html += '</ol>';
       });
@@ -2929,15 +2982,16 @@ function exportReiheSuS(f, j, r){
     ms.forEach(function(m){
       if(m.datei && m.datei.schutz !== 'pruefung'){
         var p = uniq(vdir + '/' + safeName(m.titel) + '.' + m.datei.ext); jobs.push({ F:m.datei, path:p });
-        li.push('<a href="' + encodeURI(p) + '">' + esc(m.titel) + '</a> <small>' + esc((m.datei.ext || '').toUpperCase()) + '</small>');
+        li.push('<a href="' + encodeURI(p) + '">' + esc(m.titel) + '</a>' + (niveauOf(m) ? ' ' + sterne(niveauOf(m)) : '') + ' <small>' + esc((m.datei.ext || '').toUpperCase()) + '</small>');
       } else if(m.url){
         links.push(v.titel + ' – ' + m.titel + ': ' + m.url);
-        li.push('<a href="' + esc(m.url) + '">' + esc(m.titel) + '</a> <small>Link</small>');
+        li.push('<a href="' + esc(m.url) + '">' + esc(m.titel) + '</a>' + (niveauOf(m) ? ' ' + sterne(niveauOf(m)) : '') + ' <small>Link</small>');
       }
     });
     html += '<li><b>' + esc(v.titel) + '</b><br>' + li.join(' · ') + '</li>';
   });
   html += '</ol>';
+  if(susItems(r).some(function(x){ return niveauOf(x.m); })) html += '<p><small>Niveau: ★ Basis · ★★ Standard · ★★★ Erweiterung</small></p>';
   if(checkItems(r).length) html += '<h2>Checkliste: Was kann ich schon?</h2><ul>' + checkItems(r).map(function(t){ return /^#/.test(t) ? '</ul><h3>' + esc(t.replace(/^#+\s*/, '')) + '</h3><ul>' : '<li>☐ ' + esc(t) + '</li>'; }).join('') + '</ul>';
   html += '</body></html>';
   if(!jobs.length && !links.length){ toast('Hier gibt es noch nichts zum Herunterladen.'); return; }

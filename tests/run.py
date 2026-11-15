@@ -550,6 +550,46 @@ with sync_playwright() as p:
     shot('22-vorlage')
     page.go_back(); time.sleep(0.4)
 
+    # ================= D: Notizen pro Vorhaben + Niveau =================
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.4)
+    if page.locator('body.editing').count() == 0: page.click('#edit-toggle'); page.wait_for_selector('body.editing')
+    row0 = page.locator('.row').nth(0)
+    row0.locator('[data-act=notiz-v]').click(); page.wait_for_selector('dialog#sheet[open] textarea[name=ziel]')
+    page.fill('textarea[name=ziel]', 'SuS erklären die Bildentstehung'); page.fill('textarea[name=verlauf]', 'Einstieg\nErarbeitung\nSicherung')
+    page.fill('textarea[name=reflexion]', 'Gruppenphase lief gut')
+    page.click('dialog#sheet button[value=ok]'); wait_saved()
+    d = page.evaluate("async () => { const K = await T.keys('1234','pruefung123'); return T.getData(K); }")
+    v0 = [x for x in d['faecher'][1]['jahrgaenge'][0]['reihen'] if x['id'] == 'optische-instrumente'][0]['vorhaben'][0]
+    check('D: Notizen gespeichert (Ziel, Verlauf, Reflexion)', v0.get('planung') == {'ziel': 'SuS erklären die Bildentstehung', 'verlauf': 'Einstieg\nErarbeitung\nSicherung', 'reflexion': 'Gruppenphase lief gut'}, v0.get('planung'))
+    page.locator('.row').nth(0).locator('.row-main > .chips [data-act=edit-m]', has_text='Nachricht an Lena').click()
+    page.wait_for_selector('dialog#sheet[open] select[name=niveau]')
+    page.select_option('select[name=niveau]', '2'); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    page.locator('.row').nth(0).locator('[data-act=edit-m]', has_text='AB Spiegel-Parcours').first.click()
+    page.wait_for_selector('dialog#sheet[open] select[name=niveau]')
+    check('D: Niveau-Auswahl im Dialog (ohne/Basis/Standard/Erweiterung)', page.locator('select[name=niveau] option').count() == 4 and page.input_value('select[name=niveau]') == '')
+    page.select_option('select[name=niveau]', '3'); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    d = page.evaluate("async () => { const K = await T.keys('1234','pruefung123'); return T.getData(K); }")
+    ms0 = [x for x in d['faecher'][1]['jahrgaenge'][0]['reihen'] if x['id'] == 'optische-instrumente'][0]['vorhaben'][0]['materialien']
+    check('D: Niveau gespeichert', sorted((m['titel'], m.get('niveau')) for m in ms0 if m.get('niveau')) == [('AB Spiegel-Parcours', 3), ('Nachricht an Lena', 2)], [(m['titel'], m.get('niveau')) for m in ms0])
+    page.locator('.row').nth(1).locator('[data-act=edit-m]', has_text='AB Linsen').first.click()   # Vorhaben 2 ist in der Kursansicht sichtbar
+    page.wait_for_selector('dialog#sheet[open] select[name=niveau]'); page.select_option('select[name=niveau]', '1'); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    page.click('#edit-toggle'); time.sleep(0.4)
+    row0 = page.locator('.row').nth(0)
+    check('D: Sterne am Chip', '★★' in row0.locator('.chip', has_text='Nachricht an Lena').first.inner_text() and '★★★' in row0.locator('.chip', has_text='AB Spiegel-Parcours').first.inner_text())
+    tg = row0.locator('.lk-toggle')
+    check('D: LK-Bereich nennt Notizen', 'Notizen' in tg.inner_text(), tg.inner_text())
+    if tg.get_attribute('aria-expanded') != 'true': tg.click(); time.sleep(0.2)
+    check('D: Notizen im LK-Bereich sichtbar', 'Gruppenphase lief gut' in row0.locator('.lk-notizen').inner_text() and 'Schwerpunktziel' in row0.locator('.lk-notizen').inner_text())
+    shot('23-notizen-niveau')
+    page.goto(SITE + '#/kurs/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.5)
+    txt = page.inner_text('main')
+    check('D: Kurs ohne Notizen', 'Gruppenphase' not in txt and 'Bildentstehung' not in txt and 'Notizen' not in txt)
+    check('D: Kurs mit Sternen + Legende', '★' in page.locator('.chip', has_text='AB Linsen').inner_text() and 'Basis' in txt and 'Erweiterung' in txt)
+    shot('24-kurs-niveau')
+    page.click('#kurs-exit'); page.wait_for_selector('.crumbs')
+    page.goto(SITE + '#/suche'); page.wait_for_selector('#such-feld'); page.fill('#such-feld', 'Gruppenphase'); time.sleep(0.6)
+    check('D: Suche findet Notizen (Lehrkraft)', 'Spiegel' in page.inner_text('#such-treffer') or page.locator('#such-treffer .chip, #such-treffer a').count() > 0, page.inner_text('#such-treffer')[:200])
+
     # ================= C: Sicherung -> „Alles ersetzen“ =================
     page.evaluate("""async () => { const K = await T.keys('1234','pruefung123'); const d = await T.getData(K);
       const r = d.faecher[1].jahrgaenge[0].reihen.find(x => x.id === 'optische-instrumente');
@@ -596,13 +636,14 @@ with sync_playwright() as p:
                 for r in j['reihen']:
                     out.append(('R', r['id'], r['titel'], r.get('ordner'), bool(r.get('titelbild')), bool(r.get('uebersicht') and r['uebersicht'].get('sus')), json.dumps(r.get('hinweis')), json.dumps(r.get('checkliste'))))
                     for v in r['vorhaben']:
-                        out.append(('V', v['titel'], bool(v.get('ausgeblendet')), v.get('ab')))
+                        out.append(('V', v['titel'], bool(v.get('ausgeblendet')), v.get('ab'), json.dumps(v.get('planung'))))
                         for m in v['materialien']:
-                            out.append(('M', m['titel'], m['typ'], m['bereich'], bool(m.get('ausgeblendet')), bool(m.get('datei')), m.get('url'), (m.get('datei') or {}).get('schutz'), m.get('hash'), m.get('ab')))
+                            out.append(('M', m['titel'], m['typ'], m['bereich'], bool(m.get('ausgeblendet')), bool(m.get('datei')), m.get('url'), (m.get('datei') or {}).get('schutz'), m.get('hash'), m.get('ab'), m.get('niveau')))
         return out
     nb, na = norm(before), norm(after)
     check('C: „Alles ersetzen“ stellt Stand verlustfrei wieder her', nb == na, [x for x in nb if x not in na][:5] + ['---'] + [x for x in na if x not in nb][:5])
     check('C: Datum/Hinweis/Checkliste in Sicherung', any(x[0]=='R' and x[7] != 'null' for x in na) and any(x[0]=='V' and x[3] for x in na) and any(x[0]=='M' and x[9] for x in na))
+    check('C: Notizen + Niveau in Sicherung', any(x[0]=='V' and x[4] != 'null' for x in na) and any(x[0]=='M' and x[10] for x in na))
     check('C: Prüfung wiederhergestellt', any(x[0] == 'M' and x[2] == 'pruefung' and x[7] == 'pruefung' for x in na))
     check('C: alte Dateien gelöscht', not (files_before & set(k for k in repo if k.startswith('material/'))), sorted(files_before & set(repo)))
     shot('16-nach-ersetzen')
