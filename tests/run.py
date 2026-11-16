@@ -330,6 +330,30 @@ with sync_playwright() as p:
              'M 6 Brüche - 5 AB Bruchrechnung.docx', 'M 6 Brüche - 5 Sachaufgaben Bruchrechnung.docx', 'Klausur Brüche.pdf', '~$temp.docx']
     for n in names: open(rd + '/' + n, 'wb').write((PDF if n.endswith('.pdf') else b'PK docx ') + n.encode())
     page.bring_to_front(); page2.close()
+    # ================= iPad: Teilen statt Herunterladen =================
+    ipad = br.new_context(service_workers='block', viewport={'width': 820, 'height': 1180}, has_touch=True,
+        user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1')
+    ipad.route('https://api.github.com/**', gh_handler); ipad.route(SITE + '**', site_handler)
+    ipad.add_init_script("""window.__geteilt = []; navigator.canShare = () => true;
+      navigator.share = async d => { window.__geteilt.push((d.files || []).map(f => f.name).join(',') || d.url || ''); };""")
+    pi = ipad.new_page(); pi.on('pageerror', lambda e: errors.append(str(e)))
+    pi.goto(SITE + '#/kurs/physik/8/optische-instrumente'); pi.wait_for_selector('#pad')
+    for k in '1234': pi.click(f'#pad [data-k="{k}"]')
+    pi.wait_for_selector('.rows', timeout=30000); time.sleep(0.4)
+    fchip = pi.locator('.chip[data-slot=datei]').first
+    if fchip.count():
+        fchip.click(); pi.wait_for_selector('.viewer [data-v=share]:not([hidden])', timeout=20000)
+        check('iPad: Viewer ohne Herunterladen, mit Teilen', pi.locator('.viewer [data-v=dl]').is_hidden() and pi.locator('.viewer [data-v=share]').is_visible())
+        pi.click('.viewer [data-v=share]'); time.sleep(0.3)
+        check('iPad: Teilen übergibt die Datei', len(pi.evaluate('window.__geteilt')) == 1 and '.' in pi.evaluate('window.__geteilt')[0], pi.evaluate('window.__geteilt'))
+        pi.click('.viewer [data-v=close]'); time.sleep(0.4)
+    else: check('iPad: Material in Kursansicht für Test', False)
+    if pi.locator('[data-act=dl-reihe]').count():
+        pi.click('[data-act=dl-reihe]'); pi.wait_for_selector('dialog#sheet[open] [data-x=teilen]', timeout=60000)
+        pi.click('dialog#sheet [data-x=teilen]'); time.sleep(0.3)
+        check('iPad: ZIP über Teilen', pi.evaluate('window.__geteilt')[-1].endswith('.zip'), pi.evaluate('window.__geteilt'))
+    ipad.close()
+
     page.evaluate("localStorage.setItem('um-github', JSON.stringify({owner:'o', repo:'r', branch:'main', token:'x'}))")
     def open_sync_dir(path):
         page.goto(SITE + '#/einstellungen/verwaltung'); page.wait_for_selector('[data-act=sync]')
@@ -824,15 +848,16 @@ with sync_playwright() as p:
     page.locator('.row[data-sort-item]').nth(0).locator('[data-act=add-m][data-bereich=sus]').click(); page.wait_for_selector('dialog#sheet[open] select[name=typ]')
     arten = page.eval_on_selector_all('dialog#sheet select[name=typ] option', 'o => o.map(x => x.value)')
     check('Arten: nur Dokument/Lösung/Prüfung/Buch', arten == ['dokument', 'loesung', 'pruefung', 'buch'], arten)
+    check('Arten: heißt „Material“ statt „Dokument“', page.eval_on_selector('dialog#sheet select[name=typ] option', 'o => o.textContent') == 'Material')
     page.select_option('dialog#sheet select[name=typ]', 'buch')
     check('Buch: kein Datei-Feld, Hinweis-Feld', page.locator('dialog#sheet fieldset[data-slot=datei]').is_hidden() and page.locator('dialog#sheet textarea[name=text]').is_visible())
-    page.fill('dialog#sheet input[name=titel]', 'S. 112 Nr. 4 a–c'); page.fill('dialog#sheet textarea[name=text]', 'Tipp: Merkkasten S. 110 nutzen')
+    page.fill('dialog#sheet input[name=titel]', 'S. 112 Nr. 4 a–c'); page.fill('dialog#sheet textarea[name=text]', '**Tipp:** Merkkasten S. 110 nutzen\n- erst *skizzieren*\n- dann rechnen <script>x</script>')
     page.click('dialog#sheet button[value=ok]'); wait_saved()
     page.locator('.row[data-sort-item]').nth(0).locator('[data-act=add-m][data-bereich=sus]').click(); page.wait_for_selector('dialog#sheet[open] select[name=typ]')
     page.select_option('dialog#sheet select[name=typ]', 'buch'); page.fill('dialog#sheet input[name=titel]', 'S. 113 Nr. 7')
     page.click('dialog#sheet button[value=ok]'); wait_saved()
     v0 = reihe_of(getd())['vorhaben'][0]; bs = [m for m in v0['materialien'] if m['typ'] == 'buch']
-    check('Buch: gespeichert ohne Datei', len(bs) == 2 and all(m['datei'] is None and m['url'] is None for m in bs) and bs[0].get('text') == 'Tipp: Merkkasten S. 110 nutzen' and 'text' not in bs[1], bs)
+    check('Buch: gespeichert ohne Datei', len(bs) == 2 and all(m['datei'] is None and m['url'] is None for m in bs) and bs[0].get('text', '').startswith('**Tipp:** Merkkasten') and 'text' not in bs[1], bs)
     # Dokument: Art bleibt beim Bearbeiten erhalten (HTML-Seite bleibt html)
     edit_off(); time.sleep(0.3)
     check('LK-Bereich standardmäßig offen', page.locator('.lk-area').first.is_visible())
@@ -840,6 +865,9 @@ with sync_playwright() as p:
     check('Buch: Titel + „Hinweis ›“ sichtbar', bchip.count() == 1 and 'Hinweis' in bchip.inner_text())
     bchip.click(); page.wait_for_selector('dialog#sheet[open] .buch-text')
     check('Buch: Antippen zeigt Hinweis', 'Merkkasten' in page.inner_text('dialog#sheet .buch-text'))
+    bh = page.inner_html('dialog#sheet .buch-text')
+    check('Format: **fett**, *kursiv*, Liste', '<b>Tipp:</b>' in bh and '<i>skizzieren</i>' in bh and bh.count('<li>') == 2, bh)
+    check('Format: kein HTML eingeschleust', '<script>' not in bh and '&lt;script&gt;' in bh, bh)
     shot('28-buch-hinweis')
     page.click('dialog#sheet button[value=ok]'); time.sleep(0.3)
     check('Buch: ohne Hinweis nicht antippbar', page.locator('.row').nth(0).locator('span.chip.t-buch.still', has_text='S. 113').count() == 1)
