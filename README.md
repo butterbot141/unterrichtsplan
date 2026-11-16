@@ -27,6 +27,8 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 - **+ Material** (oben): wie oben, mit Auswahl von Fach, Jahrgang, Reihe und Vorhaben – auch neue anlegen.
 - **Bearbeiten**: außerdem Reihen und Vorhaben anlegen, umbenennen, sortieren, löschen; Titelbild hinterlegen; Reihen aus dem Kernlehrplan ergänzen. Reihen-Karten lassen sich auch im Bearbeiten-Modus öffnen.
 - **Fach hinzufügen/bearbeiten → Lehrplan-Vorlage und Symbol**: Mathematik, Physik, Naturwissenschaften (NW 5/6, KLP Gesamtschule) oder Klassenleitung/Sonstiges (Ordner-Vorschläge wie Klassenrat, Elternabend); „automatisch“ erkennt das Fach am Namen.
+- **Datei ersetzen**: neue Datei mit **gleichem Dateinamen** hochladen (einzeln oder mehrere) – das vorhandene Material bekommt die neue Datei, Titel, Sichtbarkeit und Kurse bleiben. Einzeln mit Haken „… ersetzen“ (abwählbar).
+- **Speichern** läuft im Hintergrund: Änderungen erscheinen sofort, unten links steht „Speichert …“. Nicht mehr gebrauchte Dateien werden danach gelöscht. SuS sehen den neuen Stand nach ca. 1–2 Minuten; Geräte mit Token laden immer den aktuellen Stand direkt von GitHub.
 - **Herunterladen**: Jahrgang oder alles als ZIP mit `Übersicht.html` – zum Weiterverwenden ohne diese Seite.
 - **Einstellungen** (Zahnrad unten rechts), vier Bereiche: **Info** (kurze Erklärungen zu allen Funktionen), **Zugang** (abmelden, Code/Passwort ändern, GitHub-Token), **Verwaltung** (herunterladen, hochladen, importieren, Vorlagen, Schulform), **Speicher**.
 
@@ -123,7 +125,7 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
   - **PDF und Word/PowerPoint mit gleichem Namen**: PDF für SuS, Original im Lehrkraft-Bereich. Word/PowerPoint ohne PDF landet im Lehrkraft-Bereich.
   - Ignoriert werden versteckte Dateien und Word-Sperrdateien (`~$…`). Videos werden nicht hochgeladen. `.url`-Verknüpfungen werden zu Links.
 - **Vorschau** vor dem Hochladen: Ziel (Fach, Jahrgang, Reihe, Vorhaben), Art, Titel und Bereich pro Datei prüfen und ändern; Dateien abwählen.
-- **Erneut ausführen = Abgleich**: Unveränderte Dateien werden übersprungen, geänderte ersetzt. Auf dem Laptop gelöschte Dateien bleiben in der Sammlung.
+- **Erneut ausführen = Abgleich**: Unveränderte Dateien werden übersprungen, geänderte ersetzt (erkannt am Ordner oder am gleichen Dateinamen; Titel und Einstellungen bleiben). Auf dem Laptop gelöschte Dateien bleiben in der Sammlung.
 - Das passt zur Arbeitsweise: Am Laptop liegt die vollständige Sicherung aller Jahre, in der Sammlung nur, was für den aktuellen Durchgang gebraucht wird.
 
 ## Planung importieren und Sicherung wiederherstellen

@@ -278,6 +278,9 @@ dialog::backdrop{background:rgba(10,14,20,.5)}
 .file-card .i{width:44px;height:44px;color:var(--tc,var(--primary))}
 
 /* Laden & Meldungen */
+.saving{position:fixed;left:1rem;bottom:1rem;z-index:55;display:none;gap:.5rem;align-items:center;background:var(--sheet);border-radius:999px;padding:.4rem .9rem;font-size:.85rem;font-weight:600;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.saving.on{display:flex}
+.saving .spin{width:14px;height:14px}
 .busy{position:fixed;inset:0;z-index:60;display:none;place-items:center;background:rgba(10,14,20,.35)}
 .busy.on{display:grid}
 .busy div{background:var(--sheet);border-radius:16px;padding:1.1rem 1.4rem;display:flex;gap:.8rem;align-items:center;font-weight:600;max-width:85vw}
@@ -426,6 +429,7 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid 
 </svg>
 
 <dialog id="sheet"></dialog>
+<div class="saving" id="saving" role="status"><span class="spin"></span>Speichert …</div>
 <div class="busy" id="busy"><div><span class="spin"></span><span id="busy-text">Bitte warten …</span></div></div>
 <div class="toast" id="toast" role="status"></div>
 
@@ -600,6 +604,8 @@ function fetchBytes(path, noStore){
     return r.arrayBuffer();
   }).then(function(b){ return new Uint8Array(b); });
 }
+/* Material-Datei: frisch hochgeladene Dateien sind auf der Seite erst nach 1–2 Minuten da → Lehrkraft holt sie über die API */
+function fetchDatei(path){ return fetchBytes(path).catch(function(e){ if(e.status === 404 && canEdit()) return ghRaw(path); throw e; }); }
 function loadZugang(fromApi){
   if(fromApi && canEdit()){
     return gh('GET', ACCESS_PATH).then(function(r){ zugang = JSON.parse(TD.decode(b64ToBytes(r.content))); zugangSha = r.sha; return zugang; },
@@ -630,18 +636,23 @@ function loadData(fromApi){
   return fetchBytes(DATA_PATH, true).then(function(bytes){ return unseal(keyB, bytes); })
     .then(function(p){ data = migrate(JSON.parse(TD.decode(p))); freshForAdmin = false; });
 }
+/* Lehrkraft-Geräte laden den Stand direkt über die API (die Seite hängt nach dem Speichern 1–2 Minuten hinterher) */
+function loadAktuell(){ return canEdit() ? loadData(true).catch(function(){ return loadData(false); }) : loadData(false); }
 function saveData(msg){
   return seal(keyB, TE.encode(JSON.stringify(data))).then(function(bytes){ return ghPutBytes(DATA_PATH, bytes, msg, dataSha); })
     .then(function(r){ dataSha = r.content.sha; });
 }
 function keyFor(schutz){ return schutz === 'pruefung' ? keyP : keyB; }
-function freePath(dir, name){
+/* Neue Datei unter einem neuen, eindeutigen Namen anlegen (Zufallsendung).
+   Kein Pfad wird wiederverwendet → keine alten Fassungen aus Zwischenspeichern; keine Vorab-Abfrage nötig. */
+function rand4(){ return Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(3)), function(b){ return (b % 36).toString(36); }).join('') + (Date.now() % 36).toString(36); }
+function putNeu(dir, name, bytes, msg, n){
   var dot = name.indexOf('.'), base = dot > 0 ? name.slice(0, dot) : name, ext = dot > 0 ? name.slice(dot) : '';
-  function tryN(n){
-    var p = dir + '/' + (n ? base + '-' + n : base) + ext;
-    return ghSha(p).then(function(sha){ return sha ? tryN((n || 1) + 1) : p; });
-  }
-  return tryN(0);
+  var p = dir + '/' + base + '-' + rand4() + ext;
+  return ghPutBytes(p, bytes, msg).then(function(){ return p; }, function(e){
+    if((e.status === 409 || e.status === 422) && (n || 0) < 3) return putNeu(dir, name, bytes, msg, (n || 0) + 1);   // Name schon vergeben
+    throw e;
+  });
 }
 function isImageFile(file){ return /^image\/(jpeg|png|webp|heic|heif|gif)$/.test(file.type || '') || /^(jpe?g|png|webp|heic|heif|gif)$/.test(extOf(file.name)); }
 function hashHex(buf){
@@ -661,7 +672,7 @@ function reseal(F, schutz){
   return ghRaw(F.pfad).then(function(b){ return unseal(keyFor(F.schutz), b); }).then(function(p){ return seal(keyFor(schutz), p); })
     .then(function(sealed){
       // Von einer Kopie mitgenutzt: neue Datei anlegen, damit die andere Reihe weiter funktioniert
-      if(geteilt) return freePath(dir, F.pfad.split('/').pop()).then(function(np){ return ghPutBytes(np, sealed, 'Neu verschlüsselt: ' + F.name).then(function(){ return np; }); });
+      if(geteilt) return putNeu(dir, F.pfad.split('/').pop().replace(/-[a-z0-9]{4}(?=\.)/, ''), sealed, 'Neu verschlüsselt: ' + F.name);
       return ghSha(F.pfad).then(function(sha){ return ghPutBytes(F.pfad, sealed, 'Neu verschlüsselt: ' + F.name, sha); }).then(function(){ return F.pfad; });
     })
     .then(function(np){ delete blobCache[F.pfad]; F.pfad = np; F.schutz = schutz; return F; });
@@ -672,16 +683,30 @@ function uploadFile2(file, dir, schutz){
   var ext = extOf(file.name), base = slug(file.name.replace(/\.[^.]+$/, '')), path;
   busy('Verschlüssele „' + file.name + '“ …');
   return file.arrayBuffer().then(function(buf){ return seal(keyFor(schutz), new Uint8Array(buf)); }).then(function(sealed){
-    return freePath(dir, base + (ext ? '.' + ext : '') + '.enc').then(function(p){ path = p; busy('Lade „' + file.name + '“ hoch …'); return ghPutBytes(p, sealed, 'Material: ' + file.name); });
+    busy('Lade „' + file.name + '“ hoch …');
+    return putNeu(dir, base.slice(0, 44) + (ext ? '.' + ext : '') + '.enc', sealed, 'Material: ' + file.name).then(function(p){ path = p; });
   }).then(function(){ return { pfad:path, name:file.name, ext:ext, mb:Math.round(mb * 100) / 100, schutz:schutz }; });
 }
 /* Dateien löschen – außer sie werden noch woanders genutzt (z. B. von einer kopierten Reihe) */
-function deleteFiles(paths){
-  var chain = Promise.resolve(), used = {};
+function deleteFiles(paths, leise){
+  var chain = Promise.resolve(), used = {}, dirs = {};
   filesOf(data).forEach(function(p){ used[p] = 1; });
-  paths.filter(function(p){ return p && !used[p]; }).forEach(function(p){
-    chain = chain.then(function(){ busy('Lösche ' + p.split('/').pop() + ' …'); return ghSha(p); })
-      .then(function(sha){ if(sha) return gh('DELETE', p, { message:'Entfernt: ' + p.split('/').pop(), sha:sha }); });
+  paths = paths.filter(function(p, i){ return p && !used[p] && paths.indexOf(p) === i; });
+  // SHA aller Dateien eines Ordners mit einer Abfrage holen
+  paths.forEach(function(p){ var d = p.replace(/\/[^\/]*$/, ''); (dirs[d] = dirs[d] || []).push(p); });
+  Object.keys(dirs).forEach(function(d){
+    var shas = {};
+    chain = chain.then(function(){
+      return gh('GET', d).then(function(list){ (Array.isArray(list) ? list : []).forEach(function(x){ shas[x.path] = x.sha; }); }, function(e){ if(e.status !== 404) throw e; });
+    });
+    dirs[d].forEach(function(p){
+      chain = chain.then(function(){
+        if(!leise) busy('Lösche ' + p.split('/').pop() + ' …');
+        return (shas[p] ? Promise.resolve(shas[p]) : ghSha(p)).then(function(sha){
+          if(sha) return gh('DELETE', p, { message:'Entfernt: ' + p.split('/').pop(), sha:sha });
+        });
+      });
+    });
   });
   return chain;
 }
@@ -834,11 +859,58 @@ function ensureFresh(){
   busy('Lade aktuellen Stand …');
   return loadData(true).then(function(){ busy(false); });
 }
+/* Speichern: Änderungen sofort anzeigen, Übersicht im Hintergrund speichern.
+   Mehrere schnelle Änderungen (z. B. Ziehen) werden zu einem Speichervorgang zusammengefasst.
+   Nur wenn Dateien hochgeladen werden, wartet die Oberfläche. Dateien löschen: danach im Hintergrund. */
+var saveQ = { laeuft:false, offen:false, msgs:[], weg:[], warte:[] };
+function speichernSpaeter(msg, weg){
+  saveQ.offen = true; saveQ.msgs.push(msg); if(weg) saveQ.weg = saveQ.weg.concat(weg);
+  var pr = new Promise(function(res, rej){ saveQ.warte.push({ res:res, rej:rej }); });
+  speicherAnzeige(); setTimeout(pumpe, 0);
+  return pr;
+}
+function pumpe(){
+  if(saveQ.laeuft || !saveQ.offen) return;
+  saveQ.laeuft = true; saveQ.offen = false;
+  var msgs = saveQ.msgs.splice(0), weg = saveQ.weg.splice(0), warte = saveQ.warte.splice(0);
+  msgs = msgs.filter(function(m, i){ return msgs.indexOf(m) === i; });
+  speicherAnzeige();
+  saveData(msgs.length > 3 ? msgs.slice(0, 3).join(' · ') + ' …' : msgs.join(' · ')).then(function(){
+    warte.forEach(function(w){ w.res(); });
+    if(!saveQ.offen) toast('Gespeichert – für alle sichtbar in ca. 1–2 Minuten.');
+    // nicht mehr genutzte Dateien entfernen; ein Fehler hier schadet nicht (Datei bleibt nur liegen)
+    return weg.length ? deleteFiles(weg, true).catch(function(){}) : null;
+  }, function(e){
+    saveQ.offen = false; saveQ.msgs = []; saveQ.weg = [];
+    warte.concat(saveQ.warte.splice(0)).forEach(function(w){ w.rej(e); });
+    saveQ.laeuft = false; speicherAnzeige();
+    if(e) e._gemeldet = true;
+    return fail(e);
+  }).then(function(){
+    if(!saveQ.laeuft) return;
+    saveQ.laeuft = false; speicherAnzeige(); pumpe();
+  });
+}
+function speichertNoch(){ return saveQ.laeuft || saveQ.offen; }
+function speicherAnzeige(){ var el = $('#saving'); if(el) el.classList.toggle('on', speichertNoch()); }
+window.addEventListener('beforeunload', function(e){ if(speichertNoch()){ e.preventDefault(); e.returnValue = ''; } });
+/* Dateien erst nach dem Speichern der Übersicht löschen (im Hintergrund) */
+var spaeterLoeschen = [];
+function loeschenSpaeter(paths){ spaeterLoeschen = spaeterLoeschen.concat((paths || []).filter(Boolean)); }
 function commit(msg, work){
-  busy('Speichere …');
-  return Promise.resolve().then(work).then(function(){ busy('Speichere Übersicht …'); return saveData(msg); })
-    .then(function(){ busy(false); render(); toast('Gespeichert – für alle sichtbar in ca. 1–2 Minuten.'); })
-    .catch(fail);
+  var res;
+  spaeterLoeschen = [];
+  try{ res = work ? work() : null; }catch(e){ return Promise.resolve().then(function(){ return fail(e); }); }
+  if(res && typeof res.then === 'function'){
+    // Hochladen o. Ä.: Oberfläche wartet
+    busy('Speichere …');
+    return res.then(function(){ var weg = spaeterLoeschen; spaeterLoeschen = []; busy('Speichere Übersicht …'); render(); return speichernSpaeter(msg, weg); })
+      .then(function(){ busy(false); render(); }, function(e){ busy(false); return e && e._gemeldet ? null : fail(e); });
+  }
+  var weg = spaeterLoeschen; spaeterLoeschen = [];
+  render();
+  speichernSpaeter(msg, weg).catch(function(){});
+  return Promise.resolve();   // Oberfläche nicht aufhalten
 }
 
 /* Daten finden */
@@ -1313,6 +1385,8 @@ var INFO = [
   ['Notizen', 'Schwerpunktziel, Verlaufsplan und Reflexion pro Vorhaben – nur in der Lehrkraft-Ansicht. Keine Schülernamen eintragen.', true],
   ['Suche', 'Durchsucht alle Fächer und Jahrgänge, auch Dateinamen, Hinweise, Checklisten und Notizen. Umlaute können weggelassen werden.', true],
   ['Ordner hochladen', 'Fach und Jahrgang aus Ordnernamen wie „2526 M 6“, Reihe = Ordner, Nummer im Dateinamen = Vorhaben. PDF und Word mit gleichem Namen: PDF für SuS, Word für Lehrkräfte. Erneut ausführen gleicht ab; am Laptop Gelöschtes bleibt hier.', true],
+  ['Datei ersetzen', 'Neue Datei mit gleichem Dateinamen hochladen – Titel, Sichtbarkeit und Kurse bleiben. Oder Material antippen und unter „Datei“ eine neue wählen.', true],
+  ['Speichern', 'Änderungen erscheinen sofort, gespeichert wird im Hintergrund („Speichert …“ unten links). Seite erst danach schließen. SuS sehen den neuen Stand nach ca. 1–2 Minuten.', true],
   ['Sichern und Wiederherstellen', '„Alles herunterladen“ (mit Prüfungspasswort) ist die Sicherung. Wiederherstellen: „Importieren“ → „Alles ersetzen“.', true],
   ['Neues Schuljahr', 'In Reihe oder Jahrgang: zurücksetzen oder als Kopie anlegen. Kopien nutzen dieselben Dateien.', true],
   ['Interaktive Seiten', 'Vorlagen unter Verwaltung: Lernpfad (Schritte, Hilfen, Quiz) oder Simulation (ein Bildschirm). Anpassen und als HTML hochladen.', true],
@@ -1448,7 +1522,7 @@ function render(){
 var blobCache = {};
 function blobUrl(F){
   if(blobCache[F.pfad]) return Promise.resolve(blobCache[F.pfad]);
-  return fetchBytes(F.pfad).then(function(b){ return unseal(keyFor(F.schutz), b); }).then(function(p){
+  return fetchDatei(F.pfad).then(function(b){ return unseal(keyFor(F.schutz), b); }).then(function(p){
     var u = URL.createObjectURL(new Blob([p], { type:MIME[F.ext] || 'image/jpeg' })); blobCache[F.pfad] = u; return u;
   });
 }
@@ -1470,7 +1544,7 @@ function wireLock(){
     working = true; err.textContent = 'Prüfe …';
     deriveKek(code, zugang.basis.salt, zugang.iter).then(function(kek){
       return unlockBasis(kek).then(function(){ if($('#remember').checked) saveJSON(KEK_KEY, bytesToB64(kek)); });
-    }).then(function(){ return loadData(false); }).then(function(){ render(); })
+    }).then(function(){ return loadAktuell(); }).then(function(){ render(); })
       .catch(function(){ working = false; code = ''; paint(); err.textContent = 'Der Code stimmt nicht.'; pins.classList.remove('err'); void pins.offsetWidth; pins.classList.add('err'); });
   }
   function key(k){
@@ -1528,11 +1602,12 @@ function openFile(F, titel, typ, c, replace){
     document.body.style.overflow = 'hidden';
     if(replace) history.replaceState({ viewer:true }, ''); else history.pushState({ viewer:true }, '');
     viewerState = { el:v, url:null, closed:false, c:c || null, F:F };
+    var vs = viewerState;
     var body = $('.viewer-body', v);
-    fetchBytes(F.pfad).then(function(bytes){ return unseal(keyFor(F.schutz), bytes); }).then(function(plain){
-      if(viewerState.closed) return;
+    fetchDatei(F.pfad).then(function(bytes){ return unseal(keyFor(F.schutz), bytes); }).then(function(plain){
+      if(vs.closed) return;
       var file = new File([plain], niceName, { type:mime }), url = URL.createObjectURL(file);
-      viewerState.url = url;
+      vs.url = url;
       var dl = $('[data-v=dl]', v), nurTeilen = teilenStattLaden(file); dl.href = url; dl.download = niceName; dl.hidden = nurTeilen;
       if(navigator.canShare && navigator.canShare({ files:[file] })){
         var sh = $('[data-v=share]', v); sh.hidden = false;
@@ -1546,7 +1621,7 @@ function openFile(F, titel, typ, c, replace){
         fr.title = titel; fr.setAttribute('allow', 'fullscreen; clipboard-write');
         fr.setAttribute('sandbox', 'allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-downloads');
         fr.srcdoc = withBridge(TD.decode(plain), loadJSON(seiteKey(F, c)) || {}, !!nextOf(c));
-        body.innerHTML = ''; body.appendChild(fr); viewerState.frame = fr;
+        body.innerHTML = ''; body.appendChild(fr); vs.frame = fr;
         return;
       }
       if(/^image\//.test(mime)){ body.innerHTML = '<img alt="' + esc(titel) + '" src="' + url + '">'; return; }
@@ -1556,7 +1631,7 @@ function openFile(F, titel, typ, c, replace){
         + '<div class="btnline" style="justify-content:center">' + (nurTeilen ? '<button class="btn primary" data-v="share2">' + ico('share') + 'Teilen</button>'
           : '<a class="btn primary" href="' + url + '" download="' + esc(niceName) + '">' + ico('download') + 'Speichern</a>') + '</div></div>';
       var sh2 = $('[data-v=share2]', body); if(sh2) sh2.onclick = function(){ navigator.share({ files:[file], title:titel }).catch(function(){}); };
-    }).catch(function(e){ if(!viewerState.closed) body.innerHTML = '<div class="file-card"><h3>Fehler</h3><p class="muted">' + esc(e.message || 'Die Datei konnte nicht geladen werden.') + '</p></div>'; });
+    }).catch(function(e){ if(!vs.closed) body.innerHTML = '<div class="file-card"><h3>Fehler</h3><p class="muted">' + esc(e.message || 'Die Datei konnte nicht geladen werden.') + '</p></div>'; });
     v.addEventListener('click', function(e){
       if(e.target.closest('[data-v=close]')) history.back();
       if(e.target.closest('[data-v=next]')) openNext();
@@ -1796,6 +1871,15 @@ function guessTyp(name){
 function titleFromFile(name){ return String(name).replace(/\.[^.]+$/, '').replace(/[_]+/g, ' ').replace(/\s+-\s+|\s{2,}/g, ' ').trim(); }
 
 function isNewM(m){ return !m || !m.id; }
+/* Material mit gleichem Dateinamen in einer Reihe (zum Ersetzen) */
+function gleicheDatei(r, name){
+  var n = String(name || '').toLowerCase(), hit = null;
+  if(r && n) (r.vorhaben || []).forEach(function(v){ (v.materialien || []).forEach(function(m){
+    if(hit || !m.datei) return;
+    if(String(m.datei.name || '').toLowerCase() === n || (m.quelle && m.quelle.split('/').pop().toLowerCase() === n)) hit = { m:m, v:v };
+  }); });
+  return hit;
+}
 /* Material-Dialog mit Ortsauswahl. bereich: "sus" = Unterrichtsmaterial, "lk" = Lehrkraft-Material */
 function materialForm(loc, m, bereich, k){
   var isNew = !m, zs = zustand(m, isNew ? null : k);
@@ -1818,7 +1902,8 @@ function materialForm(loc, m, bereich, k){
       { type:'html', html:'<div id="buch-row"><label class="f"><span>Hinweis für SuS (optional)</span><textarea name="text" placeholder="z. B. **Tipp:** Merkkasten S. 110">' + esc(m.text || '') + '</textarea></label></div>' },
       { name:'niveau', label:'Niveau (optional)', type:'select', options:NIVEAUS, value:niveauOf(m) ? String(niveauOf(m)) : '' },
       { name:'datei', label:'Datei oder Link', type:'slot', allowLink:true, current: m.datei ? m.datei.name : (m.url || ''), url:m.url, defaultMode:'file', hint:' ' },
-      isNewM(m) ? { type:'html', html:'<p class="hint" id="multi-hint" style="margin:-.4rem 0 .8rem">Mehrere Dateien auf einmal möglich.</p>' } : { type:'html', html:'' },
+      isNewM(m) ? { type:'html', html:'<p class="hint" id="multi-hint" style="margin:-.4rem 0 .8rem">Mehrere Dateien möglich. Gleicher Dateiname ersetzt die alte Datei.</p>'
+        + '<label class="check" id="ersetzen-row" hidden><input type="checkbox" name="ersetzen" checked><span></span></label>' } : { type:'html', html:'' },
       { type:'html', html:'<div id="sichtbar-row"><label class="check"><input type="checkbox" name="sichtbar"' + (zs.ausgeblendet ? '' : ' checked') + '>Für SuS sichtbar' + (k && !isNew ? ' – ' + esc(kursLabel(k)) : '') + '</label>'
         + '<label class="f"><span>Erst sichtbar ab (optional)' + (k && !isNew ? ' – ' + esc(kursLabel(k)) : '') + '</span><input type="date" name="ab" value="' + esc(zs.ab || '') + '"></label></div>' },
       { type:'html', html:'<p class="hint" id="pruef-hint" hidden>' + ico('lock') + ' Mit Prüfungspasswort geschützt.</p>' }
@@ -1844,9 +1929,19 @@ function materialForm(loc, m, bereich, k){
         form.querySelector('[data-for=o_v]').style.display = sv.value === '__neu' ? '' : 'none';
       }
       fill(0);
-      sf.addEventListener('change', function(){ fill(1); });
-      sj.addEventListener('change', function(){ fill(2); });
-      sr.addEventListener('change', function(){ fill(3); });
+      sf.addEventListener('change', function(){ fill(1); pruefeErsetzen(); });
+      sj.addEventListener('change', function(){ fill(2); pruefeErsetzen(); });
+      var ersRow = $('#ersetzen-row', form);
+      function pruefeErsetzen(){
+        if(!ersRow) return;
+        var fi = form.querySelector('input[name=datei__file]'), file = fi && fi.files && fi.files.length === 1 ? fi.files[0] : null;
+        var mode = (form.querySelector('input[name="datei__mode"]:checked') || {}).value;
+        var f = findIn(faecher, sf.value), j = f && findIn(f.jahrgaenge, sj.value), r = j && sr.value !== '__neu' ? findIn(j.reihen, sr.value) : null;
+        var hit = file && mode === 'file' ? gleicheDatei(r, file.name) : null;
+        ersRow.hidden = !hit; ersRow.dataset.m = hit ? hit.m.id : '';
+        if(hit) $('span', ersRow).textContent = '„' + hit.m.titel + '“ ersetzen (Einstellungen bleiben)';
+      }
+      sr.addEventListener('change', function(){ fill(3); pruefeErsetzen(); });
       sv.addEventListener('change', function(){ fill(4); });
       var typ = form.typ, ph = $('#pruef-hint', form), bh = $('#bereich-hint', form), sRow = $('#sichtbar-row', form);
       var fh = form.querySelector('fieldset[data-slot=datei] .slot-file .hint'), h3 = form.querySelector('h3');
@@ -1882,6 +1977,7 @@ function materialForm(loc, m, bereich, k){
           if(!form.titel.value) form.titel.value = titleFromFile(file.name);
           sync();
         }
+        if(e.target.name === 'datei__file' || e.target.name === 'datei__mode') pruefeErsetzen();
       });
       sync();
     },
@@ -1893,6 +1989,8 @@ function materialForm(loc, m, bereich, k){
       out.niveau = +form.niveau.value || 0;
       out.text = form.text.value.trim();
       out.typ = typAus(out.typ, out.datei, m.typ);
+      var er = $('#ersetzen-row', form);
+      out.ersetzen = er && !er.hidden && form.ersetzen.checked && out.typ !== 'buch' ? er.dataset.m : null;
     }
   });
 }
@@ -1906,9 +2004,10 @@ function saveMaterial(loc, existing, bereich){
       if(v._delete){
         if(!confirm('„' + cur.m.titel + '“ entfernen?')) return;
         var files = filesOf(cur.m), rm = askDelete(files);
-        return commit('Material entfernt', function(){ cur.v.materialien.splice(cur.v.materialien.indexOf(cur.m), 1); return rm ? deleteFiles(files) : null; });
+        return commit('Material entfernt', function(){ cur.v.materialien.splice(cur.v.materialien.indexOf(cur.m), 1); if(rm) loeschenSpaeter(files); });
       }
       var o = v.o, f = findIn(data.faecher, o.f), j = f && findIn(f.jahrgaenge, o.j);
+      if(!cur && v.ersetzen && j) return ersetzeDatei(f, j, findIn(j.reihen, o.r), v.ersetzen, v.datei.file);
       if(!j){ alert('Bitte Fach und Jahrgang wählen. Jahrgänge legst du auf der Startseite an.'); return; }
       if(o.r === '__neu' && !o.rNew){ alert('Bitte einen Namen für die neue Reihe eingeben.'); return; }
       if(o.v === '__neu' && !o.vNew){ alert('Bitte einen Namen für das neue Unterrichtsvorhaben eingeben.'); return; }
@@ -1945,7 +2044,7 @@ function saveMaterial(loc, existing, bereich){
           }).then(function(){
             if(cur && cur.v !== vh){ cur.v.materialien.splice(cur.v.materialien.indexOf(cur.m), 1); }
             if(vh.materialien.indexOf(target) < 0) vh.materialien.push(target);
-            if(oldFiles.length && askDelete(oldFiles)) return deleteFiles(oldFiles);
+            if(oldFiles.length && askDelete(oldFiles)) loeschenSpaeter(oldFiles);
           }).then(function(){
             var want = '#/f/' + encodeURIComponent(f.id) + '/' + encodeURIComponent(j.id) + '/' + encodeURIComponent(r.id);
             if(location.hash !== want) setTimeout(function(){ location.hash = want; }, 0);
@@ -1954,6 +2053,28 @@ function saveMaterial(loc, existing, bereich){
       });
     });
   }).catch(fail);
+}
+/* Datei eines vorhandenen Materials ersetzen – Titel, Art, Sichtbarkeit usw. bleiben */
+function ersetzeDatei(f, j, r, mid, file){
+  var hit = null;
+  (r && r.vorhaben || []).forEach(function(v){ (v.materialien || []).forEach(function(m){ if(m.id === mid) hit = m; }); });
+  if(!hit || !file) return Promise.reject(new Error('Material nicht mehr vorhanden.'));
+  var schutz = hit.typ === 'pruefung' || (hit.datei && hit.datei.schutz === 'pruefung') ? 'pruefung' : 'basis';
+  return (schutz === 'pruefung' ? askPruefung() : Promise.resolve(true)).then(function(ok){
+    if(!ok) return;
+    return commit('Datei ersetzt: ' + hit.titel, function(){
+      return file.arrayBuffer().then(hashHex).then(function(h){
+        return applySlot(hit, 'datei', { mode:'file', file:file }, dirFor(f, j, r), schutz, true).then(function(old){
+          hit.hash = h; if(hit.quelle && hit.quelle.split('/').pop() !== file.name) hit.quelle = file.name;
+          loeschenSpaeter(old);
+          if(artOf(hit.typ) === 'dokument') hit.typ = typAus('dokument', { mode:'file', file:file }, hit.typ);
+        });
+      });
+    }).then(function(){
+      var want = '#/f/' + encodeURIComponent(f.id) + '/' + encodeURIComponent(j.id) + '/' + encodeURIComponent(r.id);
+      if(location.hash !== want) location.hash = want;
+    });
+  });
 }
 function uniqueId(base, arr){ var id = base, n = 2; while(findIn(arr, id)) id = base + '-' + (n++); return id; }
 
@@ -1977,7 +2098,7 @@ function applyReihe(f, j, r, v){
     .then(function(b){
       old = old.concat(b);
       r.uebersicht = (ov.sus || ov.lk || ov.url) ? ov : null;
-      if(old.length && askDelete(old)) return deleteFiles(old);
+      if(old.length && askDelete(old)) loeschenSpaeter(old);
     }).then(function(){ return applyTitelbild(r, v.bild, dir); });
 }
 function checkBild(s){
@@ -1988,7 +2109,7 @@ function checkBild(s){
 /* Titelbild setzen oder entfernen; alte Datei wird gelöscht */
 function applyTitelbild(r, s, dir){
   if(!s || s.mode === 'keep') return Promise.resolve();
-  return applySlot(r, 'titelbild', s, dir, 'basis', false).then(function(old){ if(old.length) return deleteFiles(old); });
+  return applySlot(r, 'titelbild', s, dir, 'basis', false).then(function(old){ loeschenSpaeter(old); });
 }
 
 /* =====================================================================
@@ -2099,7 +2220,7 @@ var actions = {
   'del-f': needAdmin(function(c){
     if(!confirm('Fach „' + c.f.name + '“ mit allen Einträgen löschen?')) return;
     var files = filesOf(c.f), rm = askDelete(files);
-    commit('Fach gelöscht', function(){ data.faecher.splice(data.faecher.indexOf(c.f), 1); return rm ? deleteFiles(files) : null; });
+    commit('Fach gelöscht', function(){ data.faecher.splice(data.faecher.indexOf(c.f), 1); if(rm) loeschenSpaeter(files); });
   }),
   'up-f': needAdmin(function(c){ if(move(data.faecher, c.f, -1)) commit('Reihenfolge'); }),
   'down-f': needAdmin(function(c){ if(move(data.faecher, c.f, 1)) commit('Reihenfolge'); }),
@@ -2132,7 +2253,7 @@ var actions = {
   'del-j': needAdmin(function(c){
     if(!confirm(jgLabel(c.j) + ' mit allen Einträgen löschen?')) return;
     var files = filesOf(c.j), rm = askDelete(files);
-    commit('Jahrgang gelöscht', function(){ c.f.jahrgaenge.splice(c.f.jahrgaenge.indexOf(c.j), 1); return rm ? deleteFiles(files) : null; })
+    commit('Jahrgang gelöscht', function(){ c.f.jahrgaenge.splice(c.f.jahrgaenge.indexOf(c.j), 1); if(rm) loeschenSpaeter(files); })
       .then(function(){ location.hash = '#/'; });
   }),
 
@@ -2159,7 +2280,7 @@ var actions = {
   'del-r': needAdmin(function(c){
     if(!confirm('Reihe „' + c.r.titel + '“ mit allen Unterrichtsvorhaben löschen?')) return;
     var files = filesOf(c.r), rm = askDelete(files), back = '#/f/' + encodeURIComponent(c.f.id) + '/' + encodeURIComponent(c.j.id);
-    commit('Reihe gelöscht', function(){ c.j.reihen.splice(c.j.reihen.indexOf(c.r), 1); return rm ? deleteFiles(files) : null; })
+    commit('Reihe gelöscht', function(){ c.j.reihen.splice(c.j.reihen.indexOf(c.r), 1); if(rm) loeschenSpaeter(files); })
       .then(function(){ location.hash = back; });
   }),
   'up-r': needAdmin(function(c){ if(move(c.j.reihen, c.r, -1)) commit('Reihenfolge'); }),
@@ -2197,7 +2318,7 @@ var actions = {
   'del-v': needAdmin(function(c){
     if(!confirm('„' + c.v.titel + '“ mit allen Materialien löschen?')) return;
     var files = filesOf(c.v), rm = askDelete(files);
-    commit('Vorhaben gelöscht', function(){ c.r.vorhaben.splice(c.r.vorhaben.indexOf(c.v), 1); return rm ? deleteFiles(files) : null; });
+    commit('Vorhaben gelöscht', function(){ c.r.vorhaben.splice(c.r.vorhaben.indexOf(c.v), 1); if(rm) loeschenSpaeter(files); });
   }),
   'up-v': needAdmin(function(c){ if(move(c.r.vorhaben, c.v, -1)) commit('Reihenfolge'); }),
   'down-v': needAdmin(function(c){ if(move(c.r.vorhaben, c.v, 1)) commit('Reihenfolge'); }),
@@ -2718,7 +2839,7 @@ var SYNC_KEY = 'um-sync';
 var SKIP_RE = /(^|\/)(\.[^\/]*|~\$[^\/]*|__MACOSX|Thumbs\.db|desktop\.ini)(\/|$)/i;
 var LK_EXT = ['docx','doc','odt','pages','pptx','ppt','key','odp','xlsx','xls','ods','numbers','tex'];
 var KURS_RE = /(?:^|[\s_-])(mathematik|mathe|ma|m|physik|ph|p|naturwissenschaften|nw)[\s_-]*(\d{1,2}|ef|q1|q2)(?=$|[\s_-])/i;
-var STATUS_LABEL = { neu:'neu', geaendert:'geändert', gleich:'unverändert', vorhanden:'schon da?', gesperrt:'' };
+var STATUS_LABEL = { neu:'neu', geaendert:'ersetzt alte Datei', gleich:'unverändert', vorhanden:'schon da – ersetzen?', gesperrt:'' };
 function isIOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 0); }
 function hashParts(){ return location.hash.replace(/^#\/?/, '').split('/').map(function(x){ try{ return decodeURIComponent(x); }catch(e){ return x; } }); }
 function parseKurs(seg){
@@ -2892,12 +3013,10 @@ function vTarget(st, g, vm){
 }
 /* Vorhandenes Material zu einer Datei finden: über Quelle, sonst über Dateiname (ältere Uploads) */
 function findQuelle(r, row){
-  var hit = null, byName = null;
-  if(r) (r.vorhaben || []).forEach(function(v){ (v.materialien || []).forEach(function(m){
-    if(m.quelle && m.quelle === row.quelle) hit = m;
-    else if(!m.quelle && !m.hash && m.datei && m.datei.name === row.name) byName = byName || m;
-  }); });
-  return hit ? { m:hit, exact:true } : (byName ? { m:byName, exact:false } : null);
+  var hit = null;
+  if(r) (r.vorhaben || []).forEach(function(v){ (v.materialien || []).forEach(function(m){ if(!hit && m.quelle && m.quelle === row.quelle) hit = m; }); });
+  if(!hit){ var g = gleicheDatei(r, row.name); if(g) hit = g.m; }   // gleicher Dateiname (auch aus anderem Ordner/Weg hochgeladen)
+  return hit ? { m:hit, exact:!!hit.hash } : null;
 }
 function rowStatus(g, row){
   if(row.blocked) return 'gesperrt';
@@ -3037,18 +3156,20 @@ function runSync(st){
           t.rows.forEach(function(row){
             rc = rc.then(function(){
               done++; busyPre = '(' + done + '/' + total + ') ';
-              var schutz = row.typ === 'pruefung' ? 'pruefung' : 'basis', bereich = row.typ === 'pruefung' ? 'lk' : row.bereich;
-              if(schutz === 'pruefung' && !keyP){ skippedP++; return; }
               var hit = findQuelle(r, row), target = vh(row);
+              var pr = row.typ === 'pruefung' || (hit && hit.m.typ === 'pruefung');
+              var schutz = pr ? 'pruefung' : 'basis', bereich = pr ? 'lk' : row.bereich;
+              if(schutz === 'pruefung' && !keyP){ skippedP++; return; }
               var p = row.it.url ? Promise.resolve(null) : uploadFile(row.it.file, dir, schutz);
               return p.then(function(F){
                 var titel = String(row.titel || '').trim() || row.name;
                 if(hit){
                   var m = hit.m;
                   if(m.datei && m.datei.pfad && (!F || m.datei.pfad !== F.pfad)) oldPaths.push(m.datei.pfad);
-                  m.typ = row.typ; m.titel = titel; m.bereich = bereich; m.quelle = row.quelle; m.hash = row.it.hash;
+                  // Ersetzen: Titel, Art, Bereich und Sichtbarkeit bleiben wie eingestellt (neue Prüfung → Lehrkraft)
+                  if(pr){ m.typ = 'pruefung'; m.bereich = 'lk'; m.ausgeblendet = false; delete m.ab; delete m.kurse; }
+                  m.quelle = row.quelle; m.hash = row.it.hash;
                   if(F){ m.datei = F; m.url = null; } else { m.datei = null; m.url = row.it.url; }
-                  if(bereich === 'lk') m.ausgeblendet = false;
                 } else {
                   target.materialien.push({ id:uid(), typ:row.typ, titel:titel, bereich:bereich, datei:F, url:F ? null : row.it.url, ausgeblendet:false, quelle:row.quelle, hash:row.it.hash });
                 }
@@ -3058,7 +3179,7 @@ function runSync(st){
           return rc;
         });
       });
-      return chain.then(function(){ busyPre = ''; return oldPaths.length ? deleteFiles(oldPaths) : null; });
+      return chain.then(function(){ busyPre = ''; loeschenSpaeter(oldPaths); });
     });
   }).then(function(){
     busyPre = '';
@@ -3391,7 +3512,7 @@ function exportZip(onlyF, onlyJ){
     if(i >= jobs.length) return Promise.resolve();
     var jb = jobs[i++];
     busy('Bereite vor … ' + i + ' / ' + jobs.length);
-    return fetchBytes(jb.F.pfad).then(function(b){ return unseal(keyFor(jb.F.schutz), b); }).then(function(plain){
+    return fetchDatei(jb.F.pfad).then(function(b){ return unseal(keyFor(jb.F.schutz), b); }).then(function(plain){
       var p = jb.path, n = 2; while(seen[p]) p = jb.path.replace(/(\.[^.]+)$/, ' (' + (n++) + ')$1'); seen[p] = 1;
       jb.holder[jb.key] = p; files.push({ name:p, bytes:plain });
     }, function(){ delete jb.holder[jb.key]; }).then(next);
@@ -3459,7 +3580,7 @@ function exportReiheSuS(f, j, r, k){
     if(i >= jobs.length) return Promise.resolve();
     var jb = jobs[i++];
     busy('Lade Materialien … ' + i + ' / ' + jobs.length);
-    return fetchBytes(jb.F.pfad).then(function(b){ return unseal(keyB, b); })
+    return fetchDatei(jb.F.pfad).then(function(b){ return unseal(keyB, b); })
       .then(function(plain){ files.push({ name:jb.path, bytes:plain }); }, function(){}).then(next);
   }
   next().then(function(){
@@ -3488,7 +3609,8 @@ $('#add-material').addEventListener('click', function(){
 $('#reload').addEventListener('click', function(){
   if(!keyB){ boot(); return; }
   busy('Lade …');
-  loadData(canEdit() && editing).then(function(){ busy(false); render(); toast('Aktualisiert.'); })
+  if(speichertNoch()){ toast('Wird noch gespeichert …'); return; }
+  loadAktuell().then(function(){ busy(false); render(); toast('Aktualisiert.'); })
     .catch(function(){ busy(false); toast('Keine Verbindung – zeige gespeicherten Stand.'); });
 });
 document.addEventListener('toggle', function(e){
@@ -3506,7 +3628,7 @@ function boot(){
     if(!z){ render(); return; }
     var stored = loadJSON(KEK_KEY);
     if(!stored){ render(); return; }
-    return unlockBasis(b64ToBytes(stored)).then(function(){ return loadData(false); }).then(render, function(){
+    return unlockBasis(b64ToBytes(stored)).then(function(){ return loadAktuell(); }).then(render, function(){
       try{ localStorage.removeItem(KEK_KEY); }catch(e){}
       keyB = null; render();
     });

@@ -9,6 +9,7 @@ OUT = os.path.join(HERE, 'out')
 FILES = os.path.join(OUT, 'files')
 os.makedirs(OUT, exist_ok=True)
 repo = {}       # path -> bytes  (simuliertes Repository)
+stale = None    # eingefrorener Stand der Seite (simuliert verzögertes GitHub Pages)
 log = []
 def sha(b): return hashlib.sha1(b).hexdigest()
 
@@ -22,7 +23,11 @@ def gh_handler(route, request):
     path = unquote(m.group(2))
     meth = request.method
     if meth == 'GET':
-        if path not in repo: return route.fulfill(status=404, content_type='application/json', body='{"message":"Not Found"}')
+        if path not in repo:
+            kids = sorted(k for k in repo if k.startswith(path.rstrip('/') + '/') and '/' not in k[len(path.rstrip('/')) + 1:])
+            if kids:   # Ordner-Inhalt wie bei GitHub
+                return route.fulfill(status=200, content_type='application/json', body=json.dumps([{'path': k, 'name': k.split('/')[-1], 'type': 'file', 'sha': sha(repo[k])} for k in kids]))
+            return route.fulfill(status=404, content_type='application/json', body='{"message":"Not Found"}')
         b = repo[path]
         if 'raw' in (request.headers.get('accept') or ''):
             return route.fulfill(status=200, body=b)
@@ -41,7 +46,8 @@ def gh_handler(route, request):
 
 def site_handler(route, request):
     p = unquote(urlparse(request.url).path).lstrip('/') or 'index.html'
-    if p in repo: return route.fulfill(status=200, body=repo[p])
+    src = stale if stale is not None else repo   # GitHub Pages hängt nach dem Speichern hinterher
+    if p in src: return route.fulfill(status=200, body=src[p])
     f = os.path.join(ROOT, p)
     if os.path.isfile(f) and not p.startswith(('data/', 'material/')):
         ct = 'text/html' if p.endswith('.html') else ('text/javascript' if p.endswith('.js') else None)
@@ -129,7 +135,7 @@ with sync_playwright() as p:
         d.accept()
     page.on('dialog', on_dialog)
     def wait_saved():
-        page.wait_for_selector('#toast.on', timeout=20000); page.wait_for_selector('#busy:not(.on)', state='attached', timeout=60000); time.sleep(0.3)
+        page.wait_for_selector('#toast.on', timeout=20000); page.wait_for_selector('#busy:not(.on)', state='attached', timeout=60000); page.wait_for_selector('#saving:not(.on)', state='attached', timeout=60000); time.sleep(0.3)
         page.evaluate("document.querySelector('#toast').classList.remove('on')")
     def shot(n): page.screenshot(path=f'{OUT}/{n}.png', full_page=True)
 
@@ -399,7 +405,7 @@ with sync_playwright() as p:
     alt = [m['datei']['pfad'] for v in rb['vorhaben'] for m in v['materialien'] if m['quelle'].endswith('2 Bruchrechnung Fehler.pdf')][0]
     open_sync_dir(base)
     sts = page.locator('.sync-box').nth(1).locator('.st').all_inner_texts()
-    check('A: Abgleich – 1 geändert', sts.count('geändert') == 1 and page.inner_text('[data-s=go]') == '1 hochladen', sts)
+    check('A: Abgleich – 1 geändert', sts.count('ersetzt alte Datei') == 1 and page.inner_text('[data-s=go]') == '1 hochladen', sts)
     page.click('[data-s=go]'); wait_saved()
     d5 = page.evaluate("async () => { const K = await T.keys('1234','pruefung123'); return T.getData(K); }")
     rb5 = [j for j in d5['faecher'][0]['jahrgaenge'] if j['name'] == '6'][0]['reihen'][0]
@@ -490,6 +496,8 @@ with sync_playwright() as p:
     page.click('dialog#sheet button[value=ok]'); wait_saved()
     page.locator('.row').nth(1).locator('[data-act=add-m][data-bereich=sus]').click(); page.wait_for_selector('dialog#sheet[open]')
     page.set_input_files('input[name=datei__file]', FILES + '/AB Spiegel-Parcours.pdf')
+    check('Ersetzen: gleicher Dateiname → Haken „ersetzen“ angeboten', page.is_visible('#ersetzen-row') and 'ersetzen' in page.inner_text('#ersetzen-row'))
+    page.uncheck('dialog#sheet input[name=ersetzen]')
     page.fill('dialog#sheet input[name=titel]', 'Lösungsblatt später')
     page.select_option('dialog#sheet select[name=typ]', 'dokument')
     page.fill('dialog#sheet input[name=ab]', morgen)
@@ -901,6 +909,58 @@ with sync_playwright() as p:
     check('Verschieben: in anderes Vorhaben', any(m['titel'] == 'S. 113 Nr. 7' for m in v1c['materialien']) and not any(m['titel'] == 'S. 113 Nr. 7' for m in v0c['materialien']))
     check('Verschieben: dort an erster Stelle', [m['titel'] for m in v1c['materialien'] if m['bereich'] == 'sus'][0] == 'S. 113 Nr. 7')
     shot('29-verschoben')
+    edit_off()
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.3)
+
+    # ================= Ersetzen, Speichern im Hintergrund, verzögerte Seite =================
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); edit_on(); time.sleep(0.3)
+    stale = dict(repo)   # ab hier liefert die Seite den alten Stand (wie GitHub Pages direkt nach dem Speichern)
+    d = getd(); n_vor = sum(len(v['materialien']) for v in reihe_of(d)['vorhaben'])
+    page.locator('.row').nth(0).locator('[data-act=add-m][data-bereich=sus]').click(); page.wait_for_selector('dialog#sheet[open]')
+    check('Ersetzen: Hinweis im Upload-Feld', 'Gleicher Dateiname ersetzt' in page.inner_text('#multi-hint'))
+    page.set_input_files('input[name=datei__file]', FILES + '/AB Spiegel-Parcours.pdf')
+    mid = page.get_attribute('#ersetzen-row', 'data-m')
+    m_alt = next(m for v in reihe_of(d)['vorhaben'] for m in v['materialien'] if m['id'] == mid)
+    log_n = len(log)
+    page.click('dialog#sheet button[value=ok]'); wait_saved()
+    stale = None; d2 = getd(); stale = dict(repo)
+    m_neu = next(m for v in reihe_of(d2)['vorhaben'] for m in v['materialien'] if m['id'] == mid)
+    check('Ersetzen: kein neuer Eintrag, Titel bleibt', sum(len(v['materialien']) for v in reihe_of(d2)['vorhaben']) == n_vor and m_neu['titel'] == m_alt['titel'], m_neu['titel'])
+    check('Ersetzen: neue Datei unter neuem Namen', m_neu['datei']['pfad'] != m_alt['datei']['pfad'] and m_neu['datei']['pfad'] in repo and re.search(r'-[a-z0-9]{4}\.pdf\.enc$', m_neu['datei']['pfad']), m_neu['datei']['pfad'])
+    neu_log = log[log_n:]
+    i_data = max(i for i, x in enumerate(neu_log) if x == ('PUT', 'data/inhalt.enc'))
+    check('Ersetzen: alte Datei erst nach dem Speichern gelöscht', m_alt['datei']['pfad'] not in repo and ('DEL', m_alt['datei']['pfad']) in neu_log[i_data:], neu_log)
+    # Neu geladen, obwohl die Seite noch den alten Stand liefert: Lehrkraft sieht den neuen Stand (über die API)
+    page.locator('.row').nth(0).locator('[data-act=edit-v]').click(); page.wait_for_selector('dialog#sheet[open] input[name=titel]')
+    alt_titel = page.input_value('dialog#sheet input[name=titel]')
+    page.fill('dialog#sheet input[name=titel]', alt_titel + ' (neu)'); page.click('dialog#sheet button[value=ok]')
+    try: page.wait_for_function("t => document.querySelector('.rows').innerText.includes(t)", arg=alt_titel + ' (neu)', timeout=1500); sofort = True
+    except Exception: sofort = False
+    check('Hintergrund: Änderung sofort sichtbar', sofort)
+    check('Hintergrund: keine blockierende Sperre', not page.is_visible('#busy'))
+    wait_saved()
+    page.reload(); page.wait_for_selector('.rows'); time.sleep(0.5)
+    check('Neu laden: Lehrkraft sieht gespeicherten Stand trotz verzögerter Seite', (alt_titel + ' (neu)') in page.inner_text('.rows'))
+    page.click('#reload'); time.sleep(1)
+    check('Aktualisieren: Stand bleibt', (alt_titel + ' (neu)') in page.inner_text('.rows'))
+    # frisch hochgeladene Datei öffnen, obwohl sie auf der Seite noch fehlt
+    edit_off(); time.sleep(0.3)
+    page.locator('.row').nth(0).locator('.chip', has_text=m_alt['titel']).first.click(); page.wait_for_selector('.viewer'); time.sleep(1.5)
+    check('Neue Datei: Lehrkraft kann sie sofort öffnen', 'Fehler' not in page.inner_text('.viewer'), page.inner_text('.viewer')[:200])
+    page.go_back(); time.sleep(0.4)
+    # Löschen: sofort weg, Datei danach im Hintergrund gelöscht
+    edit_on(); time.sleep(0.3)
+    stale = None; d3 = getd(); stale = dict(repo)
+    weg = next(m for v in reihe_of(d3)['vorhaben'] for m in v['materialien'] if m['titel'] == 'Lösungsblatt später')
+    page.locator('.chip', has_text='Lösungsblatt später').first.click(); page.wait_for_selector('dialog#sheet[open]')
+    page.click('dialog#sheet button[value=delete]')
+    page.wait_for_function("() => !document.querySelector('.rows').innerText.includes('Lösungsblatt später')", timeout=5000)
+    check('Löschen: Eintrag sofort weg', True)
+    wait_saved(); time.sleep(0.5)
+    check('Löschen: Datei im Hintergrund entfernt', weg['datei']['pfad'] not in repo)
+    stale = None
+    page.locator('.row').nth(0).locator('[data-act=edit-v]').click(); page.wait_for_selector('dialog#sheet[open] input[name=titel]')
+    page.fill('dialog#sheet input[name=titel]', alt_titel); page.click('dialog#sheet button[value=ok]'); wait_saved()
     edit_off()
     page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.3)
 
