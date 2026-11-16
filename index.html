@@ -182,6 +182,15 @@ a.reihe-card:hover{border-color:var(--acc)}
 .editing .tools{display:inline-flex}
 .tools .iconbtn{width:40px;height:40px}
 .tools .iconbtn.del:hover{color:var(--danger)}
+/* Verschieben per Ziehen (Griff bei Fach/Reihe/Vorhaben, Material-Chip direkt; am iPad kurz gedrückt halten) */
+.iconbtn.grip{cursor:grab;touch-action:none}
+.editing [data-sort=m] > [data-sort-item]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.editing [data-sort=m] > .chip[data-sort-item],.editing [data-sort=m] > .mwrap > .chip{cursor:grab}
+body.sorting,body.sorting *{cursor:grabbing !important;-webkit-user-select:none;user-select:none}
+.dragging{position:relative;z-index:20;box-shadow:0 10px 28px rgba(0,0,0,.22);border-radius:14px;background:var(--sheet);opacity:.96;transition:none !important}
+.rows:has(.dragging){overflow:visible}
+.row.dragging{outline:2px solid var(--acc,#2563eb)}
+.drag-wait{transform:scale(.97);transition:transform .3s}
 .edit-only{display:none !important}
 .editing .edit-only{display:inline-flex !important}
 .editing .rows,.editing .fach,.editing .reihe-card{border-style:dashed}
@@ -455,6 +464,7 @@ var I = {
   uebersicht:'<path d="M4 6h16M4 12h16M4 18h10"/>',
   edit:'<path d="M4 20l4-1 11-11-3-3L5 16z"/>',
   up:'<path d="M12 19V5M6 11l6-6 6 6"/>', down:'<path d="M12 5v14M6 13l6 6 6-6"/>',
+  grip:'<circle cx="9" cy="6" r="1.3"/><circle cx="15" cy="6" r="1.3"/><circle cx="9" cy="12" r="1.3"/><circle cx="15" cy="12" r="1.3"/><circle cx="9" cy="18" r="1.3"/><circle cx="15" cy="18" r="1.3"/>',
   trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',
   gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
@@ -903,18 +913,18 @@ function matChip(m, ref, mode, k){
   badge = nivBadge(m) + badge;
   if(editing && mode !== 'kurs'){
     var ext = m.datei ? (m.datei.ext || '').toUpperCase() : (m.url ? 'Link' : '');
-    var chip = '<button class="chip t-' + m.typ + (cls ? ' ' + cls : '') + '" data-act="edit-m" ' + ref + '>' + ico(m.typ === 'pruefung' ? 'lock' : m.typ)
+    var chip = '<button class="chip t-' + m.typ + (cls ? ' ' + cls : '') + '" data-act="edit-m" ' + ref + (lk ? ' data-sort-item' : '') + '>' + ico(m.typ === 'pruefung' ? 'lock' : m.typ)
       + '<span>' + esc(m.titel) + '</span>' + badge + (ext ? '<span class="ext">' + esc(ext) + '</span>' : '') + '</button>';
     if(lk) return chip;
     var lbl = (z.ausgeblendet ? 'Für SuS einblenden' : 'Für SuS ausblenden') + (k ? ' (' + k.name + ')' : '');
-    return '<span class="mwrap">' + chip + '<button class="iconbtn" data-act="vis-m" ' + ref + ' aria-label="' + esc(lbl) + '" title="' + esc(lbl) + '">' + ico(z.ausgeblendet ? 'eyeoff' : 'eye') + '</button></span>';
+    return '<span class="mwrap" data-sort-item ' + ref + '>' + chip + '<button class="iconbtn" data-act="vis-m" ' + ref + ' aria-label="' + esc(lbl) + '" title="' + esc(lbl) + '">' + ico(z.ausgeblendet ? 'eyeoff' : 'eye') + '</button></span>';
   }
   if(m.datei) return chipFile(m.datei, m.titel, m.typ, ref + ' data-slot="datei"', cls, badge);
   if(m.url) return chipLink(m.url, m.titel, m.typ, cls, badge);
   return '';
 }
 function lkEditBlock(chips, vid, notizen){
-  return '<div class="lk-area edit"><span class="lbl">Lehrkraft-Bereich · für SuS nie sichtbar</span>' + (notizen || '') + '<div class="chips">' + chips.join('')
+  return '<div class="lk-area edit"><span class="lbl">Lehrkraft-Bereich · für SuS nie sichtbar</span>' + (notizen || '') + '<div class="chips" data-sort="m" data-bereich="lk" ' + vid + '>' + chips.join('')
     + '<button class="chip add lkchip" data-act="add-m" data-bereich="lk" ' + vid + '>' + ico('plus') + '<span>Lehrkraft-Material</span></button>'
     + '<button class="chip add lkchip" data-act="notiz-v" ' + vid + '>' + ico('edit') + '<span>Notizen</span></button></div></div>';
 }
@@ -928,8 +938,7 @@ function lkBlock(key, chips, notizen){
 function tools(act, ids, opts){
   opts = opts || {};
   return '<span class="tools">' + (opts.extra || '')
-    + (opts.noMove ? '' : '<button class="iconbtn" data-act="up-' + act + '" ' + ids + ' aria-label="Nach oben">' + ico('up') + '</button>'
-    + '<button class="iconbtn" data-act="down-' + act + '" ' + ids + ' aria-label="Nach unten">' + ico('down') + '</button>')
+    + (opts.noMove ? '' : '<button class="iconbtn grip" data-grip="' + act + '" ' + ids + ' aria-label="Verschieben (ziehen oder Pfeiltasten)" title="Ziehen zum Verschieben">' + ico('grip') + '</button>')
     + '<button class="iconbtn" data-act="edit-' + act + '" ' + ids + ' aria-label="Bearbeiten">' + ico('edit') + '</button>'
     + '<button class="iconbtn del" data-act="del-' + act + '" ' + ids + ' aria-label="Löschen">' + ico('trash') + '</button></span>';
 }
@@ -953,10 +962,10 @@ function renderNotSetUp(){
 }
 function renderStart(){
   var html = '<section class="hero"><h1>' + esc(data.titel || 'Unterrichtsmaterial') + '</h1><p>Wähle dein Fach und deinen Jahrgang.</p>'
-    + '<span class="tools"><button class="iconbtn" data-act="edit-titel" aria-label="Titel ändern">' + ico('edit') + '</button></span></section><div class="faecher">';
+    + '<span class="tools"><button class="iconbtn" data-act="edit-titel" aria-label="Titel ändern">' + ico('edit') + '</button></span></section><div class="faecher" data-sort="f">';
   (data.faecher || []).forEach(function(f){
     var jgs = (f.jahrgaenge || []).slice().sort(function(a, b){ return jgOrder(a.name) - jgOrder(b.name); });
-    html += '<article class="fach acc-' + esc(f.farbe || 'blau') + '"><div class="fach-head"><span class="fach-icon">' + ico(fachIcon(f)) + '</span><h2>' + esc(f.name) + '</h2>'
+    html += '<article class="fach acc-' + esc(f.farbe || 'blau') + '" data-sort-item ' + idsAttr({f:f}) + '><div class="fach-head"><span class="fach-icon">' + ico(fachIcon(f)) + '</span><h2>' + esc(f.name) + '</h2>'
       + tools('f', idsAttr({f:f})) + '</div>';
     if(f.extern){
       html += '<div class="fach-extern"><a class="pillbtn" href="' + esc(f.extern) + '" target="_blank" rel="noopener">' + ico('next') + 'Sammlung öffnen</a>'
@@ -983,10 +992,10 @@ function renderJahrgang(f, j){
     + '<span class="spacer"></span><button class="pillbtn" data-act="export-j" ' + idsAttr({f:f, j:j}) + '>' + ico('zip') + '<span class="lbl">Herunterladen</span></button>'
     + '<span class="sub">Unterrichtsreihen</span></div>';
   if(!reihen.length) html += '<div class="empty-state">Hier ist noch keine Reihe eingetragen.</div>';
-  html += '<div class="reihen">';
+  html += '<div class="reihen" data-sort="r" ' + idsAttr({f:f, j:j}) + '>';
   reihen.forEach(function(r, i){
     var n = (r.vorhaben || []).length;
-    html += '<a class="reihe-card" href="' + base + '/' + encodeURIComponent(r.id) + '"><span class="reihe-nr">' + (i + 1) + '</span><span><b>' + esc(r.titel) + '</b>'
+    html += '<a class="reihe-card" data-sort-item ' + idsAttr({f:f, j:j, r:r}) + ' href="' + base + '/' + encodeURIComponent(r.id) + '"><span class="reihe-nr">' + (i + 1) + '</span><span><b>' + esc(r.titel) + '</b>'
       + '<small>' + (r.inhaltsfeld ? esc(r.inhaltsfeld) + ' · ' : '') + n + (n === 1 ? ' Unterrichtsvorhaben' : ' Unterrichtsvorhaben') + '</small></span>'
       + (editing ? tools('r', idsAttr({f:f, j:j, r:r}), { extra:'<span class="go" style="order:9">' + ico('next') + '</span>' }) : '<span class="go">' + ico('next') + '</span>') + '</a>';
   });
@@ -1133,7 +1142,7 @@ function renderReihe(f, j, r, mode, kk){
     }
   }
   var vs = r.vorhaben || [], shown = 0;
-  html += '<div class="rows">';
+  html += '<div class="rows"' + (kurs ? '' : ' data-sort="v" ' + ids) + '>';
   vs.forEach(function(v, i){
     if(kurs && !sichtbarSuS(v, k)) return;
     shown++;
@@ -1144,12 +1153,12 @@ function renderReihe(f, j, r, mode, kk){
     var eyeLbl = (z.ausgeblendet ? 'Für SuS einblenden' : 'Für SuS ausblenden') + (k ? ' (' + k.name + ')' : '');
     var eye = '<button class="iconbtn" data-act="vis-v" ' + vid + ' aria-label="' + esc(eyeLbl) + '" title="' + esc(eyeLbl) + '">' + ico(z.ausgeblendet ? 'eyeoff' : 'eye') + '</button>';
     var fuer = k ? ' (' + esc(k.name) + ')' : '';
-    html += '<div class="row' + (!kurs && !sichtbarSuS(v, k) ? ' aus' : '') + '" ' + vid + '><span class="nr">' + (i + 1) + '</span><div class="row-title"><b>' + esc(v.titel) + '</b>'
+    html += '<div class="row' + (!kurs && !sichtbarSuS(v, k) ? ' aus' : '') + '"' + (kurs ? '' : ' data-sort-item') + ' ' + vid + '><span class="nr">' + (i + 1) + '</span><div class="row-title"><b>' + esc(v.titel) + '</b>'
       + (v.notiz ? '<small>' + esc(v.notiz) + '</small>' : '')
       + (!kurs && z.ausgeblendet ? '<span class="aus-badge">' + ico('eyeoff') + 'für SuS ausgeblendet' + fuer + '</span>' : '')
       + (!kurs && !z.ausgeblendet && gesperrt(v, k) ? '<span class="aus-badge ab">' + ico('clock') + 'für SuS ab ' + esc(datumKurz(z.ab)) + fuer + '</span>' : '')
       + (!kurs && editing && z.ab && !gesperrt(v, k) ? '<span class="aus-badge ab">' + ico('clock') + 'freigeschaltet seit ' + esc(datumKurz(z.ab)) + fuer + '</span>' : '') + '</div>'
-      + '<div class="row-main"><div class="chips">' + sus.join('')
+      + '<div class="row-main"><div class="chips"' + (editing && !kurs ? ' data-sort="m" data-bereich="sus" ' + vid : '') + '>' + sus.join('')
       + (!sus.length && !editing ? '<span class="muted" style="font-size:.95rem;padding-top:.5rem">' + (lk.length ? '' : 'Noch kein Material.') + '</span>' : '')
       + (kurs ? '' : '<button class="chip add edit-only" data-act="add-m" data-bereich="sus" ' + vid + '>' + ico('plus') + '<span>Unterrichtsmaterial</span></button>') + '</div>'
       + (kurs ? '' : (editing ? lkEditBlock(lk, vid, planungHtml(v)) : lkBlock(v.id, lk, planungHtml(v)))) + '</div>' + (kurs ? '' : tools('v', vid, { extra:eye })) + '</div>';
@@ -1252,6 +1261,7 @@ var INFO = [
   ['Checkliste', 'Antippen: 1× noch unsicher, 2× kann ich sicher. Die Einschätzung bleibt nur auf diesem Gerät.', false],
   ['Niveau', '★ Basis · ★★ Standard · ★★★ Erweiterung', false],
   ['Bearbeiten', 'Unterrichtsmaterial sehen SuS, Lehrkraft-Material nie. Klassenarbeit, Test und Klausur werden zusätzlich mit dem Prüfungspasswort geschützt.', true],
+  ['Reihenfolge ändern', 'Im Bearbeiten-Modus Fächer, Reihen und Vorhaben am Griff (⠿) an die neue Stelle ziehen. Material: Chip ziehen – am iPad kurz gedrückt halten, dann ziehen. Material bleibt dabei im eigenen Bereich (Unterrichts- bzw. Lehrkraft-Material).', true],
   ['Ausblenden und Freischalten', 'Das Auge blendet aus. „Sichtbar ab“ schaltet an einem Tag automatisch frei, z. B. Lösungen nach der Stunde. Das Datum kommt vom Gerät der SuS – Planungshilfe, kein Schutz.', true],
   ['Parallelkurse', 'Jeder Kurs hat eigene Freischaltungen, einen eigenen Hinweis und Link. „Standard“ gilt für den allgemeinen Link und für alles, was ein Kurs nicht selbst festlegt. Neue Einträge übernehmen den Standard.', true],
   ['Notizen', 'Schwerpunktziel, Verlaufsplan und Reflexion pro Vorhaben – nur in der Lehrkraft-Ansicht. Keine Schülernamen eintragen.', true],
@@ -2320,6 +2330,119 @@ document.addEventListener('click', function(e){
   e.preventDefault();
   var cx = ctx(b); cx._el = b;
   actions[b.dataset.act](cx);
+});
+
+/* =====================================================================
+   Verschieben per Ziehen (Maus, Stift, Finger)
+   Fach/Reihe/Vorhaben: am Griff ziehen · Material: Chip ziehen (Touch: kurz halten)
+   ===================================================================== */
+var drag = null, noClick = false;
+function sortItems(box){ return Array.prototype.filter.call(box.children, function(x){ return x.hasAttribute('data-sort-item'); }); }
+function sortId(el, typ){ return el.dataset[typ] || ''; }
+function dragStart(){
+  var d = drag; if(!d || d.on) return;
+  d.on = true; clearTimeout(d.t);
+  var r = d.item.getBoundingClientRect(); d.gx = d.x - r.left; d.gy = d.y - r.top;
+  d.vor = sortItems(d.box).map(function(x){ return sortId(x, d.typ); }).join('|');
+  d.item.classList.remove('drag-wait'); d.item.classList.add('dragging'); document.body.classList.add('sorting');
+  if(navigator.vibrate) try{ navigator.vibrate(15); }catch(e){}
+  d.raf = requestAnimationFrame(dragTick);
+}
+function dragPlace(){
+  var d = drag, it = d.item, px = d.x, py = d.y, xy = d.typ !== 'v' && d.typ !== 'r';
+  it.style.transform = '';
+  var sibs = sortItems(d.box).filter(function(x){ return x !== it; }), before = null;
+  for(var i = 0; i < sibs.length; i++){
+    var b = sibs[i].getBoundingClientRect();
+    if(xy ? (py < b.top || (py <= b.bottom && px < b.left + b.width / 2)) : py < b.top + b.height / 2){ before = sibs[i]; break; }
+  }
+  if(before){ if(it.nextElementSibling !== before) d.box.insertBefore(it, before); }
+  else if(sibs.length){ var last = sibs[sibs.length - 1]; if(last.nextElementSibling !== it) last.after(it); }
+  var n = it.getBoundingClientRect();
+  it.style.transform = 'translate(' + (xy ? px - d.gx - n.left : 0) + 'px,' + (py - d.gy - n.top) + 'px)';
+}
+function dragTick(){
+  var d = drag; if(!d || !d.on) return;
+  var h = window.innerHeight, rand = 70, v = 0;
+  if(d.y < rand) v = -Math.ceil((rand - d.y) / 5); else if(d.y > h - rand) v = Math.ceil((d.y - h + rand) / 5);
+  if(v) window.scrollBy(0, v);
+  dragPlace();
+  d.raf = requestAnimationFrame(dragTick);
+}
+function dragEnd(ok){
+  var d = drag; drag = null; if(!d) return;
+  clearTimeout(d.t); cancelAnimationFrame(d.raf);
+  d.item.classList.remove('drag-wait');
+  if(!d.on) return;
+  noClick = true; setTimeout(function(){ noClick = false; }, 400);
+  d.item.classList.remove('dragging'); d.item.style.transform = ''; document.body.classList.remove('sorting');
+  var ids = sortItems(d.box).map(function(x){ return sortId(x, d.typ); });
+  if(!ok){ render(); return; }
+  if(ids.join('|') === d.vor) return;
+  sortiere(d.box, d.typ, ids);
+}
+/* neue Reihenfolge übernehmen (bei Material nur innerhalb des Bereichs SuS bzw. Lehrkraft) */
+function ordne(arr, ids){
+  var rest = arr.slice(), out = [];
+  ids.forEach(function(id){ var x = findIn(rest, id); if(x){ out.push(x); rest.splice(rest.indexOf(x), 1); } });
+  return out.concat(rest);
+}
+function sortiere(box, typ, ids){
+  needAdmin(function(c){
+    if(typ === 'f'){ data.faecher = ordne(data.faecher, ids); }
+    else if(typ === 'r'){ if(!c.j) return render(); c.j.reihen = ordne(c.j.reihen, ids); }
+    else if(typ === 'v'){ if(!c.r) return render(); c.r.vorhaben = ordne(c.r.vorhaben, ids); }
+    else if(typ === 'm'){
+      if(!c.v) return render();
+      var lk = box.dataset.bereich === 'lk', all = c.v.materialien, pos = [], sub = [];
+      all.forEach(function(m, i){ if((m.bereich === 'lk') === lk){ pos.push(i); sub.push(m); } });
+      ordne(sub, ids).forEach(function(m, i){ all[pos[i]] = m; });
+    }
+    commit('Reihenfolge');
+  })({ _el: box });
+}
+document.addEventListener('pointerdown', function(e){
+  if(!editing || drag || (e.pointerType === 'mouse' && e.button !== 0)) return;
+  var grip = e.target.closest('.grip'), item;
+  if(grip) item = grip.closest('[data-sort-item]');
+  else {
+    if(e.target.closest('.mwrap > .iconbtn')) return;
+    item = e.target.closest('[data-sort=m] > [data-sort-item]');
+  }
+  if(!item || !item.parentElement.matches('[data-sort]')) return;
+  drag = { item:item, box:item.parentElement, typ:item.parentElement.dataset.sort, x:e.clientX, y:e.clientY, x0:e.clientX, y0:e.clientY, pid:e.pointerId, on:false, grip:!!grip, touch:e.pointerType !== 'mouse' };
+  if(grip){ e.preventDefault(); dragStart(); }
+  else if(drag.touch){ item.classList.add('drag-wait'); drag.t = setTimeout(dragStart, 380); }
+});
+document.addEventListener('pointermove', function(e){
+  var d = drag; if(!d || e.pointerId !== d.pid) return;
+  d.x = e.clientX; d.y = e.clientY;
+  if(!d.on){
+    var weg = Math.abs(d.x - d.x0) + Math.abs(d.y - d.y0);
+    if(d.touch){ if(weg > 10) dragEnd(false); }   // Finger bewegt sich vorher: scrollen
+    else if(weg > 6) dragStart();
+    return;
+  }
+  e.preventDefault();
+});
+document.addEventListener('pointerup', function(e){ if(drag && e.pointerId === drag.pid) dragEnd(true); });
+document.addEventListener('pointercancel', function(e){ if(drag && e.pointerId === drag.pid && !(drag.on && drag.touch)) dragEnd(false); });
+/* Touch: Scrollen unterdrücken, sobald gezogen wird; Position auch aus Touch-Ereignissen (falls der Browser den Zeiger abbricht) */
+document.addEventListener('touchmove', function(e){ if(drag && drag.on){ e.preventDefault(); var t = e.touches[0]; if(t){ drag.x = t.clientX; drag.y = t.clientY; } } }, { passive:false });
+document.addEventListener('touchend', function(){ if(drag && drag.on && drag.touch) dragEnd(true); });
+document.addEventListener('touchcancel', function(){ if(drag && drag.on && drag.touch) dragEnd(true); });
+document.addEventListener('contextmenu', function(e){ if(drag) e.preventDefault(); });
+document.addEventListener('click', function(e){ if(noClick){ noClick = false; e.preventDefault(); e.stopPropagation(); } }, true);
+document.addEventListener('dragstart', function(e){ if(editing && e.target.closest && e.target.closest('[data-sort-item]')) e.preventDefault(); });
+/* Tastatur: Griff fokussieren, Pfeiltasten verschieben um eine Stelle */
+document.addEventListener('keydown', function(e){
+  var g = e.target.closest && e.target.closest('.grip'); if(!g || !editing) return;
+  var dir = { ArrowUp:-1, ArrowLeft:-1, ArrowDown:1, ArrowRight:1 }[e.key]; if(!dir) return;
+  e.preventDefault();
+  var item = g.closest('[data-sort-item]'), box = item.parentElement, typ = box.dataset.sort, ids = sortItems(box).map(function(x){ return sortId(x, typ); });
+  var i = ids.indexOf(sortId(item, typ)), k = i + dir; if(k < 0 || k >= ids.length) return;
+  ids.splice(i, 1); ids.splice(k, 0, sortId(item, typ));
+  sortiere(box, typ, ids);
 });
 
 /* =====================================================================
