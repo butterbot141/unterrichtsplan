@@ -28,7 +28,7 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 - **Bearbeiten**: außerdem Reihen und Vorhaben anlegen, umbenennen, sortieren, löschen; Titelbild hinterlegen; Reihen aus dem Kernlehrplan ergänzen. Reihen-Karten lassen sich auch im Bearbeiten-Modus öffnen.
 - **Fach hinzufügen/bearbeiten → Lehrplan-Vorlage und Symbol**: Mathematik, Physik, Naturwissenschaften (NW 5/6, KLP Gesamtschule) oder Klassenleitung/Sonstiges (Ordner-Vorschläge wie Klassenrat, Elternabend); „automatisch“ erkennt das Fach am Namen.
 - **Herunterladen**: Jahrgang oder alles als ZIP mit `Übersicht.html` – zum Weiterverwenden ohne diese Seite.
-- **Einstellungen → Verwaltung**: Schulform für die Lehrplan-Vorlagen, Zugangscode oder Prüfungspasswort ändern.
+- **Einstellungen** (Zahnrad unten rechts), vier Bereiche: **Info** (kurze Erklärungen zu allen Funktionen), **Zugang** (abmelden, Code/Passwort ändern, GitHub-Token), **Verwaltung** (herunterladen, hochladen, importieren, Vorlagen, Schulform), **Speicher**.
 
 ## Mit dem Kurs teilen
 
