@@ -467,7 +467,7 @@ with sync_playwright() as p:
     page.locator('.row').nth(1).locator('[data-act=add-m][data-bereich=sus]').click(); page.wait_for_selector('dialog#sheet[open]')
     page.set_input_files('input[name=datei__file]', FILES + '/AB Spiegel-Parcours.pdf')
     page.fill('dialog#sheet input[name=titel]', 'Lösungsblatt später')
-    page.select_option('dialog#sheet select[name=typ]', 'ab')
+    page.select_option('dialog#sheet select[name=typ]', 'dokument')
     page.fill('dialog#sheet input[name=ab]', morgen)
     page.click('dialog#sheet button[value=ok]'); wait_saved()
     check('Datum: Material-Chip zeigt „ab …“', page.locator('.row').nth(1).locator('.chip.aus', has_text='Lösungsblatt später').count() == 1)
@@ -819,6 +819,63 @@ with sync_playwright() as p:
     else: check('Ziehen: mind. 2 Reihen für Test', False, jr)
     edit_off()
 
+    # ================= Buchaufgabe, Arten, Verschieben zwischen Bereichen, SuS-Ansicht =================
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); edit_on(); time.sleep(0.3)
+    page.locator('.row[data-sort-item]').nth(0).locator('[data-act=add-m][data-bereich=sus]').click(); page.wait_for_selector('dialog#sheet[open] select[name=typ]')
+    arten = page.eval_on_selector_all('dialog#sheet select[name=typ] option', 'o => o.map(x => x.value)')
+    check('Arten: nur Dokument/Lösung/Prüfung/Buch', arten == ['dokument', 'loesung', 'pruefung', 'buch'], arten)
+    page.select_option('dialog#sheet select[name=typ]', 'buch')
+    check('Buch: kein Datei-Feld, Hinweis-Feld', page.locator('dialog#sheet fieldset[data-slot=datei]').is_hidden() and page.locator('dialog#sheet textarea[name=text]').is_visible())
+    page.fill('dialog#sheet input[name=titel]', 'S. 112 Nr. 4 a–c'); page.fill('dialog#sheet textarea[name=text]', 'Tipp: Merkkasten S. 110 nutzen')
+    page.click('dialog#sheet button[value=ok]'); wait_saved()
+    page.locator('.row[data-sort-item]').nth(0).locator('[data-act=add-m][data-bereich=sus]').click(); page.wait_for_selector('dialog#sheet[open] select[name=typ]')
+    page.select_option('dialog#sheet select[name=typ]', 'buch'); page.fill('dialog#sheet input[name=titel]', 'S. 113 Nr. 7')
+    page.click('dialog#sheet button[value=ok]'); wait_saved()
+    v0 = reihe_of(getd())['vorhaben'][0]; bs = [m for m in v0['materialien'] if m['typ'] == 'buch']
+    check('Buch: gespeichert ohne Datei', len(bs) == 2 and all(m['datei'] is None and m['url'] is None for m in bs) and bs[0].get('text') == 'Tipp: Merkkasten S. 110 nutzen' and 'text' not in bs[1], bs)
+    # Dokument: Art bleibt beim Bearbeiten erhalten (HTML-Seite bleibt html)
+    edit_off(); time.sleep(0.3)
+    check('LK-Bereich standardmäßig offen', page.locator('.lk-area').first.is_visible())
+    bchip = page.locator('.row').nth(0).locator('.chip.t-buch', has_text='S. 112')
+    check('Buch: Titel + „Hinweis ›“ sichtbar', bchip.count() == 1 and 'Hinweis' in bchip.inner_text())
+    bchip.click(); page.wait_for_selector('dialog#sheet[open] .buch-text')
+    check('Buch: Antippen zeigt Hinweis', 'Merkkasten' in page.inner_text('dialog#sheet .buch-text'))
+    shot('28-buch-hinweis')
+    page.click('dialog#sheet button[value=ok]'); time.sleep(0.3)
+    check('Buch: ohne Hinweis nicht antippbar', page.locator('.row').nth(0).locator('span.chip.t-buch.still', has_text='S. 113').count() == 1)
+    # SuS-Ansicht
+    page.click('#sus-ansicht'); page.wait_for_selector('body.kurs .rows'); time.sleep(0.4)
+    check('SuS-Ansicht: Kursansicht ohne Lehrkraft-Bereich', '#/kurs/physik/8/optische-instrumente' in page.url and page.locator('.lk-area').count() == 0 and page.locator('#kurs-exit').is_visible())
+    page.click('#kurs-exit'); page.wait_for_selector('.rows'); time.sleep(0.3)
+    check('SuS-Ansicht: zurück zur Lehrkraft-Ansicht', page.url.endswith('#/f/physik/8/optische-instrumente') or '/f/physik/8/optische-instrumente' in page.url)
+    # Suche findet Hinweistext
+    page.goto(SITE + '#/suche'); page.wait_for_selector('#such-feld'); page.fill('#such-feld', 'Merkkasten'); time.sleep(0.5)
+    check('Buch: Suche findet Hinweis', page.locator('#such-treffer .chip.t-buch').count() >= 1)
+    # Verschieben zwischen Bereichen / Vorhaben
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); edit_on(); time.sleep(0.3)
+    d = getd(); v0 = reihe_of(d)['vorhaben'][0]; v1 = reihe_of(d)['vorhaben'][1]
+    loes = next(m for m in v0['materialien'] if m['bereich'] == 'lk' and m['typ'] != 'pruefung')
+    n_dlg = len(dialogs)
+    row0 = page.locator('.row[data-sort-item]').nth(0)
+    ziehe(row0.locator('[data-sort=m][data-bereich=lk] > [data-sort-item]', has_text=loes['titel']).first, row0.locator('[data-sort=m][data-bereich=sus] > [data-sort-item]').nth(0), oben=True, dx=1); wait_saved()
+    v0b = reihe_of(getd())['vorhaben'][0]; mm = next(m for m in v0b['materialien'] if m['id'] == loes['id'])
+    check('Verschieben: Lehrkraft → SuS mit Rückfrage', mm['bereich'] == 'sus' and len(dialogs) > n_dlg and 'SuS sichtbar' in dialogs[-1], dialogs[-1:])
+    check('Verschieben: an die Zielstelle', [m['id'] for m in v0b['materialien'] if m['bereich'] == 'sus'][0] == loes['id'])
+    pr = next((m for m in v0b['materialien'] if m['typ'] == 'pruefung'), None)
+    if pr:
+        row0 = page.locator('.row[data-sort-item]').nth(0)
+        ziehe(row0.locator('[data-sort=m][data-bereich=lk] > [data-sort-item]', has_text=pr['titel']).first, row0.locator('[data-sort=m][data-bereich=sus] > [data-sort-item]').nth(0), oben=True, dx=1); time.sleep(1)
+        pr2 = next(m for m in reihe_of(getd())['vorhaben'][0]['materialien'] if m['id'] == pr['id'])
+        check('Verschieben: Prüfung bleibt Lehrkraft-Material', pr2['bereich'] == 'lk' and 'Klassenarbeiten' in dialogs[-1], dialogs[-1:])
+    row0 = page.locator('.row[data-sort-item]').nth(0); row1 = page.locator('.row[data-sort-item]').nth(1)
+    ziehe(row0.locator('[data-sort=m][data-bereich=sus] > [data-sort-item]', has_text='S. 113').first.locator('.chip'), row1.locator('[data-sort=m][data-bereich=sus] > [data-sort-item]').nth(0), oben=True, dx=1); wait_saved()
+    d = getd(); v0c, v1c = reihe_of(d)['vorhaben'][0], reihe_of(d)['vorhaben'][1]
+    check('Verschieben: in anderes Vorhaben', any(m['titel'] == 'S. 113 Nr. 7' for m in v1c['materialien']) and not any(m['titel'] == 'S. 113 Nr. 7' for m in v0c['materialien']))
+    check('Verschieben: dort an erster Stelle', [m['titel'] for m in v1c['materialien'] if m['bereich'] == 'sus'][0] == 'S. 113 Nr. 7')
+    shot('29-verschoben')
+    edit_off()
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.3)
+
     # ================= C: Sicherung -> „Alles ersetzen“ =================
     page.evaluate("""async () => { const K = await T.keys('1234','pruefung123'); const d = await T.getData(K);
       const r = d.faecher[1].jahrgaenge[0].reihen.find(x => x.id === 'optische-instrumente');
@@ -874,6 +931,7 @@ with sync_playwright() as p:
     check('C: Datum/Hinweis/Checkliste in Sicherung', any(x[0]=='R' and x[7] != 'null' for x in na) and any(x[0]=='V' and x[3] for x in na) and any(x[0]=='M' and x[9] for x in na))
     check('C: Parallelkurse in Sicherung', any(x[0]=='R' and x[8] != 'null' for x in na) and any(x[0]=='V' and x[5] != 'null' for x in na))
     check('C: Notizen + Niveau in Sicherung', any(x[0]=='V' and x[4] != 'null' for x in na) and any(x[0]=='M' and x[10] for x in na))
+    check('C: Buchaufgabe mit Hinweis in Sicherung', any(m.get('typ') == 'buch' and m.get('text') for f in after['faecher'] for j in f['jahrgaenge'] for r in j['reihen'] for v in r['vorhaben'] for m in v['materialien']))
     check('C: Prüfung wiederhergestellt', any(x[0] == 'M' and x[2] == 'pruefung' and x[7] == 'pruefung' for x in na))
     check('C: alte Dateien gelöscht', not (files_before & set(k for k in repo if k.startswith('material/'))), sorted(files_before & set(repo)))
     shot('16-nach-ersetzen')
