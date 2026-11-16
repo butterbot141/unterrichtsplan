@@ -25,6 +25,7 @@ python tests/run.py                     # prüft die App im übergeordneten Ordn
 * Einstellungen in Kategorien (Info, Zugang, Verwaltung, Speicher), keine Erklärtexte in Suche und Reihe
 * Notizen pro Vorhaben (nur Lehrkraft), Niveau ★/★★/★★★ (auch Kursansicht)
 * Parallelkurse (eigene Freischaltung, Termine, Hinweis, Link), neues Schuljahr (Kopie mit gemeinsamen Dateien, Zurücksetzen)
+* Verschieben per Ziehen (Vorhaben, Material im eigenen Bereich, Reihen), Pfeiltasten am Griff, Antippen öffnet weiter
 * Export → Import („Ergänzen“) und Sicherung → „Alles ersetzen“ (verlustfrei)
 
 ## Erweitern

@@ -768,6 +768,57 @@ with sync_playwright() as p:
     page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.3)
     check('E: Keine Niveau-Legende', 'Erweiterung' not in page.inner_text('main'))
 
+    # ================= Verschieben per Ziehen =================
+    def getd(): return page.evaluate("async () => { const K = await T.keys('1234','pruefung123'); return T.getData(K); }")
+    def reihe_of(d, rid='optische-instrumente'):
+        for f in d['faecher']:
+            for j in f['jahrgaenge']:
+                for r in j['reihen']:
+                    if r['id'] == rid: return r
+    def ziehe(src, dst, oben=True, dx=0):
+        dst.scroll_into_view_if_needed(); src.scroll_into_view_if_needed(); time.sleep(0.1)
+        a = src.bounding_box(); b = dst.bounding_box()
+        page.mouse.move(a['x'] + a['width'] / 2, a['y'] + a['height'] / 2); page.mouse.down()
+        ty = b['y'] + (4 if oben else b['height'] - 4); tx = (b['x'] + 6 if oben else b['x'] + b['width'] - 6) if dx else b['x'] + b['width'] / 2
+        for i in range(1, 13): page.mouse.move(a['x'] + a['width'] / 2 + (tx - a['x'] - a['width'] / 2) * i / 12, a['y'] + a['height'] / 2 + (ty - a['y'] - a['height'] / 2) * i / 12); time.sleep(0.03)
+        time.sleep(0.15); page.mouse.up()
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); edit_on(); time.sleep(0.3)
+    check('Ziehen: Griff statt Pfeile', page.locator('.row [data-act=up-v]').count() == 0 and page.locator('.row .grip').count() >= 2)
+    vor = [v['id'] for v in reihe_of(getd())['vorhaben']]
+    n = len(vor)
+    ziehe(page.locator('.row[data-sort-item]').nth(n - 1).locator('.grip'), page.locator('.row[data-sort-item]').nth(0), oben=True)
+    wait_saved()
+    nach = [v['id'] for v in reihe_of(getd())['vorhaben']]
+    check('Ziehen: letztes Vorhaben nach ganz oben', nach == [vor[-1]] + vor[:-1], (vor, nach))
+    check('Ziehen: Nummern neu', page.locator('.row[data-sort-item] .nr').first.inner_text().strip() == '1' and page.locator('.row[data-sort-item]').nth(0).get_attribute('data-v') == vor[-1])
+    # Tastatur am Griff
+    page.locator('.row[data-sort-item]').nth(0).locator('.grip').focus(); page.keyboard.press('ArrowDown'); wait_saved()
+    nach2 = [v['id'] for v in reihe_of(getd())['vorhaben']]
+    check('Ziehen: Pfeiltaste am Griff', nach2 == [nach[1], nach[0]] + nach[2:], nach2)
+    # Material innerhalb eines Vorhabens (SuS-Bereich), LK-Material bleibt an seinem Platz
+    d = getd(); vi = next(i for i, v in enumerate(reihe_of(d)['vorhaben']) if sum(1 for m in v['materialien'] if m['bereich'] != 'lk') >= 2)
+    v = reihe_of(d)['vorhaben'][vi]; sus0 = [m['id'] for m in v['materialien'] if m['bereich'] != 'lk']; lkpos0 = [(i, m['id']) for i, m in enumerate(v['materialien']) if m['bereich'] == 'lk']
+    row = page.locator('.row[data-sort-item]').nth(vi); chips = row.locator('[data-sort=m][data-bereich=sus] > [data-sort-item]')
+    ziehe(chips.nth(chips.count() - 1).locator('.chip'), chips.nth(0), oben=True, dx=1); wait_saved()
+    v2 = reihe_of(getd())['vorhaben'][vi]; sus1 = [m['id'] for m in v2['materialien'] if m['bereich'] != 'lk']
+    check('Ziehen: Material nach vorne', sus1 == [sus0[-1]] + sus0[:-1], (sus0, sus1))
+    check('Ziehen: Lehrkraft-Material unverändert', [(i, m['id']) for i, m in enumerate(v2['materialien']) if m['bereich'] == 'lk'] == lkpos0)
+    check('Ziehen: kein Dialog nach dem Ziehen', page.locator('dialog#sheet[open]').count() == 0)
+    page.locator('.row[data-sort-item]').nth(vi).locator('[data-sort=m] .chip[data-act=edit-m]').first.click(); page.wait_for_selector('dialog#sheet[open]')
+    check('Ziehen: Antippen öffnet weiter das Material', page.locator('dialog#sheet[open]').count() == 1)
+    page.keyboard.press('Escape'); time.sleep(0.3)
+    shot('27-ziehen-reihe')
+    # Reihen im Jahrgang
+    page.goto(SITE + '#/f/physik/8'); page.wait_for_selector('.reihen'); time.sleep(0.3)
+    jr = [r['id'] for r in getd()['faecher'][1]['jahrgaenge'][0]['reihen']]
+    if len(jr) >= 2:
+        ziehe(page.locator('.reihe-card').nth(len(jr) - 1).locator('.grip'), page.locator('.reihe-card').nth(0), oben=True); wait_saved()
+        jr2 = [r['id'] for r in getd()['faecher'][1]['jahrgaenge'][0]['reihen']]
+        check('Ziehen: Reihe nach oben', jr2 == [jr[-1]] + jr[:-1], (jr, jr2))
+        check('Ziehen: Reihe öffnet sich nicht beim Ziehen', page.url.endswith('#/f/physik/8'), page.url)
+    else: check('Ziehen: mind. 2 Reihen für Test', False, jr)
+    edit_off()
+
     # ================= C: Sicherung -> „Alles ersetzen“ =================
     page.evaluate("""async () => { const K = await T.keys('1234','pruefung123'); const d = await T.getData(K);
       const r = d.faecher[1].jahrgaenge[0].reihen.find(x => x.id === 'optische-instrumente');
