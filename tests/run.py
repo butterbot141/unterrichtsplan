@@ -235,7 +235,7 @@ with sync_playwright() as p:
     check('Lösung + DOCX im LK-Bereich', [m['bereich'] for m in mats if m['titel'] == 'Lösung Lena'] == ['lk'] and len([m for m in mats if m['titel'] == 'Nachricht an Lena']) == 2)
 
     # ---- Speicheranzeige ----
-    page.goto(SITE + '#/einstellungen'); page.wait_for_selector('.store-list')
+    page.goto(SITE + '#/einstellungen/speicher'); page.wait_for_selector('.store-list')
     page.wait_for_function("document.querySelector('#repo-size').textContent.indexOf('ca.') >= 0", timeout=5000)
     check('Speicheranzeige', 'Physik' in page.inner_text('.store-list') and 'Jahrgang 8' in page.inner_text('.store-list'))
     shot('07-speicher')
@@ -273,7 +273,7 @@ with sync_playwright() as p:
     page.click('#edit-toggle'); page.wait_for_selector('body.editing')
     page.evaluate("document.querySelector('#toast').classList.remove('on')"); page.click('.page-head [data-act=del-r]'); wait_saved()
     # Import
-    page.goto(SITE + '#/einstellungen'); page.wait_for_selector('[data-act=import]')
+    page.goto(SITE + '#/einstellungen/verwaltung'); page.wait_for_selector('[data-act=import]')
     with page.expect_file_chooser() as fc:
         page.click('[data-act=import]')
     fc.value.set_files(epath)
@@ -314,6 +314,7 @@ with sync_playwright() as p:
     for _ in range(5): page2.click('[data-kurs-pill]')
     page2.wait_for_selector('[data-act=leave-kurs]')
     page2.screenshot(path=f'{OUT}/09-sus-einstellungen.png')
+    check('SuS: Einstellungen ohne Speicher', page2.locator('.tabs a').all_inner_texts() == ['Info', 'Zugang', 'Verwaltung'], page2.locator('.tabs a').all_inner_texts())
     page2.click('[data-act=leave-kurs]'); page2.wait_for_selector('.faecher')
     page2.goto(SITE); page2.wait_for_selector('.faecher')
     check('SuS: Kursmodus beendet', '#/kurs/' not in page2.url)
@@ -331,7 +332,7 @@ with sync_playwright() as p:
     page.bring_to_front(); page2.close()
     page.evaluate("localStorage.setItem('um-github', JSON.stringify({owner:'o', repo:'r', branch:'main', token:'x'}))")
     def open_sync_dir(path):
-        page.goto(SITE + '#/einstellungen'); page.wait_for_selector('[data-act=sync]')
+        page.goto(SITE + '#/einstellungen/verwaltung'); page.wait_for_selector('[data-act=sync]')
         page.click('[data-act=sync]'); page.wait_for_selector('dialog#sheet[open] [data-pick=dir]')
         with page.expect_file_chooser() as fc:
             page.click('[data-pick=dir]')
@@ -532,7 +533,7 @@ with sync_playwright() as p:
     page.locator('#such-treffer a.ziel').first.click(); page.wait_for_selector('.rows')
     check('Suche: Treffer führt zur Reihe', '#/f/mathe/6/brueche' in page.url, page.url)
     # Vorlage: herunterladbar und in der App lauffähig
-    page.goto(SITE + '#/einstellungen'); page.wait_for_selector('[data-act=vorlage]')
+    page.goto(SITE + '#/einstellungen/verwaltung'); page.wait_for_selector('[data-act=vorlage]')
     with page.expect_download() as dl:
         page.click('[data-act=vorlage][data-typ=lernpfad]')
     vp = OUT + '/vorlage.html'; dl.value.save_as(vp)
@@ -617,7 +618,7 @@ with sync_playwright() as p:
     page.goto(SITE + '#/kurs/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.5)
     txt = page.inner_text('main')
     check('D: Kurs ohne Notizen', 'Gruppenphase' not in txt and 'Bildentstehung' not in txt and 'Notizen' not in txt)
-    check('D: Kurs mit Sternen + Legende', '★' in page.locator('.chip', has_text='AB Linsen').inner_text() and 'Basis' in txt and 'Erweiterung' in txt)
+    check('D: Kurs mit Sternen, ohne Legende', '★' in page.locator('.chip', has_text='AB Linsen').inner_text() and 'Erweiterung' not in txt)
     shot('24-kurs-niveau')
     page.click('#kurs-exit'); page.wait_for_selector('.crumbs')
     page.goto(SITE + '#/suche'); page.wait_for_selector('#such-feld'); page.fill('#such-feld', 'Gruppenphase'); time.sleep(0.6)
@@ -750,13 +751,30 @@ with sync_playwright() as p:
     shot('27-nw-sonstiges')
     page.click('#edit-toggle'); time.sleep(0.3)
 
+    # ================= E: Aufgeräumt + Einstellungen in Kategorien =================
+    page.goto(SITE + '#/einstellungen'); page.wait_for_selector('.tabs')
+    tabs = page.locator('.tabs a').all_inner_texts()
+    check('E: Einstellungen-Kategorien', tabs == ['Info', 'Zugang', 'Verwaltung', 'Speicher'] and page.locator('.tabs a.on').inner_text() == 'Zugang', tabs)
+    check('E: Zugang ohne Verwaltung/Speicher', page.locator('#cfg-form').count() == 1 and page.locator('[data-act=sync]').count() == 0 and page.locator('.store-list').count() == 0)
+    page.click('.tabs a[data-tab=info]'); page.wait_for_selector('.info-list')
+    check('E: Info mit Erklärungen', page.locator('.info-list details').count() >= 10 and 'Checkliste' in page.inner_text('.info-list'))
+    shot('25-einstellungen-info')
+    page.click('.tabs a[data-tab=verwaltung]'); page.wait_for_selector('[data-act=sync]')
+    check('E: Verwaltung', page.locator('[data-act=export-all]').count() == 1 and page.locator('[data-act=vorlage]').count() == 2 and page.locator('#cfg-form').count() == 0)
+    shot('26-einstellungen-verwaltung')
+    check('E: Zahnrad-Symbol', 'M19.4 15' in page.inner_html('#settings-link'))
+    page.goto(SITE + '#/suche'); page.wait_for_selector('#such-feld'); page.fill('#such-feld', ''); time.sleep(0.3)
+    check('E: Suche ohne Erklärtext', page.inner_text('#such-treffer').strip() == '' and page.locator('.page-head .sub').count() == 0)
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.3)
+    check('E: Keine Niveau-Legende', 'Erweiterung' not in page.inner_text('main'))
+
     # ================= C: Sicherung -> „Alles ersetzen“ =================
     page.evaluate("""async () => { const K = await T.keys('1234','pruefung123'); const d = await T.getData(K);
       const r = d.faecher[1].jahrgaenge[0].reihen.find(x => x.id === 'optische-instrumente');
       r.uebersicht = { sus: await T.file(K, 'material/physik/8/optische-instrumente/lernlandkarte.pdf.enc', 'LLK', 'basis'), lk:null, url:null };
       d.faecher[1].farbe = 'lila'; d.faecher.push({ id:'chemie', name:'Chemie', farbe:'rot', vorlage:null, extern:'https://x.github.io/chemie/', jahrgaenge:[] });
       await T.putData(K, d); }""")
-    page.goto(SITE + '#/einstellungen'); page.reload(); page.wait_for_selector('[data-act=unlock-p]')
+    page.goto(SITE + '#/einstellungen/verwaltung'); page.reload(); page.wait_for_selector('[data-act=unlock-p]')
     page.click('[data-act=unlock-p]'); page.wait_for_selector('dialog#sheet[open] input[name=pw]'); page.fill('input[name=pw]', 'pruefung123'); page.click('dialog#sheet button[value=ok]')
     time.sleep(0.8); page.wait_for_selector('[data-act=export-all]')
     before = page.evaluate("async () => { const K = await T.keys('1234','pruefung123'); return T.getData(K); }")

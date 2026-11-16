@@ -159,7 +159,13 @@ a.reihe-card:hover{border-color:var(--acc)}
 .lk-area{margin-top:.4rem;padding:.65rem;border-radius:12px;background:var(--lk-soft)}
 .lk-area .lbl{display:block;font-size:.8rem;font-weight:700;color:var(--lk);text-transform:none;margin-bottom:.4rem}
 .chip .niv{font-size:.8rem;letter-spacing:-.08em;color:#B7791F;white-space:nowrap}
-.niv-hint{font-size:.85rem;color:var(--muted);margin:.3rem 0 0}
+.tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1rem}
+.tabs a{display:inline-flex;align-items:center;gap:.35rem;min-height:42px;padding:.35rem .9rem;border-radius:999px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);text-decoration:none;font-weight:600;font-size:.95rem}
+.tabs a.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.info-list details{border-top:1px solid var(--line);padding:.55rem 0}
+.info-list details:first-child{border-top:0}
+.info-list summary{cursor:pointer;font-weight:600;min-height:32px;display:flex;align-items:center}
+.info-list p{margin:.35rem 0 .2rem;color:var(--muted)}
 .lk-notizen{display:grid;gap:.5rem;margin-bottom:.6rem}
 .lk-notizen div{background:var(--sheet);border-radius:10px;padding:.5rem .7rem}
 .lk-notizen b{display:block;font-size:.8rem;color:var(--lk)}
@@ -451,7 +457,7 @@ var I = {
   up:'<path d="M12 19V5M6 11l6-6 6 6"/>', down:'<path d="M12 5v14M6 13l6 6 6-6"/>',
   trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',
-  gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
   refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>',
   back:'<path d="M15 5l-7 7 7 7"/>', next:'<path d="M9 5l7 7-7 7"/>',
   close:'<path d="M6 6l12 12M18 6L6 18"/>',
@@ -986,7 +992,7 @@ function renderJahrgang(f, j){
   });
   html += '</div><div class="btnline edit-only"><button class="addbtn" data-act="add-r" ' + idsAttr({f:f, j:j}) + '>' + ico('plus') + 'Reihe hinzufügen</button>'
     + '<button class="addbtn" data-act="sync-j" ' + idsAttr({f:f, j:j}) + '>' + ico('importi') + 'Ordner hochladen</button>'
-    + (reihen.length ? '<button class="addbtn" data-act="neu-j" ' + idsAttr({f:f, j:j}) + '>' + ico('klp') + 'Neues Schuljahr: alle Reihen zurücksetzen</button>' : '');
+    + (reihen.length ? '<button class="addbtn" data-act="neu-j" ' + idsAttr({f:f, j:j}) + '>' + ico('klp') + 'Neues Schuljahr</button>' : '');
   if(klpFor(f, j.name).length) html += '<button class="addbtn" data-act="klp-r" ' + idsAttr({f:f, j:j}) + '>' + ico('klp') + 'Aus dem Kernlehrplan ergänzen</button>';
   return html + '</div></div>';
 }
@@ -1086,7 +1092,7 @@ function checklisteSection(r, mode, ids){
   var st = loadJSON(checkKey(r)) || {}, n = checkCount(r), offen = loadJSON('um-check-offen') || {};
   return '<details class="checkbox" data-checkbox="' + esc(r.id) + '"' + (offen[r.id] ? ' open' : '') + '><summary>' + ico('checklist') + 'Checkliste: Was kann ich schon?'
     + '<span class="count" data-checkcount>' + n.sicher + ' / ' + n.alle + ' sicher</span>' + '<svg class="i chev" viewBox="0 0 24 24" aria-hidden="true">' + I.next + '</svg></summary>'
-    + '<p class="check-legende">Tippe an: einmal = noch unsicher, zweimal = kann ich sicher. Deine Einschätzung bleibt nur auf diesem Gerät.</p><ul>'
+    + '<p class="check-legende">Antippen: 1× unsicher · 2× sicher</p><ul>'
     + items.map(function(t, i){
       if(/^#/.test(t)) return '<li class="kopf">' + esc(t.replace(/^#+\s*/, '')) + '</li>';
       var z = st[t] || '';
@@ -1105,8 +1111,7 @@ function kursLeiste(r, k, ids){
   return '<div class="kursbar" role="group" aria-label="Parallelkurse"><span class="lbl">' + ico('eye') + 'Freischalten für</span>' + chip(null) + ks.map(chip).join('')
     + '<button class="kchip add edit-only" data-act="add-k" ' + ids + ' aria-label="Parallelkurs anlegen">' + ico('plus') + '<span>Kurs</span></button>'
     + (k ? '<button class="kchip add edit-only" data-act="edit-k" ' + ids + ' data-k="' + esc(k.id) + '">' + ico('edit') + '<span>' + esc(k.name) + ' bearbeiten</span></button>' : '')
-    + '<p class="kurs-hint">' + (k ? 'Augen, Termine und Hinweis gelten jetzt <b>nur für ' + esc(k.name) + '</b>. Neue Einträge übernehmen den Standard.'
-      : 'Standard gilt für den allgemeinen Link und für alles, was ein Kurs nicht selbst festlegt.') + '</p></div>';
+    + (k ? '<p class="kurs-hint">Änderungen gelten nur für <b>' + esc(k.name) + '</b>.</p>' : '') + '</div>';
 }
 function renderReihe(f, j, r, mode, kk){
   document.title = r.titel;
@@ -1151,11 +1156,9 @@ function renderReihe(f, j, r, mode, kk){
   });
   if(!shown) html += '<div class="row empty">' + (kurs ? 'Hier gibt es noch nichts zu sehen.' : 'Noch keine Unterrichtsvorhaben.') + '</div>';
   html += (kurs ? '' : '<button class="addbtn add-row edit-only" data-act="add-v" ' + ids + '>' + ico('plus') + 'Unterrichtsvorhaben</button>') + '</div>';
-  if(!kurs) html += '<div class="btnline edit-only"><button class="addbtn" data-act="sync-r" ' + ids + '>' + ico('importi') + 'Ordner oder mehrere Dateien hochladen</button>'
-    + (kurseOf(r).length ? '' : '<button class="addbtn" data-act="add-k" ' + ids + '>' + ico('plus') + 'Parallelkurs anlegen (eigenes Tempo, eigener Link)</button>')
-    + '<button class="addbtn" data-act="neu-r" ' + ids + '>' + ico('klp') + 'Neues Schuljahr: zurücksetzen oder kopieren</button></div>';
-  if(susItems(r, k).some(function(x){ return niveauOf(x.m); }) || (!kurs && (r.vorhaben || []).some(function(v){ return (v.materialien || []).some(niveauOf); })))
-    html += '<p class="niv-hint">Niveau: ★ Basis · ★★ Standard · ★★★ Erweiterung</p>';
+  if(!kurs) html += '<div class="btnline edit-only"><button class="addbtn" data-act="sync-r" ' + ids + '>' + ico('importi') + 'Ordner hochladen</button>'
+    + (kurseOf(r).length ? '' : '<button class="addbtn" data-act="add-k" ' + ids + '>' + ico('plus') + 'Parallelkurs anlegen</button>')
+    + '<button class="addbtn" data-act="neu-r" ' + ids + '>' + ico('klp') + 'Neues Schuljahr</button></div>';
   var dl = susItems(r, k), dlMb = dl.reduce(function(s, x){ return s + (x.m.datei ? +x.m.datei.mb || 0 : 0); }, 0);
   var foot = dl.length ? '<p class="kurs-foot"><button class="linkbtn" data-act="dl-reihe" ' + kids + (kurs ? '' : ' title="Lädt alles, was SuS in der Kursansicht' + (k ? ' von ' + esc(k.name) : '') + ' sehen"') + '>' + ico('download')
     + 'Alle Materialien herunterladen' + (dlMb ? ' (ca. ' + fmtMb(dlMb) + ')' : '') + '</button></p>' : '';
@@ -1181,7 +1184,7 @@ var suchText = '';
 function norm(s){ return String(s || '').toLowerCase().replace(/ß/g, 'ss').normalize('NFKD').replace(/[\u0300-\u036f]/g, ''); }
 function renderSuche(){
   document.title = 'Suche';
-  return crumbs([['Suche', '#/suche']]) + '<div class="page-head"><h1>Suche</h1><span class="sub">Reihen, Unterrichtsvorhaben, Materialien und Dateinamen</span></div>'
+  return crumbs([['Suche', '#/suche']]) + '<div class="page-head"><h1>Suche</h1></div>'
     + '<input type="search" class="such-feld" id="such-feld" placeholder="z. B. Spiegel, Lösung, Brüche …" autocomplete="off" value="' + esc(suchText) + '">'
     + '<div id="such-treffer"></div>';
 }
@@ -1215,7 +1218,7 @@ function mark(txt, q){
   return res + esc(raw.slice(pos));
 }
 function suchHtml(q){
-  if(!norm(q).trim()) return '<p class="muted" style="margin-top:1rem">Suchbegriff eingeben – gesucht wird in allen Fächern und Jahrgängen.</p>';
+  if(!norm(q).trim()) return '';
   var res = suchErgebnisse(q), n = 0;
   if(!res.length) return '<p class="muted" style="margin-top:1rem">Nichts gefunden.</p>';
   var h = '<ul class="treffer">';
@@ -1242,46 +1245,75 @@ function wireSuche(){
   inp.addEventListener('input', go); go();
   setTimeout(function(){ inp.focus(); }, 30);
 }
-function renderSettings(){
+/* Einstellungen in Kategorien: #/einstellungen/info|zugang|verwaltung|speicher */
+var INFO = [
+  // [Titel, Text, nur Lehrkraft?]
+  ['Mit Kurs teilen', 'Link oder QR-Code zeigt nur diese Reihe – ohne Ausgeblendetes und ohne Lehrkraft-Material. Der Zugangscode wird trotzdem gebraucht. Zurück zur ganzen Sammlung: 5× auf das Fach-Schild tippen.', false],
+  ['Checkliste', 'Antippen: 1× noch unsicher, 2× kann ich sicher. Die Einschätzung bleibt nur auf diesem Gerät.', false],
+  ['Niveau', '★ Basis · ★★ Standard · ★★★ Erweiterung', false],
+  ['Bearbeiten', 'Unterrichtsmaterial sehen SuS, Lehrkraft-Material nie. Klassenarbeit, Test und Klausur werden zusätzlich mit dem Prüfungspasswort geschützt.', true],
+  ['Ausblenden und Freischalten', 'Das Auge blendet aus. „Sichtbar ab“ schaltet an einem Tag automatisch frei, z. B. Lösungen nach der Stunde. Das Datum kommt vom Gerät der SuS – Planungshilfe, kein Schutz.', true],
+  ['Parallelkurse', 'Jeder Kurs hat eigene Freischaltungen, einen eigenen Hinweis und Link. „Standard“ gilt für den allgemeinen Link und für alles, was ein Kurs nicht selbst festlegt. Neue Einträge übernehmen den Standard.', true],
+  ['Notizen', 'Schwerpunktziel, Verlaufsplan und Reflexion pro Vorhaben – nur in der Lehrkraft-Ansicht. Keine Schülernamen eintragen.', true],
+  ['Suche', 'Durchsucht alle Fächer und Jahrgänge, auch Dateinamen, Hinweise, Checklisten und Notizen. Umlaute können weggelassen werden.', true],
+  ['Ordner hochladen', 'Fach und Jahrgang aus Ordnernamen wie „2526 M 6“, Reihe = Ordner, Nummer im Dateinamen = Vorhaben. PDF und Word mit gleichem Namen: PDF für SuS, Word für Lehrkräfte. Erneut ausführen gleicht ab; am Laptop Gelöschtes bleibt hier.', true],
+  ['Sichern und Wiederherstellen', '„Alles herunterladen“ (mit Prüfungspasswort) ist die Sicherung. Wiederherstellen: „Importieren“ → „Alles ersetzen“.', true],
+  ['Neues Schuljahr', 'In Reihe oder Jahrgang: zurücksetzen oder als Kopie anlegen. Kopien nutzen dieselben Dateien.', true],
+  ['Interaktive Seiten', 'Vorlagen unter Verwaltung: Lernpfad (Schritte, Hilfen, Quiz) oder Simulation (ein Bildschirm). Anpassen und als HTML hochladen.', true],
+  ['Speicher', 'Höchstens 1 GB. Ersetzte und gelöschte Dateien bleiben im Verlauf und zählen mit. Videos verlinken. Wird es eng: ein Fach in eine eigene Sammlung auslagern (Fach bearbeiten → Adresse).', true],
+  ['Sicherheit', 'Alles liegt verschlüsselt im Repository. Der Zugangscode ist eine Hürde, kein Tresor – Klassenarbeiten deshalb mit langem Prüfungspasswort schützen.', true]
+];
+function settingsTabs(){
+  var t = [['info', 'Info'], ['zugang', 'Zugang']];
+  if(keyB) t.push(['verwaltung', 'Verwaltung']);
+  if(canEdit() && keyB && data) t.push(['speicher', 'Speicher']);
+  return t;
+}
+function renderSettings(tab){
   document.title = 'Einstellungen';
-  var html = crumbs([['Einstellungen', '#/einstellungen']]) + '<div class="page-head"><h1>Einstellungen</h1></div>';
-  if(loadJSON(KURS_KEY)){
-    html += '<section class="panel"><h2>Kursansicht</h2><p class="muted">Dieses Gerät öffnet beim Start automatisch die Kursansicht einer Reihe.</p>'
-      + '<button class="btn" data-act="leave-kurs">Kursansicht auf diesem Gerät beenden</button></section>';
+  var tabs = settingsTabs();
+  if(!tabs.some(function(x){ return x[0] === tab; })) tab = 'zugang';
+  var html = crumbs([['Einstellungen', '#/einstellungen']]) + '<div class="page-head"><h1>Einstellungen</h1></div>'
+    + '<nav class="tabs" role="tablist">' + tabs.map(function(x){ return '<a href="#/einstellungen/' + x[0] + '" role="tab" data-tab="' + x[0] + '"' + (x[0] === tab ? ' class="on" aria-selected="true"' : '') + '>' + x[1] + '</a>'; }).join('') + '</nav>';
+  if(tab === 'info'){
+    var lk = canEdit();
+    html += '<section class="panel info-list">' + INFO.filter(function(x){ return lk || !x[2]; }).map(function(x){
+      return '<details><summary>' + esc(x[0]) + '</summary><p>' + esc(x[1]) + '</p></details>'; }).join('') + '</section>';
   }
-  if(keyB){
-    html += '<section class="panel"><h2>Zugang</h2><p class="muted">Der Code ist auf diesem Gerät gespeichert.</p>'
-      + '<button class="btn" data-act="logout">Auf diesem Gerät abmelden</button></section>'
-      + '<section class="panel"><h2>Herunterladen</h2><p class="muted">Alle Materialien als ZIP-Ordner mit Übersicht – zum Weiterverwenden ohne diese Seite und als Sicherung zum Wiederherstellen.'
-      + (keyP ? ' Klassenarbeiten sind enthalten.' : ' Klassenarbeiten sind nur enthalten, wenn das Prüfungspasswort eingegeben wurde.') + '</p>'
-      + '<div class="btnline" style="margin:0"><button class="btn primary" data-act="export-all">' + ico('zip') + 'Alles herunterladen</button>'
-      + (keyP ? '' : '<button class="btn" data-act="unlock-p">' + ico('lock') + 'Prüfungspasswort eingeben</button>') + '</div></section>';
+  if(tab === 'zugang'){
+    if(loadJSON(KURS_KEY)) html += '<section class="panel"><h2>Kursansicht</h2><button class="btn" data-act="leave-kurs">Kursansicht auf diesem Gerät beenden</button></section>';
+    if(keyB){
+      html += '<section class="panel"><h2>Dieses Gerät</h2><div class="btnline" style="margin:0">'
+        + (keyP ? '' : '<button class="btn" data-act="unlock-p">' + ico('lock') + 'Prüfungspasswort eingeben</button>')
+        + '<button class="btn" data-act="logout">Abmelden</button></div></section>';
+      if(canEdit() && data) html += '<section class="panel"><h2>Code und Passwort</h2><div class="btnline" style="margin:0"><button class="btn" data-act="change-code">Zugangscode ändern</button>'
+        + '<button class="btn" data-act="change-pw">Prüfungspasswort ändern</button></div></section>';
+    }
+    html += '<form class="panel" id="cfg-form" autocomplete="off"><h2>Bearbeiten über GitHub</h2>'
+      + '<p class="muted">Nur für die Lehrkraft, die die Seite pflegt.</p>'
+      + '<div class="grid2"><label class="f"><span>GitHub-Benutzername</span><input type="text" name="owner" value="' + esc(cfg.owner || '') + '" autocapitalize="off" spellcheck="false"></label>'
+      + '<label class="f"><span>Repository</span><input type="text" name="repo" value="' + esc(cfg.repo || '') + '" autocapitalize="off" spellcheck="false"></label></div>'
+      + '<label class="f"><span>Zugangs-Token</span><input type="password" name="token" value="' + esc(cfg.token || '') + '" autocapitalize="off" spellcheck="false">'
+      + '<span class="hint">Fine-grained, „Contents: Read and write“</span></label>'
+      + '<label class="f"><span>Branch</span><input type="text" name="branch" value="' + esc(cfg.branch || 'main') + '" autocapitalize="off" spellcheck="false"></label>'
+      + '<div class="btnline" style="margin:0"><button class="btn primary" type="submit">Speichern und testen</button>'
+      + '<button class="btn danger" type="button" id="cfg-clear">Token löschen</button></div><div class="status" id="cfg-status"></div></form>';
+    if(canEdit() && !zugang) html += '<section class="panel"><h2>Ersteinrichtung</h2><a class="btn primary" href="#/einrichtung">Jetzt einrichten</a></section>';
   }
-  html += '<form class="panel" id="cfg-form" autocomplete="off"><h2>Bearbeiten über GitHub</h2>'
-    + '<p class="muted">Nur für die Person, die die Seite pflegt. Die Angaben bleiben auf diesem Gerät.</p>'
-    + '<div class="grid2"><label class="f"><span>GitHub-Benutzername</span><input type="text" name="owner" value="' + esc(cfg.owner || '') + '" autocapitalize="off" spellcheck="false"></label>'
-    + '<label class="f"><span>Repository</span><input type="text" name="repo" value="' + esc(cfg.repo || '') + '" autocapitalize="off" spellcheck="false"></label></div>'
-    + '<label class="f"><span>Zugangs-Token</span><input type="password" name="token" value="' + esc(cfg.token || '') + '" autocapitalize="off" spellcheck="false">'
-    + '<span class="hint">Fine-grained Token nur für dieses Repository, Berechtigung „Contents: Read and write“.</span></label>'
-    + '<label class="f"><span>Branch</span><input type="text" name="branch" value="' + esc(cfg.branch || 'main') + '" autocapitalize="off" spellcheck="false"></label>'
-    + '<div class="btnline" style="margin:0"><button class="btn primary" type="submit">Speichern und testen</button>'
-    + '<button class="btn danger" type="button" id="cfg-clear">Token löschen</button></div><div class="status" id="cfg-status"></div></form>';
-  if(canEdit() && keyB && data){
-    var sf = data.schulform || 'ge';
-    html += '<section class="panel"><h2>Verwaltung</h2>'
-      + '<label class="f"><span>Lehrplan-Vorlagen für</span><select id="schulform"><option value="ge"' + (sf === 'ge' ? ' selected' : '') + '>Gesamtschule</option>'
-      + '<option value="gym"' + (sf === 'gym' ? ' selected' : '') + '>Gymnasium</option></select>'
-      + '<span class="hint">Betrifft nur die Vorschläge beim Anlegen von Reihen (Sek I Physik). Sek II ist für beide gleich.</span></label>'
-      + '<div class="btnline" style="margin:0 0 .3rem"><button class="btn primary" data-act="sync">' + ico('importi') + 'Ordner oder Dateien hochladen</button>'
-      + '<button class="btn" data-act="import">' + ico('importi') + 'Planung importieren / Sicherung wiederherstellen</button></div>'
-      + '<div class="btnline" style="margin:0 0 .3rem"><button class="btn" data-act="vorlage" data-typ="lernpfad">' + ico('download') + 'Vorlage Lernpfad</button>'
-      + '<button class="btn" data-act="vorlage" data-typ="simulation">' + ico('download') + 'Vorlage Simulation</button></div>'
-      + '<p class="hint" style="margin:0 0 .9rem">Vorlagen für interaktive HTML-Seiten im Stil der App: <b>Lernpfad</b> (Schritte mit Auftrag, Hilfen, Quiz, Antwortfeld) oder <b>Simulation</b> (ein Bildschirm: Bild in der Mitte, Steuerung unten). Kopfzeile „‹ P8 › Thema › Titel“ führt zurück zur Reihe. Anpassen und als Unterrichtsmaterial hochladen.<br>Sammel-Upload: Ordner vom Laptop (oder ZIP) verschlüsselt hochladen und automatisch zuordnen – erneut ausführen gleicht ab. Sicherung: die ZIP aus „Alles herunterladen“.</p>'
-      + '<div class="btnline" style="margin:0"><button class="btn" data-act="change-code">Zugangscode ändern</button>'
-      + '<button class="btn" data-act="change-pw">Prüfungspasswort ändern</button></div></section>';
-    html += storagePanel();
+  if(tab === 'verwaltung'){
+    html += '<section class="panel"><h2>Herunterladen</h2><div class="btnline" style="margin:0"><button class="btn primary" data-act="export-all">' + ico('zip') + 'Alles herunterladen</button>'
+      + (keyP ? '' : '<button class="btn" data-act="unlock-p">' + ico('lock') + 'Mit Klassenarbeiten</button>') + '</div></section>';
+    if(canEdit() && data){
+      var sf = data.schulform || 'ge';
+      html += '<section class="panel"><h2>Hochladen</h2><div class="btnline" style="margin:0"><button class="btn primary" data-act="sync">' + ico('importi') + 'Ordner oder Dateien hochladen</button>'
+        + '<button class="btn" data-act="import">' + ico('importi') + 'Importieren / Wiederherstellen</button></div></section>'
+        + '<section class="panel"><h2>Vorlagen</h2><div class="btnline" style="margin:0 0 .6rem"><button class="btn" data-act="vorlage" data-typ="lernpfad">' + ico('download') + 'Lernpfad</button>'
+        + '<button class="btn" data-act="vorlage" data-typ="simulation">' + ico('download') + 'Simulation</button></div>'
+        + '<label class="f" style="margin:0"><span>Lehrplan-Vorschläge für</span><select id="schulform"><option value="ge"' + (sf === 'ge' ? ' selected' : '') + '>Gesamtschule</option>'
+        + '<option value="gym"' + (sf === 'gym' ? ' selected' : '') + '>Gymnasium</option></select></label></section>';
+    }
   }
-  if(canEdit() && !zugang) html += '<section class="panel"><h2>Ersteinrichtung</h2><p class="muted">Die Seite ist noch nicht eingerichtet.</p><a class="btn primary" href="#/einrichtung">Jetzt einrichten</a></section>';
+  if(tab === 'speicher') html += storagePanel();
   return html;
 }
 function storagePanel(){
@@ -1295,10 +1327,9 @@ function storagePanel(){
   });
   return '<section class="panel"><h2>Speicherplatz</h2><p style="margin-bottom:.2rem">Dateien in der Sammlung: <b>' + fmtMb(total) + '</b> von 1 GB</p>'
     + '<div class="bar' + (warn ? ' warn' : '') + '"><i style="width:' + pct.toFixed(1) + '%"></i></div>'
-    + (warn ? '<p class="status err">Der Speicher wird knapp. Große Dateien entfernen oder ein Fach in eine eigene Sammlung auslagern.</p>' : '')
+    + (warn ? '<p class="status err">Speicher wird knapp – siehe Info.</p>' : '')
     + '<p class="hint" id="repo-size"></p><ul class="store-list">' + rows + '</ul>'
-    + '<p class="hint">GitHub Pages erlaubt höchstens 1 GB pro Seite. Ersetzte und gelöschte Dateien bleiben im Verlauf und zählen beim Repository mit. '
-    + 'Videos deshalb verlinken; Bilder werden beim Hochladen verkleinert. Wird es eng: ein Fach in ein eigenes Repository auslagern und hier über „Fach bearbeiten → Adresse“ verlinken.</p></section>';
+    + '</section>';
 }
 function renderSetup(){
   document.title = 'Einrichtung';
@@ -1331,7 +1362,7 @@ function render(){
   var kx = $('#kurs-exit'); kx.hidden = !(kurs && canEdit() && keyB);
   kx.innerHTML = ico('teacher') + '<span class="lbl">Lehrkraft-Ansicht</span>';
   $('.brand').setAttribute('href', kurs ? location.hash : '#/');
-  if(parts[0] === 'einstellungen'){ app.innerHTML = renderSettings(); wireSettings(); return; }
+  if(parts[0] === 'einstellungen'){ app.innerHTML = renderSettings(parts[1]); wireSettings(); return; }
   if(parts[0] === 'einrichtung'){ app.innerHTML = renderSetup(); wireSetup(); return; }
   if(zugang === undefined){ app.innerHTML = '<div class="center-spin"><span class="spin"></span></div>'; return; }
   if(zugang === null){ app.innerHTML = renderNotSetUp(); return; }
@@ -1728,10 +1759,10 @@ function materialForm(loc, m, bereich, k){
       { name:'titel', label:'Titel', value:m.titel, required:true },
       { name:'niveau', label:'Niveau (optional)', type:'select', options:NIVEAUS, value:niveauOf(m) ? String(niveauOf(m)) : '' },
       { name:'datei', label:'Datei oder Link', type:'slot', allowLink:true, current: m.datei ? m.datei.name : (m.url || ''), url:m.url, defaultMode:'file', hint:' ' },
-      isNewM(m) ? { type:'html', html:'<p class="hint" style="margin:-.4rem 0 .8rem">Tipp: Mehrere Dateien auf einmal auswählen – dann ordnet die App sie automatisch zu.</p>' } : { type:'html', html:'' },
+      isNewM(m) ? { type:'html', html:'<p class="hint" style="margin:-.4rem 0 .8rem">Mehrere Dateien auf einmal möglich.</p>' } : { type:'html', html:'' },
       { type:'html', html:'<div id="sichtbar-row"><label class="check"><input type="checkbox" name="sichtbar"' + (zs.ausgeblendet ? '' : ' checked') + '>Für SuS sichtbar' + (k && !isNew ? ' – ' + esc(kursLabel(k)) : '') + '</label>'
-        + '<label class="f"><span>Erst sichtbar ab (optional)' + (k && !isNew ? ' – ' + esc(kursLabel(k)) : '') + '</span><input type="date" name="ab" value="' + esc(zs.ab || '') + '"><span class="hint">Z. B. Lösungen erst nach der Stunde freischalten. Leer = sofort.</span></label></div>' },
-      { type:'html', html:'<p class="hint" id="pruef-hint" hidden>' + ico('lock') + ' Wird zusätzlich mit dem Prüfungspasswort verschlüsselt.</p>' }
+        + '<label class="f"><span>Erst sichtbar ab (optional)' + (k && !isNew ? ' – ' + esc(kursLabel(k)) : '') + '</span><input type="date" name="ab" value="' + esc(zs.ab || '') + '"></label></div>' },
+      { type:'html', html:'<p class="hint" id="pruef-hint" hidden>' + ico('lock') + ' Mit Prüfungspasswort geschützt.</p>' }
     ],
     wire:function(form){
       var sf = form.o_f, sj = form.o_j, sr = form.o_r, sv = form.o_v;
@@ -1765,9 +1796,8 @@ function materialForm(loc, m, bereich, k){
         if(typ.value === 'pruefung') form.querySelector('input[name=bereich][value=lk]').checked = true;
         var lk = bereichNow() === 'lk';
         ph.hidden = typ.value !== 'pruefung'; sRow.hidden = lk;
-        bh.textContent = lk ? 'Nur im Lehrkraft-Bereich – SuS sehen es nie, auch nicht in der Kursansicht.'
-          : 'Erscheint für SuS direkt in der Zeile. Mit dem Auge lässt es sich aus- und einblenden.';
-        if(fh) fh.textContent = lk ? 'z. B. Word- oder PowerPoint-Datei, Lösung, Klassenarbeit.' : 'Am besten PDF oder interaktive Seite (HTML). Videos bitte als Link.';
+        bh.textContent = lk ? 'SuS sehen es nie.' : '';
+        if(fh) fh.textContent = lk ? '' : 'Videos bitte als Link.';
         if(isNew) h3.textContent = titleNew(bereichNow());
       }
       Array.prototype.forEach.call(form.querySelectorAll('input[name=bereich]'), function(x){
@@ -1871,9 +1901,9 @@ function reiheForm(r){
   return openForm({ title: r.id ? 'Reihe bearbeiten' : 'Reihe hinzufügen', submit: r.id ? 'Speichern' : 'Anlegen', fields:[
     { name:'titel', label:'Titel der Reihe', value:r.titel, required:true, placeholder:'z. B. Sehhilfen für nah und fern' },
     { name:'inhaltsfeld', label:'Inhaltsfeld / Untertitel (optional)', value:r.inhaltsfeld },
-    { name:'ovSus', label:'Datei zur Reihe für SuS (optional)', type:'slot', allowLink:true, current: ov.sus ? ov.sus.name : (ov.url || ''), url:ov.url, hint:'z. B. Lernlandkarte als PDF.' },
-    { name:'ovLk', label:'Datei zur Reihe für Lehrkräfte (optional)', type:'slot', current: ov.lk ? ov.lk.name : '', hint:'z. B. Reihenplanung als Word-Datei' },
-    { name:'bild', label:'Titelbild (optional)', type:'slot', accept:'image/*', current: r.titelbild ? r.titelbild.name : '', hint:'Foto oder Bild der Concept-Map bzw. Fragensammlung. Große Bilder werden automatisch verkleinert.' }
+    { name:'ovSus', label:'Datei zur Reihe für SuS (optional)', type:'slot', allowLink:true, current: ov.sus ? ov.sus.name : (ov.url || ''), url:ov.url, hint:'z. B. Lernlandkarte' },
+    { name:'ovLk', label:'Datei zur Reihe für Lehrkräfte (optional)', type:'slot', current: ov.lk ? ov.lk.name : '', hint:'z. B. Reihenplanung' },
+    { name:'bild', label:'Titelbild (optional)', type:'slot', accept:'image/*', current: r.titelbild ? r.titelbild.name : '', hint:'z. B. Concept-Map' }
   ]});
 }
 function applyReihe(f, j, r, v){
@@ -1903,7 +1933,7 @@ function applyTitelbild(r, s, dir){
    ===================================================================== */
 function AB_FIELD(val, k){
   return { type:'html', name:'ab', html:'<label class="f"><span>Für SuS sichtbar ab (optional)' + (k ? ' – ' + esc(kursLabel(k)) : '') + '</span><input type="date" name="ab" value="' + esc(val || '') + '">'
-    + '<span class="hint">So lässt sich die Reihe vorausplanen: Bis zu diesem Tag sehen SuS das Vorhaben nicht. Leer = sofort (Auge gilt weiterhin).</span></label>' };
+    + '</label>' };
 }
 /* Parallelkurs entfernen: Kurs + seine Stände an allen Einträgen */
 function kursEntfernen(r, k){
@@ -1939,7 +1969,7 @@ function neuesSchuljahr(f, j, r){
   if(r) activeFaecher().forEach(function(F){ (F.jahrgaenge || []).forEach(function(J){ ziele.push([F.id + '|' + J.id, 'Kopie anlegen in ' + F.name + ' ' + J.name + (J === j ? ' (hier)' : '')]); }); });
   var hatKurse = r ? kurseOf(r).length : (j.reihen || []).some(function(x){ return kurseOf(x).length; });
   openForm({ title:'Neues Schuljahr' + (r ? ': ' + r.titel : ': ' + f.name + ' ' + j.name), submit:'Übernehmen', noFocus:true,
-    intro:'Material, Notizen, Checkliste, Titelbild und Reihenfolge bleiben. Eine Kopie nutzt dieselben Dateien – es wird nichts neu hochgeladen.',
+    intro:'Material, Notizen und Checkliste bleiben.',
     fields:[
       ziele.length > 1 ? { name:'ziel', label:'Was soll passieren?', type:'select', value:'hier', options:ziele } : { type:'html', html:'' },
       { name:'aus', label:'Alle Unterrichtsvorhaben für SuS ausblenden', type:'check', value:true },
@@ -2088,7 +2118,7 @@ var actions = {
   'notiz-v': needAdmin(function(c){
     var p = planungOf(c.v) || {};
     openForm({ title:'Notizen: ' + c.v.titel, fields:[
-      { type:'html', html:'<p class="hint" style="margin:0 0 .8rem">Nur für dich – erscheint nie in der Kursansicht. Bitte keine Schülernamen.</p>' },
+      { type:'html', html:'<p class="hint" style="margin:0 0 .8rem">Nur für dich. Keine Schülernamen.</p>' },
       { name:'ziel', label:'Schwerpunktziel', type:'textarea', value:p.ziel || '' },
       { name:'verlauf', label:'Verlaufsplan', type:'textarea', value:p.verlauf || '' },
       { name:'reflexion', label:'Reflexion – was lief gut?', type:'textarea', value:p.reflexion || '' }
@@ -2124,7 +2154,7 @@ var actions = {
   'kurs-wahl': function(c){ if(c.r){ setWahl(c.r, c.k); render(); } },
   'add-k': needAdmin(function(c){
     var ks = kurseOf(c.r), vorlage = wahlKurs(c.r);
-    openForm({ title:'Parallelkurs anlegen', submit:'Anlegen', intro:'Jeder Kurs bekommt eigene Freischaltungen, Termine, einen eigenen Hinweis und einen eigenen Link. Material und Notizen bleiben gemeinsam.', fields:[
+    openForm({ title:'Parallelkurs anlegen', submit:'Anlegen', intro:'Eigene Freischaltungen, Hinweis und Link. Material bleibt gemeinsam.', fields:[
       { name:'name', label:'Kurs', required:true, placeholder:'z. B. 8a' },
       { name:'start', label:'Start-Stand', type:'select', value:'kopie', options:[['kopie', 'Wie ' + (vorlage ? vorlage.name : 'der Standard') + ' (aktueller Stand)'], ['aus', 'Alles ausgeblendet']] }
     ]}).then(function(v){
@@ -2140,8 +2170,7 @@ var actions = {
   'edit-k': needAdmin(function(c){
     if(!c.k) return;
     openForm({ title:'Kurs bearbeiten', deletable:true, fields:[
-      { name:'name', label:'Kurs', value:c.k.name, required:true },
-      { type:'html', html:'<p class="hint" style="margin:0">Der Link des Kurses bleibt beim Umbenennen gleich. Löschen entfernt nur die Freischaltungen dieses Kurses – Material bleibt erhalten.</p>' }
+      { name:'name', label:'Kurs', value:c.k.name, required:true }
     ]}).then(function(v){
       if(!v) return;
       if(v._delete){
@@ -2156,7 +2185,7 @@ var actions = {
   'edit-bild': needAdmin(function(c){
     openForm({ title:'Titelbild: ' + c.r.titel, noFocus:true, fields:[
       { name:'bild', label:'Titelbild', type:'slot', accept:'image/*', current: c.r.titelbild ? c.r.titelbild.name : '', defaultMode:'file',
-        hint:'z. B. Foto oder Export der Concept-Map bzw. Fragensammlung. Große Bilder werden automatisch verkleinert.' }
+        hint:'z. B. Concept-Map' }
     ]}).then(function(v){
       if(!v || v._delete || !checkBild(v.bild) || v.bild.mode === 'keep') return;
       commit('Titelbild: ' + c.r.titel, function(){ return applyTitelbild(c.r, v.bild, dirFor(c.f, c.j, c.r)); });
@@ -2172,8 +2201,8 @@ var actions = {
   'edit-hinweis': needAdmin(function(c){
     var hold = c.k || c.r, h = hold.hinweis || {};
     openForm({ title:c.k ? 'Hinweis nur für ' + c.k.name : 'Hinweis für SuS', deletable:!!h.text, fields:[
-      { name:'text', label:c.k ? 'Hinweis (erscheint nur in der Kursansicht von ' + c.k.name + ')' : 'Hinweis (erscheint oben in der Reihe, auch in der Kursansicht' + (kurseOf(c.r).length ? ' aller Kurse' : '') + ')', type:'textarea', value:h.text || '', required:true },
-      { name:'bis', label:'Anzeigen bis einschließlich (optional)', type:'date', value:h.bis || '' }
+      { name:'text', label:c.k ? 'Hinweis nur für ' + c.k.name : 'Hinweis oben in der Reihe', type:'textarea', value:h.text || '', required:true },
+      { name:'bis', label:'Anzeigen bis (optional)', type:'date', value:h.bis || '' }
     ]}).then(function(v){
       if(!v) return;
       if(v._delete) return commit('Hinweis entfernt', function(){ delete hold.hinweis; });
@@ -2182,10 +2211,9 @@ var actions = {
   }),
   'edit-check': needAdmin(function(c){
     openForm({ title:'Checkliste „Ich kann …“', deletable:checkItems(c.r).length > 0, noFocus:true,
-      intro:'Eine Aussage pro Zeile. Zeilen mit # am Anfang werden Zwischenüberschriften. Die Checkliste erscheint nur, wenn hier etwas steht.',
       fields:[
         { type:'html', html:'<div class="btnline" style="margin:0 0 .6rem"><button type="button" class="btn" data-x="datei">' + ico('importi') + 'Aus Datei übernehmen (Word oder Text)</button></div>' },
-        { name:'liste', label:'Aussagen', type:'textarea', value:checkItems(c.r).join('\n') }
+        { name:'liste', label:'Aussagen (eine pro Zeile, # = Überschrift)', type:'textarea', value:checkItems(c.r).join('\n') }
       ],
       wire:function(form){
         var ta = form.liste; ta.style.minHeight = '220px';
@@ -2299,7 +2327,7 @@ document.addEventListener('click', function(e){
    ===================================================================== */
 function wireSettings(){
   var form = $('#cfg-form'), st = $('#cfg-status');
-  form.addEventListener('submit', function(e){
+  if(form) form.addEventListener('submit', function(e){
     e.preventDefault();
     var fd = new FormData(form);
     function clean(x){ return String(x || '').replace(/[^\x21-\x7E]/g, ''); } // unsichtbare Zeichen beim Einfügen entfernen
@@ -2330,7 +2358,7 @@ function wireSettings(){
         });
       });
   });
-  $('#cfg-clear').addEventListener('click', function(){
+  if(form) $('#cfg-clear').addEventListener('click', function(){
     cfg.token = ''; saveJSON(CFG_KEY, cfg); editing = false; form.token.value = '';
     st.className = 'status ok'; st.textContent = 'Token gelöscht.'; document.body.classList.remove('can-edit', 'editing');
   });
@@ -2443,9 +2471,7 @@ function shareReihe(f, j, r, k){
     var qr = qrcode(0, 'M'); qr.addData(url); qr.make();
     var svg = qr.createSvgTag({ cellSize:4, margin:2, scalable:true }), gif = qr.createDataURL(10, 4);
     return openForm({ title:'„' + r.titel + '“ mit ' + (k ? k.name : 'dem Kurs') + ' teilen', submit:'Fertig', noFocus:true, fields:[{ type:'html', html:
-      (ks.length ? '<p class="hint" style="margin:0 0 .6rem">' + (k ? 'Link für <b>' + esc(k.name) + '</b> – mit eigenen Freischaltungen und eigenem Hinweis.' : 'Link mit dem <b>Standard</b>-Stand. Für einen Parallelkurs oben in der Reihe den Kurs wählen.') + '</p>' : '')
-      + '<div class="qr-box">' + svg + '</div><div class="linkbox">' + esc(url) + '</div>'
-      + '<p class="hint" style="margin:0 0 .8rem">SuS sehen nur diese Reihe – ohne Hauptmenü, ohne Ausgeblendetes und ohne Lehrkraft-Material. Den Zugangscode brauchen sie trotzdem.</p>'
+      '<div class="qr-box">' + svg + '</div><div class="linkbox">' + esc(url) + '</div>'
       + '<div class="btnline" style="margin:0"><button type="button" class="btn" data-x="copy">' + ico('link') + 'Link kopieren</button>'
       + (navigator.share ? '<button type="button" class="btn" data-x="share">' + ico('share') + 'Teilen</button>' : '')
       + '<a class="btn" href="' + gif + '" download="QR ' + esc(safeName(r.titel + (k ? ' ' + k.name : ''))) + '.gif">' + ico('download') + 'QR-Code speichern</a>'
@@ -2521,12 +2547,9 @@ function openSyncPicker(fixed){
   ensureFresh().then(function(){
     var ios = isIOS();
     openForm({ title:'Ordner oder Dateien hochladen', submit:'Schließen', noFocus:true, fields:[{ type:'html', html:
-      '<p class="muted" style="margin-top:-.4rem">Die Dateien werden verschlüsselt hochgeladen und automatisch zugeordnet. Vorher siehst du eine Vorschau.</p>'
-      + '<div class="btnline" style="margin:0 0 .8rem">' + (ios ? '' : '<button type="button" class="btn primary" data-pick="dir">' + ico('importi') + 'Ordner wählen</button>')
+      '<div class="btnline" style="margin:0 0 .8rem">' + (ios ? '' : '<button type="button" class="btn primary" data-pick="dir">' + ico('importi') + 'Ordner wählen</button>')
       + '<button type="button" class="btn' + (ios ? ' primary' : '') + '" data-pick="files">' + ico('plus') + 'Dateien oder ZIP wählen</button></div>'
-      + '<p class="hint">' + (ios ? 'Auf dem iPad: Ordner in der Dateien-App lange antippen → „Komprimieren“, dann die ZIP-Datei wählen. Oder mehrere Dateien auf einmal auswählen.'
-        : 'Am Laptop kannst du einen Ordner auch direkt auf die Seite oder auf eine Zeile ziehen.')
-      + ' Erneut ausführen gleicht ab: Unveränderte Dateien werden übersprungen, geänderte ersetzt. Auf dem Laptop gelöschte Dateien bleiben hier erhalten.</p>' }],
+      + '<p class="hint">' + (ios ? 'iPad: Ordner in der Dateien-App komprimieren, dann die ZIP wählen.' : 'Oder Ordner auf die Seite ziehen.') + '</p>' }],
       wire:function(form){
         form.addEventListener('click', function(e){
           var b = e.target.closest('[data-pick]'); if(!b) return;
@@ -2673,8 +2696,7 @@ function syncHtml(st){
     h += '<div class="sync-box"><b>Unterrichtsvorhaben erkennen an</b><div class="seg" style="margin-top:.4rem">'
       + [['nummer', 'Nummer am Anfang des Dateinamens'], ['ordner', 'Unterordnern'], ['eins', 'alles in ein Vorhaben']].map(function(o){
         return '<label><input type="radio" name="schema" data-schema="1" value="' + o[0] + '"' + (st.schema === o[0] ? ' checked' : '') + '>' + o[1] + '</label>'; }).join('')
-      + '</div><p class="hint" style="margin:0">Beispiel: „M 6 Brüche - 2 Bruchrechnung Fehler.pdf“ → Vorhaben Nr. 2, Titel „Bruchrechnung Fehler“. '
-      + 'Fach und Jahrgang werden aus Ordnernamen wie „2526 M 6“ oder „Ph Q2“ erkannt. PDF und Word/PowerPoint mit gleichem Namen: PDF für SuS, Original für Lehrkräfte.</p></div>';
+      + '</div><p class="hint" style="margin:0">„M 6 Brüche - 2 Titel.pdf“ → Vorhaben 2</p></div>';
   }
   st.groups.forEach(function(g, gi){
     var f = curFach(g), j = curJg(g), r = curReihe(g), ga = ' data-g="' + gi + '"';
@@ -2950,8 +2972,8 @@ function startImport(){
           function sync(){
             var rep = form.querySelector('input[name=modus]:checked').value === 'ersetzen';
             $('#modus-hint', form).textContent = rep
-              ? 'Stellt den Stand der Sicherung komplett wieder her – mit Reihenfolge, Ausgeblendetem, Titelbildern, Lehrkraft-Dateien und (mit Passwort) Prüfungen. Der jetzige Inhalt wird ersetzt.'
-              : 'Vorhandene Reihen und Vorhaben mit gleichem Namen werden ergänzt, nichts wird überschrieben.';
+              ? 'Der jetzige Inhalt wird vollständig ersetzt.'
+              : 'Ergänzt nur, überschreibt nichts.';
           }
           form.addEventListener('change', sync); sync();
         },

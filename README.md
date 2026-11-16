@@ -28,7 +28,7 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 - **Bearbeiten**: außerdem Reihen und Vorhaben anlegen, umbenennen, sortieren, löschen; Titelbild hinterlegen; Reihen aus dem Kernlehrplan ergänzen. Reihen-Karten lassen sich auch im Bearbeiten-Modus öffnen.
 - **Fach hinzufügen/bearbeiten → Lehrplan-Vorlage und Symbol**: Mathematik, Physik, Naturwissenschaften (NW 5/6, KLP Gesamtschule) oder Klassenleitung/Sonstiges (Ordner-Vorschläge wie Klassenrat, Elternabend); „automatisch“ erkennt das Fach am Namen.
 - **Herunterladen**: Jahrgang oder alles als ZIP mit `Übersicht.html` – zum Weiterverwenden ohne diese Seite.
-- **Einstellungen → Verwaltung**: Schulform für die Lehrplan-Vorlagen, Zugangscode oder Prüfungspasswort ändern.
+- **Einstellungen** (Zahnrad unten rechts), vier Bereiche: **Info** (kurze Erklärungen zu allen Funktionen), **Zugang** (abmelden, Code/Passwort ändern, GitHub-Token), **Verwaltung** (herunterladen, hochladen, importieren, Vorlagen, Schulform), **Speicher**.
 
 ## Mit dem Kurs teilen
 
@@ -37,7 +37,7 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 - Ganz unten: **Alle Materialien herunterladen** – ein ZIP mit allem, was SuS sehen (z. B. zur Vorbereitung auf einen Test).
 - **Zurück zur ganzen Sammlung (Lehrkraft):**
   - Auf Geräten mit eingetragenem Token gibt es oben den Knopf **Lehrkraft-Ansicht**; diese Geräte bleiben nie im Kursmodus hängen.
-  - Auf anderen Geräten: **5× schnell auf das Fach-Schild** (z. B. „Physik 8“) tippen oder die Adresse mit `#/einstellungen` aufrufen → **Kursansicht auf diesem Gerät beenden**.
+  - Auf anderen Geräten: **5× schnell auf das Fach-Schild** (z. B. „Physik 8“) tippen oder die Adresse mit `#/einstellungen` aufrufen → Reiter **Zugang** → **Kursansicht auf diesem Gerät beenden**.
 
 ## Titelbild einer Reihe
 
@@ -57,7 +57,7 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 - Externe Links öffnen sich in einem neuen Tab.
 - Sicherheit: Die Seiten laufen abgeschottet. Sie kommen nicht an Zugangscode, Token oder andere Daten der App.
 
-- **Vorlage:** Einstellungen → Verwaltung → *Vorlage für interaktive Seite*. Eine HTML-Datei im Stil der App mit Schritten, Lernziel, Aufgaben, gestuften Hilfen, Quiz, Antwortfeld (wird gespeichert, mit Kopieren-Knopf), Merke-Kasten und Zurück/Weiter. Stellen zum Anpassen sind mit „ÄNDERN“ markiert.
+- **Vorlagen:** Einstellungen → Verwaltung → *Lernpfad* oder *Simulation*. Eine HTML-Datei im Stil der App mit Schritten, Lernziel, Aufgaben, gestuften Hilfen, Quiz, Antwortfeld (wird gespeichert, mit Kopieren-Knopf), Merke-Kasten und Zurück/Weiter. Stellen zum Anpassen sind mit „ÄNDERN“ markiert.
 
 ## Ausblenden und Freischalten
 
@@ -83,11 +83,11 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 
 ## Neues Schuljahr
 
-- Bearbeiten → in der Reihe **Neues Schuljahr: zurücksetzen oder kopieren**.
+- Bearbeiten → in der Reihe **Neues Schuljahr**.
   - **Diese Reihe zurücksetzen** oder **Kopie anlegen in …** (beliebiges Fach/Jahrgang).
   - Voreingestellt: alle Vorhaben ausblenden, Lösungen wieder ausblenden, Termine löschen, Hinweise löschen, Parallelkurse entfernen. Optional jedes Material einzeln ausblenden.
   - Material, Notizen (inkl. Reflexion), Checkliste, Titelbild und Reihenfolge bleiben.
-- Für alle Reihen eines Jahrgangs auf einmal: auf der Jahrgangsseite **Neues Schuljahr: alle Reihen zurücksetzen**.
+- Für alle Reihen eines Jahrgangs auf einmal: auf der Jahrgangsseite **Neues Schuljahr**.
 - Eine Kopie nutzt dieselben Dateien (nichts wird neu hochgeladen). Gemeinsam genutzte Dateien werden beim Löschen nicht aus dem Speicher entfernt.
 
 ## Checkliste „Ich kann …“
@@ -105,7 +105,7 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 ## Niveau ★ / ★★ / ★★★
 
 - Im Material-Dialog **Niveau**: ★ Basis, ★★ Standard, ★★★ Erweiterung (optional).
-- Sterne erscheinen am Material – auch für SuS in der Kursansicht, mit kurzer Legende unter der Reihe.
+- Sterne erscheinen am Material – auch für SuS in der Kursansicht.
 
 ## Suche
 
@@ -128,10 +128,10 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 
 ## Planung importieren und Sicherung wiederherstellen
 
-- **Einstellungen → Verwaltung → Planung importieren / Sicherung wiederherstellen**: ZIP mit `import.json` und Dateien (oder auf dem iPad: `import.json` und Dateien gemeinsam auswählen).
+- **Einstellungen → Verwaltung → Importieren / Wiederherstellen**: ZIP mit `import.json` und Dateien (oder auf dem iPad: `import.json` und Dateien gemeinsam auswählen).
   - **Ergänzen**: Vorhandene Reihen und Vorhaben mit gleichem Namen werden ergänzt, nichts wird überschrieben.
   - **Alles ersetzen**: stellt eine Sicherung („Alles herunterladen“) vollständig wieder her – Fächer mit Farben, Reihenfolge, Ausgeblendetes, Titelbilder, Datei zur Reihe, Lehrkraft-Dateien, Kurs-Links. Prüfungen nur mit Prüfungspasswort (beim Sichern und beim Wiederherstellen).
-- Tipp: Ab und zu **Einstellungen → Alles herunterladen** mit eingegebenem Prüfungspasswort und die ZIP am Laptop ablegen.
+- Tipp: Ab und zu **Einstellungen → Verwaltung → Alles herunterladen** mit eingegebenem Prüfungspasswort und die ZIP am Laptop ablegen.
 
 ## Mehrere Geräte
 
@@ -156,7 +156,7 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 
 - Möglichst **unter 15 MB** pro Datei (Warnung), höchstens 50 MB. Bei großen PowerPoints für SuS lieber ein PDF hochladen.
 - Videos werden nicht hochgeladen, sondern verlinkt. Bilder werden automatisch verkleinert.
-- **Einstellungen → Speicherplatz** zeigt den belegten Platz gesamt und pro Fach/Jahrgang, dazu die Größe des Repositorys inkl. Verlauf. Warnung ab ca. 800 MB.
+- **Einstellungen → Speicher** zeigt den belegten Platz gesamt und pro Fach/Jahrgang, dazu die Größe des Repositorys inkl. Verlauf. Warnung ab ca. 800 MB.
 - GitHub Pages: Seite bis 1 GB, ca. 100 GB Datenverkehr pro Monat. Ersetzte Dateien bleiben im Verlauf und zählen mit.
 - **Wird es eng:** ein Fach in ein eigenes Repository (eigene Sammlung) auslagern und hier unter *Fach bearbeiten → Adresse* verlinken. Die Startseite zeigt dann einen Knopf zur anderen Sammlung.
 
