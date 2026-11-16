@@ -26,6 +26,7 @@ python tests/run.py                     # prüft die App im übergeordneten Ordn
 * Notizen pro Vorhaben (nur Lehrkraft), Niveau ★/★★/★★★ (auch Kursansicht)
 * Parallelkurse (eigene Freischaltung, Termine, Hinweis, Link), neues Schuljahr (Kopie mit gemeinsamen Dateien, Zurücksetzen)
 * Verschieben per Ziehen (Vorhaben, Material im eigenen Bereich, Reihen), Pfeiltasten am Griff, Antippen öffnet weiter
+* Buchaufgabe (Titel sichtbar, Hinweis antippbar, Suche, Sicherung), Auswahl „Art“ (Dokument/Lösung/Prüfung/Buch), Material zwischen Bereichen und Vorhaben verschieben (Rückfrage, Prüfung bleibt Lehrkraft), Lehrkraft-Bereich offen, SuS-Ansicht
 * Export → Import („Ergänzen“) und Sicherung → „Alles ersetzen“ (verlustfrei)
 
 ## Erweitern
