@@ -152,6 +152,12 @@ a.reihe-card:hover{border-color:var(--acc)}
 .chip:hover,.chip:focus-visible{border-color:var(--tc);outline:none;background:color-mix(in srgb,var(--tc) 7%,var(--sheet))}
 .chip .ext{font-size:.72rem;font-weight:700;letter-spacing:.03em;color:var(--muted);border-left:1px solid var(--line);padding-left:.45rem}
 .chip.add{border-style:dashed;color:var(--muted)}
+/* Trenner für mehrere Tage innerhalb eines Vorhabens (material.typ "tag") */
+.trenner{flex-basis:100%;display:flex;align-items:center;gap:.6rem;margin:.3rem 0 0;padding:0;border:0;background:transparent;color:var(--muted);font:inherit;font-size:.82rem;font-weight:700;letter-spacing:.02em;text-align:left;min-height:22px}
+.trenner::after{content:"";flex:1;border-top:1px solid var(--line)}
+button.trenner{min-height:36px;cursor:pointer}
+button.trenner:hover span,button.trenner:focus-visible span{color:var(--acc);outline:none}
+.editing [data-sort=m] > .trenner{cursor:grab}
 .chip.still{cursor:default}.chip.still:hover{border-color:var(--line);background:var(--sheet)}
 .chip .mehr{color:var(--tc);border-left-color:color-mix(in srgb,var(--tc) 35%,var(--line))}
 .buch-text{font-size:1.1rem;line-height:1.5;margin:0 0 1rem}
@@ -1003,6 +1009,10 @@ function chipBuch(m, ref, cls, badge){
 }
 /* Ein Material als Chip. Lehrkraft-Material (bereich "lk") erscheint nie in der Kursansicht. */
 function matChip(m, ref, mode, k){
+  if(m.typ === 'tag'){
+    if(editing && mode !== 'kurs') return '<button class="trenner" data-act="edit-t" data-sort-item ' + ref + ' title="Beschriftung ändern oder ziehen"><span>' + esc(m.titel || 'Tag') + '</span></button>';
+    return '<div class="trenner" role="separator"><span>' + esc(m.titel || 'Tag') + '</span></div>';
+  }
   var z = zustand(m, k), lk = m.bereich === 'lk', zu = !lk && !z.ausgeblendet && gesperrt(m, k), aus = !lk && (z.ausgeblendet || zu), cls = (lk ? 'lkchip' : '') + (aus ? ' aus' : '');
   var badge = !lk && z.ausgeblendet ? '<span title="für SuS ausgeblendet" style="display:inline-flex"><svg class="i aus-i" viewBox="0 0 24 24" aria-label="ausgeblendet">' + I.eyeoff + '</svg></span>'
     : (zu ? '<span class="ab" title="für SuS sichtbar ab ' + esc(datumKurz(z.ab)) + '">ab ' + esc(datumKurz(z.ab)) + '</span>' : '');
@@ -1020,6 +1030,10 @@ function matChip(m, ref, mode, k){
   if(m.url) return chipLink(m.url, m.titel, m.typ, cls, badge);
   return '';
 }
+/* Trenner ohne folgendes Material weglassen (z. B. wenn der nächste Tag für SuS noch ausgeblendet ist) */
+function ohneLeereTrenner(list){ return list.filter(function(m, i){ if(m.typ !== 'tag') return true; var n = list[i + 1]; return !!n && n.typ !== 'tag'; }); }
+/* Einträge für Übersicht.html verbinden; Trenner (beginnt mit \n) als eigene Zeile */
+function joinItems(a){ return a.map(function(x, i){ return x.charAt(0) === '\n' ? '<br><small><b>' + x.slice(1) + '</b></small><br>' : (i && a[i - 1].charAt(0) !== '\n' ? ' · ' : '') + x; }).join(''); }
 function lkEditBlock(chips, vid, notizen){
   return '<div class="lk-area edit"><span class="lbl">Lehrkraft-Bereich · für SuS nie sichtbar</span>' + (notizen || '') + '<div class="chips" data-sort="m" data-bereich="lk" ' + vid + '>' + chips.join('')
     + '<button class="chip add lkchip" data-act="add-m" data-bereich="lk" ' + vid + '>' + ico('plus') + '<span>Lehrkraft-Material</span></button>'
@@ -1263,7 +1277,8 @@ function renderReihe(f, j, r, mode, kk){
     shown++;
     var vid = idsAttr({f:f, j:j, r:r, v:v, k:k}), mats = v.materialien || [], z = zustand(v, k);
     function chipOf(m){ return matChip(m, vid + ' data-m="' + esc(m.id) + '"', mode, k); }
-    var sus = mats.filter(function(m){ return m.bereich !== 'lk' && !(kurs && !sichtbarSuS(m, k)); }).map(chipOf).filter(Boolean);
+    var sus = mats.filter(function(m){ return m.bereich !== 'lk' && !(kurs && m.typ !== 'tag' && !sichtbarSuS(m, k)); });
+    sus = (kurs ? ohneLeereTrenner(sus) : sus).map(chipOf).filter(Boolean);
     var lk = kurs ? [] : mats.filter(function(m){ return m.bereich === 'lk'; }).map(chipOf).filter(Boolean);
     var eyeLbl = (z.ausgeblendet ? 'Für SuS einblenden' : 'Für SuS ausblenden') + (k ? ' (' + k.name + ')' : '');
     var eye = '<button class="iconbtn" data-act="vis-v" ' + vid + ' aria-label="' + esc(eyeLbl) + '" title="' + esc(eyeLbl) + '">' + ico(z.ausgeblendet ? 'eyeoff' : 'eye') + '</button>';
@@ -1275,7 +1290,8 @@ function renderReihe(f, j, r, mode, kk){
       + (!kurs && editing && z.ab && !gesperrt(v, k) ? '<span class="aus-badge ab">' + ico('clock') + 'freigeschaltet seit ' + esc(datumKurz(z.ab)) + fuer + '</span>' : '') + '</div>'
       + '<div class="row-main"><div class="chips"' + (editing && !kurs ? ' data-sort="m" data-bereich="sus" ' + vid : '') + '>' + sus.join('')
       + (!sus.length && !editing ? '<span class="muted" style="font-size:.95rem;padding-top:.5rem">' + (lk.length ? '' : 'Noch kein Material.') + '</span>' : '')
-      + (kurs ? '' : '<button class="chip add edit-only" data-act="add-m" data-bereich="sus" ' + vid + '>' + ico('plus') + '<span>Unterrichtsmaterial</span></button>') + '</div>'
+      + (kurs ? '' : '<button class="chip add edit-only" data-act="add-m" data-bereich="sus" ' + vid + '>' + ico('plus') + '<span>Unterrichtsmaterial</span></button>'
+        + '<button class="chip add edit-only" data-act="add-t" ' + vid + ' title="Trenner für einen weiteren Tag">' + ico('plus') + '<span>Tag</span></button>') + '</div>'
       + (kurs ? '' : (editing ? lkEditBlock(lk, vid, planungHtml(v)) : lkBlock(v.id, lk, planungHtml(v)))) + '</div>' + (kurs ? '' : tools('v', vid, { extra:eye })) + '</div>';
   });
   if(!shown) html += '<div class="row empty">' + (kurs ? 'Hier gibt es noch nichts zu sehen.' : 'Noch keine Unterrichtsvorhaben.') + '</div>';
@@ -1321,7 +1337,7 @@ function suchErgebnisse(q){
     var vHits = [];
     (r.vorhaben || []).forEach(function(v, vi){
       var pl = planungOf(v), vTxt = rTxt + ' ' + v.titel + ' ' + (v.notiz || '') + (pl ? ' ' + PLANUNG.map(function(k){ return pl[k[0]] || ''; }).join(' ') : ''), ms = (v.materialien || []).filter(function(m){
-        return hit(vTxt + ' ' + m.titel + ' ' + (m.text || '') + ' ' + (TYPE_LABEL[m.typ] || '') + ' ' + (m.datei ? m.datei.name : '') + ' ' + (m.url ? hostOf(m.url) : '') + ' ' + (m.bereich === 'lk' ? 'Lehrkraft' : ''));
+        return m.typ !== 'tag' && hit(vTxt + ' ' + m.titel + ' ' + (m.text || '') + ' ' + (TYPE_LABEL[m.typ] || '') + ' ' + (m.datei ? m.datei.name : '') + ' ' + (m.url ? hostOf(m.url) : '') + ' ' + (m.bereich === 'lk' ? 'Lehrkraft' : ''));
       });
       if(ms.length || hit(vTxt)) vHits.push({ v:v, vi:vi, ms:ms });
     });
@@ -1377,6 +1393,7 @@ var INFO = [
   ['Niveau', '★ Basis · ★★ Standard · ★★★ Erweiterung', false],
   ['Bearbeiten', 'Unterrichtsmaterial sehen SuS, Lehrkraft-Material nie. Klassenarbeit, Test und Klausur werden zusätzlich mit dem Prüfungspasswort geschützt.', true],
   ['Reihenfolge ändern', 'Im Bearbeiten-Modus Fächer, Reihen und Vorhaben am Griff (⠿) an die neue Stelle ziehen. Material: Chip ziehen – am iPad kurz gedrückt halten, dann ziehen. Material lässt sich auch in ein anderes Vorhaben oder zwischen Lehrkraft- und Unterrichtsmaterial schieben (mit Rückfrage, Klassenarbeiten bleiben beim Lehrkraft-Material).', true],
+  ['Mehrere Tage', 'Im Bearbeiten-Modus „+ Tag“ antippen: Ein Trenner teilt das Unterrichtsmaterial eines Vorhabens nach Tagen. Antippen ändert die Beschriftung, ziehen verschiebt ihn. SuS sehen den Trenner nur, wenn danach Material sichtbar ist.', true],
   ['Buchaufgabe', 'Material ohne Datei: Der Titel (z. B. „S. 112 Nr. 4 a–c“) ist direkt sichtbar. Ein optionaler Hinweis öffnet sich beim Antippen – SuS erkennen das an „Hinweis ›“. Keine Scans aus Schulbüchern hochladen.', true],
   ['Text formatieren', 'In Hinweisen, Notizen und Buchaufgaben: **fett**, *kursiv*, Zeilen mit „- “ werden zur Liste, Links sind antippbar.', true],
   ['SuS-Ansicht', 'Zeigt die Reihe so, wie SuS sie sehen – ohne Lehrkraft-Material, Notizen und Ausgeblendetes. Gut zum Spiegeln im Unterricht. Zurück über „Lehrkraft-Ansicht“.', true],
@@ -2325,6 +2342,20 @@ var actions = {
 
   'add-m': function(c){ saveMaterial({ f:c.f.id, j:c.j.id, r:c.r.id, v:c.v.id }, null, c._el.dataset.bereich || 'sus'); },
   'edit-m': function(c){ saveMaterial({ f:c.f.id, j:c.j.id, r:c.r.id, v:c.v.id }, c); },
+  /* Trenner für mehrere Tage: wird hinten angefügt, Beschriftung „Tag 2“, „Tag 3“ … */
+  'add-t': needAdmin(function(c){
+    if(!c.v) return;
+    var n = c.v.materialien.filter(function(m){ return m.typ === 'tag'; }).length, t = 'Tag ' + (n + 2);
+    commit('Trenner: ' + c.v.titel + ' – ' + t, function(){ c.v.materialien.push({ id:uid(), typ:'tag', titel:t, bereich:'sus', datei:null, url:null, ausgeblendet:false }); });
+  }),
+  'edit-t': needAdmin(function(c){
+    if(!c.m) return;
+    openForm({ title:'Trenner', deletable:true, fields:[{ name:'titel', label:'Beschriftung', value:c.m.titel, required:true, placeholder:'z. B. Tag 2 oder Do 20.11.' }] }).then(function(v){
+      if(!v) return;
+      if(v._delete) return commit('Trenner entfernt: ' + c.v.titel, function(){ c.v.materialien.splice(c.v.materialien.indexOf(c.m), 1); });
+      commit('Trenner: ' + c.v.titel + ' – ' + v.titel, function(){ c.m.titel = v.titel; });
+    });
+  }),
 
   'vis-v': needAdmin(function(c){
     var z = zustand(c.v, c.k), an = !z.ausgeblendet;
@@ -2597,6 +2628,7 @@ function sortiere(box, typ, ids){
 function verschiebeMaterial(von, nach, mid, ids){
   var a = ctx(von), b = ctx(nach), m = a.v && findIn(a.v.materialien, mid), zuSuS = nach.dataset.bereich === 'sus';
   if(!m || !b.v){ render(); return; }
+  if(!zuSuS && m.typ === 'tag'){ render(); return; }
   if(zuSuS && m.typ === 'pruefung'){ alert('Klassenarbeiten, Tests und Klausuren bleiben beim Lehrkraft-Material.'); render(); return; }
   if(zuSuS && m.bereich === 'lk' && !confirm('„' + m.titel + '“ wird damit für SuS sichtbar' + (m.typ === 'loesung' ? ' – es ist eine Lösung' : '') + '. Verschieben?')){ render(); return; }
   needAdmin(function(){
@@ -3393,7 +3425,7 @@ function runImport(imp, plan, modus){
                         var schutz = x.typ === 'pruefung' ? 'pruefung' : 'basis';
                         var m = { id:uid(), typ:x.typ, titel:x.titel, bereich:x.bereich, datei:null, url:x.url, ausgeblendet:x.ausgeblendet };
                         if(x.quelle) m.quelle = x.quelle; if(x.hash) m.hash = x.hash; if(x.ab) m.ab = x.ab; if(x.niveau) m.niveau = x.niveau; if(x.kurse && x.bereich === 'sus') m.kurse = JSON.parse(JSON.stringify(x.kurse)); if(x.text) m.text = x.text;
-                        return up(x.datei, dir, schutz).then(function(F){ m.datei = F; if(m.datei || m.url || m.typ === 'buch') v.materialien.push(m); });
+                        return up(x.datei, dir, schutz).then(function(F){ m.datei = F; if(m.datei || m.url || m.typ === 'buch' || m.typ === 'tag') v.materialien.push(m); });
                       });
                     });
                   });
@@ -3489,6 +3521,7 @@ function exportZip(onlyF, onlyJ){
             if(m.quelle) pm.quelle = m.quelle; if(m.hash) pm.hash = m.hash; if(m.ab) pm.ab = m.ab; if(niveauOf(m)) pm.niveau = niveauOf(m);
             if(!lk && m.kurse) pm.kurse = JSON.parse(JSON.stringify(m.kurse));
             var st = niveauOf(m) ? ' ' + sterne(niveauOf(m)) : '';
+            if(m.typ === 'tag'){ pv.materialien.push(pm); items.push('\n' + esc(m.titel)); return; }
             if(m.datei){
               var path = vdir + '/' + safeName(m.titel) + sfx + '.' + m.datei.ext;
               if(job(m.datei, path, pm, 'datei')){ any = true; items.push('<a href="' + encodeURI(path) + '">' + esc(m.titel) + sfx + '</a>' + st + ' <small>' + esc((m.datei.ext || '').toUpperCase()) + '</small>'); }
@@ -3498,7 +3531,7 @@ function exportZip(onlyF, onlyJ){
             if(any) pv.materialien.push(pm);
           });
           var pl = planungOf(v);
-          html += '<li><b>' + esc(v.titel) + '</b>' + (v.notiz ? ' <small>' + esc(v.notiz) + '</small>' : '') + (items.length ? '<br>' + items.join(' · ') : '')
+          html += '<li><b>' + esc(v.titel) + '</b>' + (v.notiz ? ' <small>' + esc(v.notiz) + '</small>' : '') + (items.length ? '<br>' + joinItems(items) : '')
             + (pl ? '<details><summary><small>Notizen (Lehrkraft)</small></summary>' + PLANUNG.filter(function(k){ return pl[k[0]]; }).map(function(k){ return '<p><b>' + esc(k[1]) + ':</b><br><span style="white-space:pre-wrap">' + esc(pl[k[0]]) + '</span></p>'; }).join('') + '</details>' : '') + '</li>';
         });
         html += '</ol>';
@@ -3554,11 +3587,12 @@ function exportReiheSuS(f, j, r, k){
   if(r.titelbild) jobs.push({ F:r.titelbild, path:uniq('00 Titelbild.' + r.titelbild.ext) });
   (r.vorhaben || []).forEach(function(v, vi){
     if(!sichtbarSuS(v, k)) return;
-    var ms = (v.materialien || []).filter(function(m){ return m.bereich !== 'lk' && sichtbarSuS(m, k) && (m.datei || m.url || m.typ === 'buch'); });
+    var ms = ohneLeereTrenner((v.materialien || []).filter(function(m){ return m.bereich !== 'lk' && (m.typ === 'tag' || sichtbarSuS(m, k) && (m.datei || m.url || m.typ === 'buch')); }));
     if(!ms.length) return;
     var vdir = pad2(vi + 1) + ' ' + safeName(v.titel), li = [];
     ms.forEach(function(m){
-      if(m.typ === 'buch'){
+      if(m.typ === 'tag') li.push('\n' + esc(m.titel));
+      else if(m.typ === 'buch'){
         li.push('📖 ' + esc(m.titel) + (niveauOf(m) ? ' ' + sterne(niveauOf(m)) : '') + (m.text ? ' <small>– ' + fmt(m.text) + '</small>' : ''));
       } else if(m.datei && m.datei.schutz !== 'pruefung'){
         var p = uniq(vdir + '/' + safeName(m.titel) + '.' + m.datei.ext); jobs.push({ F:m.datei, path:p });
@@ -3568,7 +3602,7 @@ function exportReiheSuS(f, j, r, k){
         li.push('<a href="' + esc(m.url) + '">' + esc(m.titel) + '</a>' + (niveauOf(m) ? ' ' + sterne(niveauOf(m)) : '') + ' <small>Link</small>');
       }
     });
-    html += '<li><b>' + esc(v.titel) + '</b><br>' + li.join(' · ') + '</li>';
+    html += '<li><b>' + esc(v.titel) + '</b><br>' + joinItems(li) + '</li>';
   });
   html += '</ol>';
   if(susItems(r, k).some(function(x){ return niveauOf(x.m); })) html += '<p><small>Niveau: ★ Basis · ★★ Standard · ★★★ Erweiterung</small></p>';

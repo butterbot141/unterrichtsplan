@@ -912,6 +912,55 @@ with sync_playwright() as p:
     edit_off()
     page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.3)
 
+    # ================= Trenner für mehrere Tage innerhalb eines Vorhabens =================
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.3)
+    check('Tage: ohne Trenner nichts zu sehen', page.locator('.trenner').count() == 0 and not page.locator('[data-act=add-t]').first.is_visible())
+    edit_on(); time.sleep(0.3)
+    row0 = page.locator('.row[data-sort-item]').nth(0)
+    check('Tage: „+ Tag“ im Bearbeiten-Modus', row0.locator('[data-act=add-t]').is_visible())
+    row0.locator('[data-act=add-t]').click(); wait_saved()
+    sus0 = [m for m in reihe_of(getd())['vorhaben'][0]['materialien'] if m['bereich'] == 'sus']
+    check('Tage: Trenner „Tag 2“ hinten angefügt', sus0[-1]['typ'] == 'tag' and sus0[-1]['titel'] == 'Tag 2' and sus0[-1]['datei'] is None, [m['titel'] for m in sus0])
+    tid = sus0[-1]['id']
+    # Trenner nach vorne ziehen (hinter das erste Material)
+    row0 = page.locator('.row[data-sort-item]').nth(0)
+    ziehe(row0.locator('.trenner'), row0.locator('[data-sort=m][data-bereich=sus] > [data-sort-item]').nth(1), oben=True, dx=1); wait_saved()
+    ids = [m['id'] for m in reihe_of(getd())['vorhaben'][0]['materialien'] if m['bereich'] == 'sus']
+    check('Tage: Trenner verschiebbar', ids.index(tid) == 1, ids)
+    # Beschriftung ändern
+    page.locator('.row[data-sort-item]').nth(0).locator('.trenner').click(); page.wait_for_selector('dialog#sheet[open] input[name=titel]')
+    page.fill('dialog#sheet input[name=titel]', 'Do 20.11.'); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    check('Tage: Beschriftung geändert', next(m for m in reihe_of(getd())['vorhaben'][0]['materialien'] if m['id'] == tid)['titel'] == 'Do 20.11.')
+    # zweiter Trenner ohne Material dahinter
+    page.locator('.row[data-sort-item]').nth(0).locator('[data-act=add-t]').click(); wait_saved()
+    t2 = [m for m in reihe_of(getd())['vorhaben'][0]['materialien'] if m['typ'] == 'tag']
+    check('Tage: zweiter Trenner heißt „Tag 3“', len(t2) == 2 and t2[1]['titel'] == 'Tag 3', [m['titel'] for m in t2])
+    # nicht in den Lehrkraft-Bereich
+    row0 = page.locator('.row[data-sort-item]').nth(0)
+    ziehe(row0.locator('.trenner', has_text='Tag 3'), row0.locator('[data-sort=m][data-bereich=lk] > [data-sort-item]').nth(0), oben=True, dx=1); time.sleep(1)
+    check('Tage: Trenner bleibt beim Unterrichtsmaterial', all(m['bereich'] == 'sus' for m in reihe_of(getd())['vorhaben'][0]['materialien'] if m['typ'] == 'tag'))
+    edit_off(); time.sleep(0.3)
+    tx = page.locator('.row').nth(0).locator('.trenner').all_inner_texts()
+    check('Tage: Lehrkraft sieht beide Trenner', tx == ['Do 20.11.', 'Tag 3'], tx)
+    check('Tage: andere Vorhaben ohne Trenner', page.locator('.row').nth(1).locator('.trenner').count() == 0)
+    shot('30-tage-trenner')
+    page.evaluate("""async () => { const K = await T.keys('1234','pruefung123'); const d = await T.getData(K);
+      const r = d.faecher[1].jahrgaenge[0].reihen.find(x => x.id === 'optische-instrumente'); const v = r.vorhaben[0];
+      v.ausgeblendet = false; delete v.ab; delete v.kurse;
+      v.materialien.forEach(m => { if(m.bereich === 'sus'){ m.ausgeblendet = false; delete m.ab; delete m.kurse; } });
+      await T.putData(K, d); }""")
+    page.goto(SITE + '#/kurs/physik/8/optische-instrumente'); page.reload(); page.wait_for_selector('body.kurs .rows'); time.sleep(0.5)
+    kt = page.locator('.row').nth(0).locator('.trenner').all_inner_texts()
+    check('Tage: SuS sehen nur Trenner mit Material danach', kt == ['Do 20.11.'], kt)
+    page.goto(SITE + '#/suche'); page.wait_for_selector('#such-feld'); page.fill('#such-feld', 'Tag 3'); time.sleep(0.5)
+    check('Tage: Suche zeigt keine Trenner', 'Tag 3' not in page.inner_text('#such-treffer'))
+    # löschen
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); edit_on(); time.sleep(0.3)
+    page.locator('.row[data-sort-item]').nth(0).locator('.trenner', has_text='Tag 3').click(); page.wait_for_selector('dialog#sheet[open]')
+    page.click('dialog#sheet button[value=delete]'); wait_saved()
+    check('Tage: Trenner gelöscht', [m['titel'] for m in reihe_of(getd())['vorhaben'][0]['materialien'] if m['typ'] == 'tag'] == ['Do 20.11.'])
+    edit_off()
+
     # ================= Ersetzen, Speichern im Hintergrund, verzögerte Seite =================
     page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); edit_on(); time.sleep(0.3)
     stale = dict(repo)   # ab hier liefert die Seite den alten Stand (wie GitHub Pages direkt nach dem Speichern)
@@ -1020,6 +1069,7 @@ with sync_playwright() as p:
     check('C: Parallelkurse in Sicherung', any(x[0]=='R' and x[8] != 'null' for x in na) and any(x[0]=='V' and x[5] != 'null' for x in na))
     check('C: Notizen + Niveau in Sicherung', any(x[0]=='V' and x[4] != 'null' for x in na) and any(x[0]=='M' and x[10] for x in na))
     check('C: Buchaufgabe mit Hinweis in Sicherung', any(m.get('typ') == 'buch' and m.get('text') for f in after['faecher'] for j in f['jahrgaenge'] for r in j['reihen'] for v in r['vorhaben'] for m in v['materialien']))
+    check('C: Trenner in Sicherung', any(m.get('typ') == 'tag' and m.get('titel') == 'Do 20.11.' for f in after['faecher'] for j in f['jahrgaenge'] for r in j['reihen'] for v in r['vorhaben'] for m in v['materialien']))
     check('C: Prüfung wiederhergestellt', any(x[0] == 'M' and x[2] == 'pruefung' and x[7] == 'pruefung' for x in na))
     check('C: alte Dateien gelöscht', not (files_before & set(k for k in repo if k.startswith('material/'))), sorted(files_before & set(repo)))
     shot('16-nach-ersetzen')

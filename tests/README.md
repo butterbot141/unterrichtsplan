@@ -34,3 +34,4 @@ python tests/run.py                     # prüft die App im übergeordneten Ordn
 
 Neue Prüfungen vor dem Abschnitt „C: Sicherung“ in `run.py` einfügen (`check('Name', Bedingung, Info)`).
 Echte Unterrichtsmaterialien nicht ins Repository legen – Testdateien im Skript erzeugen.
+* Mehrere Tage: Trenner „+ Tag“ im Vorhaben (verschieben, umbenennen, löschen, SuS nur mit Material danach, nicht in Suche, Sicherung)
