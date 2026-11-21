@@ -1013,6 +1013,62 @@ with sync_playwright() as p:
     edit_off()
     page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.3)
 
+    # ================= Titelbild mit interaktiver Seite (Advance Organizer) =================
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.3)
+    d = getd(); ziel = next(m['titel'] for v in reihe_of(d)['vorhaben'] for m in v['materialien'] if m['bereich'] == 'sus' and m.get('datei') and m['typ'] != 'html')
+    open(FILES + '/AO Optik.html', 'w').write('<!DOCTYPE html><html><body><h1 id="ao">Advance Organizer</h1><a id="mat" href="um:material:' + ziel + '">Material</a></body></html>')
+    check('AO: ohne Seite kein Knopf', page.locator('.titelseite-btn').count() == 0)
+    edit_on()
+    page.click('[data-act=edit-bild]'); page.wait_for_selector('dialog#sheet[open]')
+    page.click('input[name=seite__mode][value=file]')
+    page.set_input_files('input[name=seite__file]', FILES + '/AB Spiegel-Parcours.pdf')
+    n_d = len(dialogs); page.click('dialog#sheet button[value=ok]')
+    for _ in range(50):
+        if len(dialogs) > n_d: break
+        page.wait_for_timeout(100)
+    check('AO: nur HTML erlaubt', any('HTML-Datei' in x for x in dialogs[n_d:]) and not reihe_of(getd()).get('titelseite'), dialogs[n_d:])
+    page.click('[data-act=edit-bild]'); page.wait_for_selector('dialog#sheet[open]')
+    page.click('input[name=seite__mode][value=file]')
+    page.set_input_files('input[name=seite__file]', FILES + '/AO Optik.html')
+    tb_vor = reihe_of(getd())['titelbild']['pfad']
+    page.click('dialog#sheet button[value=ok]'); wait_saved()
+    r_ = reihe_of(getd()); ts = r_.get('titelseite') or {}
+    check('AO: Seite gespeichert, Titelbild bleibt', ts.get('datei') and ts['datei']['pfad'] in repo and ts['datei']['ext'] == 'html' and r_['titelbild']['pfad'] == tb_vor, ts)
+    edit_off()
+    check('AO: Knopf auf dem Titelbild', page.locator('.titelbild-box .titelseite-btn').is_visible() and page.locator('img.titelbild').count() == 1)
+    page.click('.titelbild-btn'); page.wait_for_selector('.viewer'); time.sleep(0.5)
+    check('AO: Bild antippen vergrößert weiter', 'Titelbild' in page.inner_text('.viewer .viewer-bar b') and page.locator('.viewer img').count() == 1)
+    page.go_back(); time.sleep(0.4)
+    page.click('.titelseite-btn'); fr = page.frame_locator('.viewer iframe'); fr.locator('#ao').wait_for(timeout=10000)
+    check('AO: „Interaktiv öffnen“ zeigt die Seite (ohne „Weiter“)', page.locator('.viewer [data-v=next]').count() == 0)
+    fr.locator('#mat').click(); time.sleep(1)
+    check('AO: Link um:material öffnet Material der Reihe', page.locator('.viewer').count() == 1 and page.inner_text('.viewer .viewer-bar b') == ziel, page.inner_text('.viewer .viewer-bar b') if page.locator('.viewer').count() else '')
+    page.go_back(); time.sleep(0.4)
+    page.goto(SITE + '#/kurs/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.4)
+    check('AO: auch in der Kursansicht', page.locator('.titelseite-btn').is_visible())
+    shot('20-ao-kurs')
+    with page.expect_download() as dl:
+        page.click('[data-act=dl-reihe]')
+    zp = OUT + '/sus-ao.zip'; dl.value.save_as(zp); zn = zipfile.ZipFile(zp).namelist()
+    check('AO: im SuS-Download', any('Titelbild (interaktiv).html' in n for n in zn) and 'Interaktiv öffnen' in zipfile.ZipFile(zp).read([n for n in zn if n.endswith('Übersicht.html')][0]).decode(), zn)
+    page.click('#kurs-exit'); page.wait_for_selector('.crumbs')
+    # Reihe ohne Titelbild: nur Seite → eigener Knopf; leeres Bild-Feld stört nicht
+    page.goto(SITE + '#/f/mathe/6/brueche'); page.wait_for_selector('.rows'); edit_on()
+    check('AO: Hinzufügen-Knopf nennt Advance Organizer', 'Advance Organizer' in page.inner_text('[data-act=edit-bild]'))
+    page.click('[data-act=edit-bild]'); page.wait_for_selector('dialog#sheet[open]')
+    page.click('input[name=seite__mode][value=file]'); page.set_input_files('input[name=seite__file]', FILES + '/AO Optik.html')
+    n_d = len(dialogs); page.click('dialog#sheet button[value=ok]'); wait_saved()
+    check('AO: ohne Bild keine Rückfrage', not dialogs[n_d:], dialogs[n_d:])
+    edit_off()
+    check('AO: ohne Titelbild nur Knopf', page.locator('.titelseite-btn.solo').is_visible() and page.locator('img.titelbild').count() == 0)
+    alt_ao = reihe_of(getd(), 'brueche')['titelseite']['datei']['pfad']
+    edit_on(); page.click('[data-act=edit-bild]'); page.wait_for_selector('dialog#sheet[open]')
+    page.click('input[name=seite__mode][value=link]'); page.fill('input[name=seite__url]', 'https://example.org/ao')
+    page.click('dialog#sheet button[value=ok]'); wait_saved(); edit_off()
+    a_ = page.locator('a.titelseite-btn')
+    check('AO: Link öffnet in neuem Tab, alte Datei gelöscht', a_.count() == 1 and a_.get_attribute('href') == 'https://example.org/ao' and a_.get_attribute('target') == '_blank' and alt_ao not in repo)
+    page.goto(SITE + '#/f/physik/8/optische-instrumente'); page.wait_for_selector('.rows'); time.sleep(0.3)
+
     # ================= C: Sicherung -> „Alles ersetzen“ =================
     page.evaluate("""async () => { const K = await T.keys('1234','pruefung123'); const d = await T.getData(K);
       const r = d.faecher[1].jahrgaenge[0].reihen.find(x => x.id === 'optische-instrumente');
@@ -1071,6 +1127,8 @@ with sync_playwright() as p:
     check('C: Buchaufgabe mit Hinweis in Sicherung', any(m.get('typ') == 'buch' and m.get('text') for f in after['faecher'] for j in f['jahrgaenge'] for r in j['reihen'] for v in r['vorhaben'] for m in v['materialien']))
     check('C: Trenner in Sicherung', any(m.get('typ') == 'tag' and m.get('titel') == 'Do 20.11.' for f in after['faecher'] for j in f['jahrgaenge'] for r in j['reihen'] for v in r['vorhaben'] for m in v['materialien']))
     check('C: Prüfung wiederhergestellt', any(x[0] == 'M' and x[2] == 'pruefung' and x[7] == 'pruefung' for x in na))
+    ao_r = [r for f in after['faecher'] for j in f['jahrgaenge'] for r in j['reihen'] if r.get('titelseite')]
+    check('C: Titelbild-Seite (Datei + Link) in Sicherung', any((r['titelseite'].get('datei') or {}).get('ext') == 'html' for r in ao_r) and any(r['titelseite'].get('url') == 'https://example.org/ao' for r in ao_r), [r.get('titelseite') for r in ao_r])
     check('C: alte Dateien gelöscht', not (files_before & set(k for k in repo if k.startswith('material/'))), sorted(files_before & set(repo)))
     shot('16-nach-ersetzen')
 
