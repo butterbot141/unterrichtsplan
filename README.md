@@ -46,6 +46,8 @@ Materialsammlung als Web-App (GitHub Pages). Schülerinnen, Schüler und Lehrkr�
 - Ein Bild pro Reihe, z. B. Foto oder Export der Concept-Map oder Fragensammlung (außerhalb der App erstellt).
 - **Bearbeiten → Titelbild hinzufügen/ändern**. Große Bilder werden beim Hochladen verkleinert.
 - Wird oben in der Reihe ganz angezeigt (nicht abgeschnitten); antippen öffnet es groß.
+- **Interaktive Seite zum Titelbild** (optional, z. B. Advance Organizer als HTML): im Titelbild-Dialog unter „Beim Antippen öffnen“ eine HTML-Datei oder einen Link wählen. Dann zeigt das Bild links unten „Interaktiv öffnen“, rechts unten bleibt „Vergrößern“. Tipp: Screenshot des Advance Organizers als Titelbild. Ohne Bild erscheint nur der Knopf.
+- Links `um:material:Titel` in dieser Seite öffnen Material der Reihe (z. B. Knoten im Advance Organizer → Arbeitsblatt). Die Seite steht nicht in der Materialliste und hat kein „Weiter“.
 
 ## Interaktive HTML-Seiten
 

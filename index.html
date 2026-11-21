@@ -307,6 +307,12 @@ footer a{display:inline-flex;align-items:center;gap:.35rem;color:var(--muted);te
   background:rgba(15,20,28,.62);color:#fff;font-size:.8rem;font-weight:600;pointer-events:none}
 .titelbild-btn .zoom .i{width:1em;height:1em}
 @media (max-width:560px){.titelbild{max-height:min(28vh,220px)}.titelbild-btn .zoom span{display:none}}
+/* Titelbild mit verknüpfter Seite (z. B. Advance Organizer als HTML): Bild = Vorschau, Knopf öffnet die Seite */
+.titelbild-box{position:relative;display:inline-block;max-width:100%;vertical-align:top}
+.titelseite-btn{position:absolute;left:.5rem;bottom:.5rem;display:inline-flex;align-items:center;gap:.35rem;padding:.45rem .85rem;min-height:38px;border-radius:999px;
+  border:0;background:var(--acc);color:#fff;font:inherit;font-size:.88rem;font-weight:700;text-decoration:none;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.titelseite-btn .i{width:1.05em;height:1.05em}
+.titelseite-btn.solo{position:static;box-shadow:none;font-size:1rem;padding:.6rem 1.1rem;min-height:44px}
 /* Material: Auge, ausgeblendet */
 .mwrap{display:inline-flex;align-items:center;gap:.1rem;max-width:100%}
 .mwrap .iconbtn{width:40px;height:40px}
@@ -1116,13 +1122,23 @@ function renderJahrgang(f, j){
   if(klpFor(f, j.name).length) html += '<button class="addbtn" data-act="klp-r" ' + idsAttr({f:f, j:j}) + '>' + ico('klp') + 'Aus dem Kernlehrplan ergänzen</button>';
   return html + '</div></div>';
 }
+function titelseiteOf(r){ var t = r && r.titelseite; return t && (t.datei || t.url) ? t : null; }
+/* Knopf zur verknüpften Seite (Datei im Viewer, Link in neuem Tab) */
+function titelseiteBtn(r, ids, solo){
+  var t = titelseiteOf(r); if(!t) return '';
+  var cls = 'titelseite-btn' + (solo ? ' solo' : ''), inner = ico(t.datei ? 'html' : 'link') + '<span>Interaktiv öffnen</span>';
+  return t.datei ? '<button class="' + cls + '" data-act="open-titelseite" ' + ids + '>' + inner + '</button>'
+    : '<a class="' + cls + '" href="' + esc(t.url) + '" target="_blank" rel="noopener">' + inner + '</a>';
+}
 function titelbildSection(r, mode, ids){
+  var edit = mode === 'kurs' ? '' : '<div class="edit-only" style="margin-top:.6rem"><button class="pillbtn" data-act="edit-bild" ' + ids + '>' + ico('image') + 'Titelbild ändern</button></div>';
   if(r.titelbild){
-    return '<section class="titelbild-wrap" aria-label="Titelbild"><button class="titelbild-btn" data-act="open-bild" ' + ids + ' aria-label="Titelbild groß anzeigen">'
+    return '<section class="titelbild-wrap" aria-label="Titelbild"><div class="titelbild-box"><button class="titelbild-btn" data-act="open-bild" ' + ids + ' aria-label="Titelbild groß anzeigen">'
       + '<img class="titelbild" data-bild="1" ' + ids + ' alt="Titelbild der Reihe"><span class="zoom" aria-hidden="true">' + ico('search') + '<span>Vergrößern</span></span></button>'
-      + (mode === 'kurs' ? '' : '<div class="edit-only" style="margin-top:.6rem"><button class="pillbtn" data-act="edit-bild" ' + ids + '>' + ico('image') + 'Titelbild ändern</button></div>') + '</section>';
+      + titelseiteBtn(r, ids) + '</div>' + edit + '</section>';
   }
-  return mode === 'kurs' ? '' : '<div class="edit-only" style="margin:0 0 1.2rem"><button class="addbtn" data-act="edit-bild" ' + ids + '>' + ico('image') + 'Titelbild hinzufügen – z. B. Foto der Concept-Map</button></div>';
+  if(titelseiteOf(r)) return '<section class="titelbild-wrap" aria-label="Titelbild">' + titelseiteBtn(r, ids, true) + edit + '</section>';
+  return mode === 'kurs' ? '' : '<div class="edit-only" style="margin:0 0 1.2rem"><button class="addbtn" data-act="edit-bild" ' + ids + '>' + ico('image') + 'Titelbild hinzufügen – z. B. Concept-Map oder Advance Organizer</button></div>';
 }
 /* Alles, was SuS in der Kursansicht sehen (für „Alle Materialien herunterladen“) */
 function susItems(r, k){
@@ -1406,6 +1422,7 @@ var INFO = [
   ['Speichern', 'Änderungen erscheinen sofort, gespeichert wird im Hintergrund („Speichert …“ unten links). Seite erst danach schließen. SuS sehen den neuen Stand nach ca. 1–2 Minuten.', true],
   ['Sichern und Wiederherstellen', '„Alles herunterladen“ (mit Prüfungspasswort) ist die Sicherung. Wiederherstellen: „Importieren“ → „Alles ersetzen“.', true],
   ['Neues Schuljahr', 'In Reihe oder Jahrgang: zurücksetzen oder als Kopie anlegen. Kopien nutzen dieselben Dateien.', true],
+  ['Titelbild', 'Antippen vergrößert. Optional mit HTML-Seite oder Link, z. B. Advance Organizer: Dann zeigt das Bild „Interaktiv öffnen“. Ohne Bild erscheint nur der Knopf. In der Seite öffnen Links „um:material:Titel“ Material der Reihe.', true],
   ['Interaktive Seiten', 'Vorlagen unter Verwaltung: Lernpfad (Schritte, Hilfen, Quiz) oder Simulation (ein Bildschirm). Anpassen und als HTML hochladen.', true],
   ['Speicher', 'Höchstens 1 GB. Ersetzte und gelöschte Dateien bleiben im Verlauf und zählen mit. Videos verlinken. Wird es eng: ein Fach in eine eigene Sammlung auslagern (Fach bearbeiten → Adresse).', true],
   ['Sicherheit', 'Alles liegt verschlüsselt im Repository. Der Zugangscode ist eine Hürde, kein Tresor – Klassenarbeiten deshalb mit langem Prüfungspasswort schützen.', true]
@@ -2123,6 +2140,25 @@ function checkBild(s){
   if(s && s.mode === 'file' && !isImageFile(s.file)){ alert('Als Titelbild bitte ein Bild wählen (JPG oder PNG).'); return false; }
   return true;
 }
+/* Verknüpfte Seite zum Titelbild (z. B. Advance Organizer): HTML-Datei oder Link */
+function seiteSlot(r){
+  var t = titelseiteOf(r);
+  return { name:'seite', label:'Beim Antippen öffnen (optional)', type:'slot', allowLink:true, accept:'.html,.htm,text/html',
+    current: t ? (t.datei ? t.datei.name : t.url) : '', url: t ? t.url : '', hint:'z. B. Advance Organizer als HTML' };
+}
+function checkSeite(s){
+  if(!checkSlot(s)) return false;
+  if(s && s.mode === 'file' && ['html', 'htm'].indexOf(extOf(s.file.name)) < 0){ alert('Bitte eine HTML-Datei wählen – oder einen Link.'); return false; }
+  return true;
+}
+function applyTitelseite(r, s, dir){
+  if(!s || s.mode === 'keep') return Promise.resolve();
+  var t = r.titelseite || { datei:null, url:null };
+  return applySlot(t, 'datei', s, dir, 'basis', true).then(function(old){
+    r.titelseite = (t.datei || t.url) ? t : null; if(!r.titelseite) delete r.titelseite;
+    loeschenSpaeter(old);
+  });
+}
 /* Titelbild setzen oder entfernen; alte Datei wird gelöscht */
 function applyTitelbild(r, s, dir){
   if(!s || s.mode === 'keep') return Promise.resolve();
@@ -2400,13 +2436,22 @@ var actions = {
   'edit-bild': needAdmin(function(c){
     openForm({ title:'Titelbild: ' + c.r.titel, noFocus:true, fields:[
       { name:'bild', label:'Titelbild', type:'slot', accept:'image/*', current: c.r.titelbild ? c.r.titelbild.name : '', defaultMode:'file',
-        hint:'z. B. Concept-Map' }
+        hint:'z. B. Concept-Map oder Screenshot des Advance Organizers' },
+      seiteSlot(c.r)
     ]}).then(function(v){
-      if(!v || v._delete || !checkBild(v.bild) || v.bild.mode === 'keep') return;
-      commit('Titelbild: ' + c.r.titel, function(){ return applyTitelbild(c.r, v.bild, dirFor(c.f, c.j, c.r)); });
+      if(!v || v._delete) return;
+      /* Nur die Seite gewählt: leeres Bild-Feld bedeutet „Bild lassen, wie es ist“ */
+      if(v.bild.mode === 'file' && !v.bild.file && v.seite.mode !== 'keep' && v.seite.mode !== 'none') v.bild.mode = 'keep';
+      if(!checkBild(v.bild) || !checkSeite(v.seite)) return;
+      var neuBild = v.bild.mode !== 'keep' && !(v.bild.mode === 'none' && !c.r.titelbild), neuSeite = v.seite.mode !== 'keep' && !(v.seite.mode === 'none' && !titelseiteOf(c.r));
+      if(!neuBild && !neuSeite) return;
+      var dir = dirFor(c.f, c.j, c.r);
+      commit('Titelbild: ' + c.r.titel, function(){ return applyTitelbild(c.r, v.bild, dir).then(function(){ return applyTitelseite(c.r, v.seite, dir); }); });
     });
   }),
   'open-bild': function(c){ if(c.r && c.r.titelbild) openFile(c.r.titelbild, 'Titelbild – ' + c.r.titel, 'uebersicht'); },
+  /* Ohne Material im Kontext: kein „Weiter“; Links „um:material:Titel“ öffnen Material der Reihe */
+  'open-titelseite': function(c){ var t = titelseiteOf(c.r); if(t && t.datei) openFile(t.datei, c.r.titel, 'html', { f:c.f, j:c.j, r:c.r }); },
   'dl-reihe': function(c){ exportReiheSuS(c.f, c.j, c.r, c.k); },
   'vorlage': function(c){
     var sim = c && c._el && c._el.dataset.typ === 'simulation';
@@ -3329,6 +3374,7 @@ function startImport(){
       var entries = planEntries(imp.plan), nR = 0, nV = 0, files = [], missing = [];
       entries.forEach(function(en){ (en.reihen || []).forEach(function(r){ nR++;
         var tb = importTitelbild(r); if(tb){ (imp.get(tb) ? files : missing).push(tb); }
+        if(r.titelseite && r.titelseite.datei) (imp.get(r.titelseite.datei) ? files : missing).push(r.titelseite.datei);
         if(r.uebersicht) ['sus', 'lk'].forEach(function(k){ var x = r.uebersicht[k]; if(x) (imp.get(x) ? files : missing).push(x); });
         (r.vorhaben || []).forEach(function(v){ nV++; (v.materialien || []).forEach(function(m){ importMats(m).forEach(function(x){ if(x.datei) (imp.get(x.datei) ? files : missing).push(x.datei); }); }); }); }); });
       var html = '<ul class="import-list">' + entries.map(function(en){ return '<li><b>' + esc(en.fach) + ' ' + esc(en.jahrgang) + '</b>: ' + (en.reihen || []).map(function(r){ return esc(r.titel); }).join(', ') + '</li>'; }).join('') + '</ul>'
@@ -3405,6 +3451,11 @@ function runImport(imp, plan, modus){
               });
               var dir = dirFor(f, j, r), p = Promise.resolve(), tb = importTitelbild(ri), ou = ri.uebersicht;
               if(tb && !r.titelbild) p = p.then(function(){ return up(tb, dir, 'basis'); }).then(function(F){ if(F) r.titelbild = F; });
+              var ti = ri.titelseite;
+              if(ti && (ti.datei || ti.url) && !titelseiteOf(r)){
+                p = p.then(function(){ return ti.datei ? up(ti.datei, dir, 'basis') : null; })
+                  .then(function(F){ if(F || ti.url) r.titelseite = { datei:F || null, url:F ? null : (ti.url || null) }; });
+              }
               if(ou && !r.uebersicht && (ou.sus || ou.lk || ou.url)){
                 var nu = { sus:null, lk:null, url:ou.url || null };
                 p = p.then(function(){ return up(ou.sus, dir, 'basis'); }).then(function(F){ nu.sus = F; return up(ou.lk, dir, 'basis'); })
@@ -3503,7 +3554,13 @@ function exportZip(onlyF, onlyJ){
         if(kurseOf(r).length) pr.kurse = JSON.parse(JSON.stringify(r.kurse));
         pe.reihen.push(pr);
         if(r.titelbild) job(r.titelbild, rdir + '/00 Titelbild.' + r.titelbild.ext, pr, 'titelbild');
-        html += '<h3>' + (ri + 1) + '. ' + esc(r.titel) + '</h3><ol>';
+        var ts = titelseiteOf(r), tsHtml = '';
+        if(ts){
+          pr.titelseite = { url:ts.url || null };
+          if(ts.datei && job(ts.datei, rdir + '/00 Titelbild (interaktiv).' + ts.datei.ext, pr.titelseite, 'datei')) tsHtml = '<a href="' + encodeURI(pr.titelseite.datei) + '">Interaktiv öffnen</a>';
+          if(ts.url){ tsHtml = '<a href="' + esc(ts.url) + '">Interaktiv öffnen</a>'; links.push(r.titel + ' – Titelbild (interaktiv): ' + ts.url); }
+        }
+        html += '<h3>' + (ri + 1) + '. ' + esc(r.titel) + '</h3>' + (tsHtml ? '<p><small>' + tsHtml + '</small></p>' : '') + '<ol>';
         if(r.uebersicht){
           pr.uebersicht = { url:r.uebersicht.url || null };
           ['sus', 'lk'].forEach(function(k){ var F = r.uebersicht[k]; if(F) job(F, rdir + '/00 Datei zur Reihe' + (k === 'lk' ? ' (Lehrkraft)' : '') + '.' + F.ext, pr.uebersicht, k); });
@@ -3585,6 +3642,9 @@ function exportReiheSuS(f, j, r, k){
     + '<style>body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:860px;margin:2rem auto;padding:0 1rem;line-height:1.5;color:#1B2333}h1{font-family:Georgia,serif}li{margin:.5rem 0}small{color:#5E6A7C}</style></head><body>'
     + '<h1>' + esc(r.titel) + '</h1><p><small>' + esc(f.name + ' ' + (k ? k.name : j.name)) + ' · Stand ' + new Date().toLocaleDateString('de-DE') + '</small></p><ol>';
   if(r.titelbild) jobs.push({ F:r.titelbild, path:uniq('00 Titelbild.' + r.titelbild.ext) });
+  var ts = titelseiteOf(r);
+  if(ts && ts.datei){ var tp = uniq('00 Titelbild (interaktiv).' + ts.datei.ext); jobs.push({ F:ts.datei, path:tp }); html = html.replace(/<ol>$/, '<p><a href="' + encodeURI(tp) + '">Interaktiv öffnen</a></p><ol>'); }
+  else if(ts && ts.url){ links.push('Titelbild (interaktiv): ' + ts.url); html = html.replace(/<ol>$/, '<p><a href="' + esc(ts.url) + '">Interaktiv öffnen</a></p><ol>'); }
   (r.vorhaben || []).forEach(function(v, vi){
     if(!sichtbarSuS(v, k)) return;
     var ms = ohneLeereTrenner((v.materialien || []).filter(function(m){ return m.bereich !== 'lk' && (m.typ === 'tag' || sichtbarSuS(m, k) && (m.datei || m.url || m.typ === 'buch')); }));
